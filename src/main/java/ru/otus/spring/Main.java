@@ -8,15 +8,10 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("/spring/spring-context.xml");
         QuestionService service = context.getBean(QuestionService.class);
         for (Question question : service.getAll()) {
             System.out.println(question.toString());
-            boolean validation = false;
-            while (!validation) {
-                validation = service.validateAnswer(question, scanner.nextLine());
-            }
             System.out.println("-----------------------------------------------------------------");
         }
     }

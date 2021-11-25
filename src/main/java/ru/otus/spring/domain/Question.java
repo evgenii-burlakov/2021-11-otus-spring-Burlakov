@@ -46,8 +46,6 @@ public class Question {
             for (int i = 0; i < answerOptions.size(); i++) {
                 sb.append(String.format("%d) %s \n", i + 1, answerOptions.get(i)));
             }
-        } else {
-            sb.append("Enter your answer: \n");
         }
 
         return sb.toString();
