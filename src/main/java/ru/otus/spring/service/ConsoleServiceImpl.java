@@ -1,21 +1,23 @@
 package ru.otus.spring.service;
 
-import ru.otus.spring.dao.QuestionService;
+import org.springframework.stereotype.Service;
+import ru.otus.spring.dao.QuestionDao;
 import ru.otus.spring.domain.Question;
 
 import java.util.List;
 
+@Service
 public class ConsoleServiceImpl implements ConsoleService{
-    private final QuestionService service;
+    private final QuestionDao dao;
 
-    public ConsoleServiceImpl(QuestionService service) {
-        this.service = service;
+    public ConsoleServiceImpl(QuestionDao dao) {
+        this.dao = dao;
     }
 
     @Override
     public void printAllQuestions() {
         System.out.println();
-        for (Question question : service.getAll()) {
+        for (Question question : dao.getAll()) {
             System.out.println(toStringQuestion(question));
             System.out.println("-----------------------------------------------------------------");
         }

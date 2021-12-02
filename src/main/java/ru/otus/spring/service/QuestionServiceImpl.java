@@ -1,14 +1,16 @@
 package ru.otus.spring.service;
 
-import ru.otus.spring.dao.QuestionService;
+import org.springframework.stereotype.Service;
+import ru.otus.spring.dao.QuestionDao;
 import ru.otus.spring.domain.Question;
 
 import java.util.List;
 
+@Service
 public class QuestionServiceImpl implements QuestionService {
-    private final QuestionService dao;
+    private final QuestionDao dao;
 
-    public QuestionServiceImpl(QuestionService dao) {
+    public QuestionServiceImpl(QuestionDao dao) {
         this.dao = dao;
     }
 

@@ -14,7 +14,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuestionDaoInFile implements QuestionService {
+public class QuestionDaoInFile implements QuestionDao {
     private final String questionFile;
 
     public QuestionDaoInFile(String questionFile) {
