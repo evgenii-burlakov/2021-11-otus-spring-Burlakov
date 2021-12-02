@@ -29,7 +29,7 @@ public class QuestionDaoInFile implements QuestionDao {
             CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT);
 
             for (CSVRecord record : parser) {
-                if (record.toList().size() > 1) {
+                if (record.toList().size() > 2) {
                     int number;
                     try {
                         number = Integer.parseInt(record.get(0));
@@ -38,10 +38,11 @@ public class QuestionDaoInFile implements QuestionDao {
                     }
 
                     String question = record.get(1);
-                    List<String> answerOptions = record.toList().size() > 2 ?
-                            new ArrayList<>(record.toList().subList(2, record.toList().size())) : null;
+                    String rightAnswer = record.get(2);
+                    List<String> answerOptions = record.toList().size() > 3 ?
+                            new ArrayList<>(record.toList().subList(3, record.toList().size())) : null;
 
-                    result.add(new Question(number, question, answerOptions));
+                    result.add(new Question(number, question, rightAnswer, answerOptions));
                 } else {
                     throw new QuestionsLoadingException("Wrong question data");
                 }
@@ -54,6 +55,13 @@ public class QuestionDaoInFile implements QuestionDao {
         }
 
         return new ArrayList<>();
+    }
+
+    @Override
+    public Question get(int number) {
+        return getAll().stream()
+                .filter(q -> q.getNumber() == number)
+                .findFirst().orElse(null);
     }
 
     private BufferedReader getReader(String questionFile) throws IOException {

@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface QuestionDao {
     List<Question> getAll();
+
+    Question get(int number);
 }

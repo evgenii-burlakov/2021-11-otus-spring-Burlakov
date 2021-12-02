@@ -1,9 +1,13 @@
 package ru.otus.spring.service;
 
-import ru.otus.spring.domain.Question;
+import ru.otus.spring.domain.User;
 
 public interface ConsoleService {
     void printAllQuestions();
 
-    String toStringQuestion(Question question);
+    void printQuestion(int number);
+
+    User addPerson();
+
+    void doTest();
 }

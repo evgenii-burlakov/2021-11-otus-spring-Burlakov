@@ -6,11 +6,13 @@ import java.util.Objects;
 public class Question {
     private int number;
     private String question;
+    private String rightAnswer;
     private List<String> answerOptions;
 
-    public Question(Integer number, String question, List<String> answerOptions) {
+    public Question(Integer number, String question, String rightAnswer, List<String> answerOptions) {
         this.number = number;
         this.question = question;
+        this.rightAnswer = rightAnswer;
         this.answerOptions = answerOptions;
     }
 
@@ -36,6 +38,14 @@ public class Question {
 
     public void setAnswerOptions(List<String> answerOptions) {
         this.answerOptions = answerOptions;
+    }
+
+    public String getRightAnswer() {
+        return rightAnswer;
+    }
+
+    public void setRightAnswer(String rightAnswer) {
+        this.rightAnswer = rightAnswer;
     }
 
     @Override
