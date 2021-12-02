@@ -5,7 +5,7 @@ import ru.otus.spring.domain.Question;
 
 import java.util.List;
 
-public class ConsoleServiceImpl implements ConsoleService{
+public class ConsoleServiceImpl implements ConsoleService {
     private final QuestionDao dao;
 
     public ConsoleServiceImpl(QuestionDao dao) {
