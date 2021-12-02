@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Question {
-    private Integer number;
+    private int number;
     private String question;
     private List<String> answerOptions;
 
@@ -14,11 +14,11 @@ public class Question {
         this.answerOptions = answerOptions;
     }
 
-    public Integer getNumber() {
+    public int getNumber() {
         return number;
     }
 
-    public void setNumber(Integer number) {
+    public void setNumber(int number) {
         this.number = number;
     }
 
@@ -36,19 +36,6 @@ public class Question {
 
     public void setAnswerOptions(List<String> answerOptions) {
         this.answerOptions = answerOptions;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder(String.format("Question №%d:\n%s\n", number, question));
-        if (answerOptions != null && answerOptions.size() != 0) {
-            sb.append("Choose from the proposed answer options (enter the number): \n");
-            for (int i = 0; i < answerOptions.size(); i++) {
-                sb.append(String.format("%d) %s \n", i + 1, answerOptions.get(i)));
-            }
-        }
-
-        return sb.toString();
     }
 
     @Override

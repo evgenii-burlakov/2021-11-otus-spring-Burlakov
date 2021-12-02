@@ -12,4 +12,7 @@
         <constructor-arg name="dao" ref="questionDaoInFile"/>
     </bean>
 
+    <bean id="consoleServiceImpl" class="ru.otus.spring.service.ConsoleServiceImpl">
+        <constructor-arg name="service" ref="questionServiceImpl"/>
+    </bean>
 </beans>
