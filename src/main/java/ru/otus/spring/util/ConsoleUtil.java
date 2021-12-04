@@ -3,13 +3,14 @@ package ru.otus.spring.util;
 import java.util.Scanner;
 
 public final class ConsoleUtil {
+    private static final Scanner scanner = new Scanner(System.in);
+
     public static void print(String sting) {
         System.out.println(sting);
     }
 
     public static String readNonEmptyString() {
-        Scanner scanner = new Scanner(System.in);
-        String result = "";
+        String result;
         while (true) {
             result = scanner.nextLine();
             if (result.isBlank()) {
@@ -21,11 +22,10 @@ public final class ConsoleUtil {
     }
 
     public static String readAnswerFromOptions(int numberOfOptions) {
-        Scanner scanner = new Scanner(System.in);
         String result;
         while (true) {
             result = scanner.nextLine();
-            int intResult = 0;
+            int intResult;
             try {
                 intResult = Integer.parseInt(result);
                 if (intResult > 0 && intResult <= numberOfOptions) {
@@ -37,5 +37,9 @@ public final class ConsoleUtil {
                 print(String.format("Please enter a number from 1 to %d", numberOfOptions));
             }
         }
+    }
+
+    public static void closeScanner() {
+        scanner.close();
     }
 }
