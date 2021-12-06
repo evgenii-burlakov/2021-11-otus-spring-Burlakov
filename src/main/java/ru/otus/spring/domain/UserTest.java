@@ -1,5 +1,7 @@
 package ru.otus.spring.domain;
 
+import java.util.Objects;
+
 public class UserTest {
     private User user;
     private int userCorrectAnswers;
@@ -33,5 +35,18 @@ public class UserTest {
 
     public void setRequiredCorrectAnswers(int requiredCorrectAnswers) {
         this.requiredCorrectAnswers = requiredCorrectAnswers;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserTest userTest = (UserTest) o;
+        return userCorrectAnswers == userTest.userCorrectAnswers && requiredCorrectAnswers == userTest.requiredCorrectAnswers && Objects.equals(user, userTest.user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(user, userCorrectAnswers, requiredCorrectAnswers);
     }
 }

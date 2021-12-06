@@ -1,13 +1,15 @@
 package ru.otus.spring.domain;
 
+import java.util.Objects;
+
 public class Answer {
     private User user;
-    private int questionNumber;
+    private Question question;
     private boolean result;
 
-    public Answer(User user, int questionNumber, boolean result) {
+    public Answer(User user, Question question, boolean result) {
         this.user = user;
-        this.questionNumber = questionNumber;
+        this.question = question;
         this.result = result;
     }
 
@@ -19,12 +21,12 @@ public class Answer {
         this.user = user;
     }
 
-    public int getQuestionNumber() {
-        return questionNumber;
+    public Question getQuestion() {
+        return question;
     }
 
-    public void setQuestionNumber(int questionNumber) {
-        this.questionNumber = questionNumber;
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     public boolean isResult() {
@@ -33,5 +35,18 @@ public class Answer {
 
     public void setResult(boolean result) {
         this.result = result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Answer answer = (Answer) o;
+        return result == answer.result && Objects.equals(user, answer.user) && Objects.equals(question, answer.question);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(user, question, result);
     }
 }
