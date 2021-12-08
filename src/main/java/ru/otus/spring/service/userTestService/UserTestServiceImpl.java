@@ -21,7 +21,7 @@ public class UserTestServiceImpl implements UserTestService {
 
     @Override
     public void registerAnswer(UserTest userTest, Answer answer) {
-        if (answer.isResult()) {
+        if (answer.isTrueAnswer()) {
             userTest.setUserCorrectAnswers(userTest.getUserCorrectAnswers() + 1);
         }
     }

@@ -5,12 +5,12 @@ import java.util.Objects;
 public class Answer {
     private User user;
     private Question question;
-    private boolean result;
+    private boolean trueAnswer;
 
-    public Answer(User user, Question question, boolean result) {
+    public Answer(User user, Question question, boolean trueAnswer) {
         this.user = user;
         this.question = question;
-        this.result = result;
+        this.trueAnswer = trueAnswer;
     }
 
     public User getUser() {
@@ -29,12 +29,12 @@ public class Answer {
         this.question = question;
     }
 
-    public boolean isResult() {
-        return result;
+    public boolean isTrueAnswer() {
+        return trueAnswer;
     }
 
-    public void setResult(boolean result) {
-        this.result = result;
+    public void setTrueAnswer(boolean trueAnswer) {
+        this.trueAnswer = trueAnswer;
     }
 
     @Override
@@ -42,11 +42,11 @@ public class Answer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Answer answer = (Answer) o;
-        return result == answer.result && Objects.equals(user, answer.user) && Objects.equals(question, answer.question);
+        return trueAnswer == answer.trueAnswer && Objects.equals(user, answer.user) && Objects.equals(question, answer.question);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(user, question, result);
+        return Objects.hash(user, question, trueAnswer);
     }
 }

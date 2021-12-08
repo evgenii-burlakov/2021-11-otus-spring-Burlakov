@@ -5,23 +5,23 @@ import ru.otus.spring.domain.Answer;
 import ru.otus.spring.domain.Question;
 import ru.otus.spring.domain.QuestionType;
 import ru.otus.spring.domain.User;
-import ru.otus.spring.service.question.QuestionService;
+import ru.otus.spring.service.questionAnswer.QuestionAnswerService;
 
 @Service
 public class AnswerServiceImpl implements AnswerService {
-    private final QuestionService questionService;
+    private final QuestionAnswerService questionAnswerService;
 
-    public AnswerServiceImpl(QuestionService questionService) {
-        this.questionService = questionService;
+    public AnswerServiceImpl(QuestionAnswerService questionAnswerService) {
+        this.questionAnswerService = questionAnswerService;
     }
 
     @Override
     public Answer addAnswer(String answer, User user, Question question) {
         boolean result = false;
         if (question.getQuestionType().equals(QuestionType.FREE_ANSWER)) {
-            result = answer.equalsIgnoreCase(questionService.getRightAnswer(question).getQuestionAnswer());
+            result = answer.equalsIgnoreCase(questionAnswerService.getRightAnswer(question).getQuestionAnswer());
         } else if (question.getQuestionType().equals(QuestionType.ANSWER_OPTIONS)) {
-            result = answer.equals(String.valueOf(questionService.getRightAnswer(question).getSequenceNumber()));
+            result = answer.equals(String.valueOf(questionAnswerService.getRightAnswer(question).getSequenceNumber()));
         }
         return new Answer(user, question, result);
     }

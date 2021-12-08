@@ -16,12 +16,4 @@ class QuestionServiceImplTest {
         QuestionService service = new QuestionServiceImpl(questionDaoInFile);
         Assertions.assertIterableEquals(QUESTION_LIST, service.getAll());
     }
-
-    @Test
-    void getRightAnswer() {
-        QuestionDao questionDaoInFile = Mockito.mock(QuestionDaoInFile.class);
-        Mockito.when(questionDaoInFile.getAll()).thenReturn(QUESTION_LIST);
-        QuestionService service = new QuestionServiceImpl(questionDaoInFile);
-        Assertions.assertEquals(QUESTION_ANSWER2, service.getRightAnswer(QUESTION1));
-    }
 }
