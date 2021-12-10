@@ -1,4 +1,4 @@
-package ru.otus.spring.dao;
+package ru.otus.spring.dao.question;
 
 import ru.otus.spring.domain.Question;
 

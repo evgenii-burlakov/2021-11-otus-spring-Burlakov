@@ -8,6 +8,7 @@ import ru.otus.spring.domain.UserTest;
 import ru.otus.spring.service.answer.AnswerService;
 import ru.otus.spring.service.clientData.ClientDataService;
 import ru.otus.spring.service.question.QuestionService;
+import ru.otus.spring.service.string.StringService;
 import ru.otus.spring.service.user.UserService;
 import ru.otus.spring.service.userTestService.UserTestService;
 
@@ -18,13 +19,17 @@ public class TestingServiceImpl implements TestingService {
     private final AnswerService answerService;
     private final UserTestService userTestService;
     private final ClientDataService clientDataService;
+    private final StringService stringService;
 
-    public TestingServiceImpl(QuestionService questionService, UserService userService, AnswerService answerService, UserTestService userTestService, ClientDataService clientDataService) {
+    public TestingServiceImpl(QuestionService questionService, UserService userService, AnswerService answerService,
+                              UserTestService userTestService, ClientDataService clientDataService,
+                              StringService stringService) {
         this.questionService = questionService;
         this.userService = userService;
         this.answerService = answerService;
         this.userTestService = userTestService;
         this.clientDataService = clientDataService;
+        this.stringService = stringService;
     }
 
     @Override
@@ -33,14 +38,12 @@ public class TestingServiceImpl implements TestingService {
         UserTest userTest = userTestService.addUserTest(user);
         for (Question question : questionService.getAll()) {
             Answer answer = requestAnswer(user, question);
-            userTestService.registerAnswer(userTest, answer);
+            userTest.applyAnswer(answer);
         }
-        getResult(userTestService.testResult(userTest));
-
-        clientDataService.close();
+        printResult(userTestService.testResult(userTest));
     }
 
-    private void getResult(boolean result) {
+    private void printResult(boolean result) {
         if (result) {
             clientDataService.printString("Test passed. You are genius!");
         } else {
@@ -60,7 +63,7 @@ public class TestingServiceImpl implements TestingService {
     }
 
     private Answer requestAnswer(User user, Question question) {
-        clientDataService.printString(clientDataService.toStringQuestion(question));
+        clientDataService.printString(stringService.toStringQuestion(question));
         while (true) {
             String answer = clientDataService.getString();
             if (answerService.validateAnswer(answer, question)) {

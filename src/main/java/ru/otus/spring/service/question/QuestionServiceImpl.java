@@ -1,7 +1,7 @@
 package ru.otus.spring.service.question;
 
 import org.springframework.stereotype.Service;
-import ru.otus.spring.dao.QuestionDao;
+import ru.otus.spring.dao.question.QuestionDao;
 import ru.otus.spring.domain.Question;
 
 import java.util.List;

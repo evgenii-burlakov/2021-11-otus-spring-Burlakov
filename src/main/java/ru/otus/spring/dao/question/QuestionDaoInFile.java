@@ -1,10 +1,12 @@
-package ru.otus.spring.dao;
+package ru.otus.spring.dao.question;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Repository;
 import ru.otus.spring.domain.Question;
 import ru.otus.spring.domain.QuestionAnswers;
 import ru.otus.spring.domain.QuestionType;
@@ -16,10 +18,11 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class QuestionDaoInFile implements QuestionDao {
     private final String questionFile;
 
-    public QuestionDaoInFile(String questionFile) {
+    public QuestionDaoInFile(@Value("${dao.questionFile}") String questionFile) {
         this.questionFile = questionFile;
     }
 

@@ -18,15 +18,6 @@ class UserTestServiceImplTest {
     }
 
     @Test
-    void registerAnswer() {
-        int requiredCorrectAnswers = 4;
-        UserTestService service = new UserTestServiceImpl(requiredCorrectAnswers);
-        UserTest userTest = service.addUserTest(USER);
-        service.registerAnswer(userTest, ANSWER1);
-        Assertions.assertEquals(1, userTest.getUserCorrectAnswers());
-    }
-
-    @Test
     void testResult() {
         int requiredCorrectAnswers = 4;
         UserTestService service = new UserTestServiceImpl(requiredCorrectAnswers);

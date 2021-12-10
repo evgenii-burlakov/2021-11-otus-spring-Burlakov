@@ -3,8 +3,8 @@ package ru.otus.spring.service.question;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import ru.otus.spring.dao.QuestionDao;
-import ru.otus.spring.dao.QuestionDaoInFile;
+import ru.otus.spring.dao.question.QuestionDao;
+import ru.otus.spring.dao.question.QuestionDaoInFile;
 
 import static ru.otus.spring.QuestionTestData.*;
 

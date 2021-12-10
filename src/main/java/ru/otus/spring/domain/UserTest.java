@@ -37,6 +37,12 @@ public class UserTest {
         this.requiredCorrectAnswers = requiredCorrectAnswers;
     }
 
+    public void applyAnswer(Answer answer) {
+        if (answer.isTrueAnswer()) {
+            userCorrectAnswers++;
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
