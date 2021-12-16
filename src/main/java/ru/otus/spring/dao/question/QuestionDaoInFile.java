@@ -63,12 +63,12 @@ public class QuestionDaoInFile implements QuestionDao {
             }
 
             if (result.size() != numberOfQuestions) {
-                throw new RuntimeException();
+                throw new DataLoadingException("Wrong question data. Not all questions have been localized.");
             }
 
             return result;
-        } catch (Exception e) {
-            throw new DataLoadingException("Wrong question data");
+        } catch (IOException e) {
+            throw new DataLoadingException("Wrong question data", e);
         }
     }
 

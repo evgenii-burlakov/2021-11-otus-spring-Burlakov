@@ -7,8 +7,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class UserTest {
     private final User user;
-    private final int requiredCorrectAnswers;
     private int userCorrectAnswers;
+    private final int requiredCorrectAnswers;
 
     public void applyAnswer(Answer answer) {
         if (answer.isTrueAnswer()) {
