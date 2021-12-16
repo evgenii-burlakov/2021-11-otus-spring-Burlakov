@@ -1,5 +1,10 @@
-1,What does the squirrel eat?,2,Nuts (chocolate),Nuts,Meat
-2,The capital of England?,London
-3,Who lives in a pineapple under the sea?,1,SpongeBob,Patrick
-4,The name of our planet?,Earth
-5,What programming language was this test written in?,Java
+en-EN,1,What does the squirrel eat?,2,Nuts (chocolate),Nuts,Meat
+ru-RU,1,Что ест белочка?,2,Батончик Nuts,Орехи,Мясо
+en-EN,2,The capital of England?,London
+ru-RU,2,Столица Англии?,Лондон
+en-EN,3,Who lives in a pineapple under the sea?,1,SpongeBob,Patrick
+ru-RU,3,Кто проживает в ананасе на дне океана?,1,Губка Боб,Патрик
+en-EN,4,The name of our planet?,Earth
+ru-RU,4,Название нашей планеты?,Земля
+en-EN,5,What programming language was this test written in?,Java
+ru-RU,5,На каком языке программирования написан этот тест?,Джава

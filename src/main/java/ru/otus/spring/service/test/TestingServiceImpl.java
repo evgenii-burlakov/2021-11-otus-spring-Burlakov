@@ -1,5 +1,6 @@
 package ru.otus.spring.service.test;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.otus.spring.domain.Answer;
 import ru.otus.spring.domain.Question;
@@ -12,7 +13,10 @@ import ru.otus.spring.service.string.StringService;
 import ru.otus.spring.service.user.UserService;
 import ru.otus.spring.service.userTestService.UserTestService;
 
+import java.util.List;
+
 @Service
+@AllArgsConstructor
 public class TestingServiceImpl implements TestingService {
     private final QuestionService questionService;
     private final UserService userService;
@@ -21,22 +25,12 @@ public class TestingServiceImpl implements TestingService {
     private final ClientDataService clientDataService;
     private final StringService stringService;
 
-    public TestingServiceImpl(QuestionService questionService, UserService userService, AnswerService answerService,
-                              UserTestService userTestService, ClientDataService clientDataService,
-                              StringService stringService) {
-        this.questionService = questionService;
-        this.userService = userService;
-        this.answerService = answerService;
-        this.userTestService = userTestService;
-        this.clientDataService = clientDataService;
-        this.stringService = stringService;
-    }
-
     @Override
     public void printTest() {
+        List<Question> questions = questionService.getAll();
         User user = requestUser();
         UserTest userTest = userTestService.addUserTest(user);
-        for (Question question : questionService.getAll()) {
+        for (Question question : questions) {
             Answer answer = requestAnswer(user, question);
             userTest.applyAnswer(answer);
         }
@@ -45,19 +39,20 @@ public class TestingServiceImpl implements TestingService {
 
     private void printResult(boolean result) {
         if (result) {
-            clientDataService.printString("Test passed. You are genius!");
+            clientDataService.printString(stringService.getMessage("strings.passedTest"));
         } else {
-            clientDataService.printString("Test failed. You can try again.");
+            clientDataService.printString(stringService.getMessage("strings.failedTest"));
         }
     }
 
+
     private User requestUser() {
-        clientDataService.printString("Enter your first name:");
-        String firstName = clientDataService.getString();
-        clientDataService.printString("Enter your second name:");
-        String secondName = clientDataService.getString();
-        clientDataService.printString("Enter your surname:");
-        String surname = clientDataService.getString();
+        clientDataService.printString(stringService.getMessage("strings.getFirstName"));
+        String firstName = clientDataService.getNotEmptyString();
+        clientDataService.printString(stringService.getMessage("strings.getSecondName"));
+        String secondName = clientDataService.getNotEmptyString();
+        clientDataService.printString(stringService.getMessage("strings.getSurname"));
+        String surname = clientDataService.getNotEmptyString();
 
         return userService.addUser(firstName, secondName, surname);
     }
@@ -65,12 +60,12 @@ public class TestingServiceImpl implements TestingService {
     private Answer requestAnswer(User user, Question question) {
         clientDataService.printString(stringService.toStringQuestion(question));
         while (true) {
-            String answer = clientDataService.getString();
+            String answer = clientDataService.getNotEmptyString();
             if (answerService.validateAnswer(answer, question)) {
                 clientDataService.printString("-----------------------------------------------------------------");
                 return answerService.addAnswer(answer, user, question);
             } else {
-                clientDataService.printString("Please, write correct answer");
+                clientDataService.printString(stringService.getMessage("strings.getCorrectAnswer"));
             }
         }
     }

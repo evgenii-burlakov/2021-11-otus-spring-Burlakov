@@ -1,6 +1,6 @@
 package ru.otus.spring.service.clientData;
 
-import ru.otus.spring.service.errorMessage.ErrorMessageService;
+import ru.otus.spring.service.string.StringService;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -9,22 +9,22 @@ import java.util.Scanner;
 public class ConsoleServiceImpl implements ClientDataService {
     private final PrintStream printStream;
     private final InputStream inputStream;
-    private final ErrorMessageService errorMessageService;
+    private final StringService stringService;
 
-    public ConsoleServiceImpl(PrintStream printStream, InputStream inputStream, ErrorMessageService errorMessageService) {
+    public ConsoleServiceImpl(PrintStream printStream, InputStream inputStream, StringService stringService) {
         this.printStream = printStream;
         this.inputStream = inputStream;
-        this.errorMessageService = errorMessageService;
+        this.stringService = stringService;
     }
 
     @Override
-    public String getString() {
+    public String getNotEmptyString() {
         Scanner scanner = new Scanner(inputStream);
         String result;
         while (true) {
             result = scanner.nextLine();
             if (result.isBlank()) {
-                printString(errorMessageService.getErrorText(1));
+                printString(stringService.getMessage("strings.notEmptyStringError"));
             } else {
                 return result;
             }

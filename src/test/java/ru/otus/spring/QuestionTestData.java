@@ -1,6 +1,9 @@
 package ru.otus.spring;
 
-import ru.otus.spring.domain.*;
+import ru.otus.spring.domain.Question;
+import ru.otus.spring.domain.QuestionAnswers;
+import ru.otus.spring.domain.QuestionType;
+import ru.otus.spring.domain.User;
 
 import java.util.List;
 
@@ -19,10 +22,6 @@ public final class QuestionTestData {
     public static final Question QUESTION3 = new Question(3, QuestionType.ANSWER_OPTIONS, "Who lives in a pineapple under the sea?", List.of(QUESTION_ANSWER5, QUESTION_ANSWER6));
     public static final Question QUESTION4 = new Question(4, QuestionType.FREE_ANSWER, "The name of our planet?", List.of(QUESTION_ANSWER7));
     public static final Question QUESTION5 = new Question(5, QuestionType.FREE_ANSWER, "What programming language was this test written in?", List.of(QUESTION_ANSWER8));
-
     public static final List<Question> QUESTION_LIST = List.of(QUESTION1, QUESTION2, QUESTION3, QUESTION4, QUESTION5);
-
     public static final User USER = new User("TEST", "TESTOVICH", "TESTOV");
-
-    public static final Answer ANSWER1 = new Answer(USER, QUESTION1, true);
 }

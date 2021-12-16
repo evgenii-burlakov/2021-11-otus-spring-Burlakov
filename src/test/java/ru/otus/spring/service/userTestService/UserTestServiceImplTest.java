@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.otus.spring.domain.UserTest;
 
-import static ru.otus.spring.QuestionTestData.ANSWER1;
 import static ru.otus.spring.QuestionTestData.USER;
 
 class UserTestServiceImplTest {
