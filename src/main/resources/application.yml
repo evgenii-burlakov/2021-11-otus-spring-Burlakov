@@ -3,8 +3,8 @@ spring:
     basename: i18n/message
 
 application:
-  language: ru-RU
-#  language: en-EN
+#  language: ru-RU
+  language: en-EN
 dao:
   questionFile: /questions.csv
 passedTest:
