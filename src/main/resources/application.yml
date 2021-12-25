@@ -1,6 +1,7 @@
 spring:
   messages:
     basename: i18n/message
+    fallback-to-system-locale: false
 
 application:
 #  language: ru-RU

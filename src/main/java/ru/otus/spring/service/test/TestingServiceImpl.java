@@ -9,6 +9,7 @@ import ru.otus.spring.domain.UserTest;
 import ru.otus.spring.service.answer.AnswerService;
 import ru.otus.spring.service.clientData.ClientDataService;
 import ru.otus.spring.service.locale.LocaleService;
+import ru.otus.spring.service.question.QuestionService;
 import ru.otus.spring.service.string.StringService;
 import ru.otus.spring.service.user.UserService;
 import ru.otus.spring.service.userTestService.UserTestService;
@@ -24,10 +25,11 @@ public class TestingServiceImpl implements TestingService {
     private final ClientDataService clientDataService;
     private final StringService stringService;
     private final LocaleService localeService;
+    private final QuestionService questionService;
 
     @Override
     public void printTest() {
-        List<Question> questions = localeService.getLocalizedQuestions();
+        List<Question> questions = questionService.getAll();
         User user = requestUser();
         UserTest userTest = userTestService.addUserTest(user);
         for (Question question : questions) {
