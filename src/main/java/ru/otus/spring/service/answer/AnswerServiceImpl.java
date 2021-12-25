@@ -1,5 +1,6 @@
 package ru.otus.spring.service.answer;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.otus.spring.domain.Answer;
 import ru.otus.spring.domain.Question;
@@ -8,12 +9,9 @@ import ru.otus.spring.domain.User;
 import ru.otus.spring.service.questionAnswer.QuestionAnswerService;
 
 @Service
+@AllArgsConstructor
 public class AnswerServiceImpl implements AnswerService {
     private final QuestionAnswerService questionAnswerService;
-
-    public AnswerServiceImpl(QuestionAnswerService questionAnswerService) {
-        this.questionAnswerService = questionAnswerService;
-    }
 
     @Override
     public Answer addAnswer(String answer, User user, Question question) {

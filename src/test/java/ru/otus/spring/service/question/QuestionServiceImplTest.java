@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import ru.otus.spring.dao.question.QuestionDao;
 import ru.otus.spring.dao.question.QuestionDaoInFile;
 
-import static ru.otus.spring.QuestionTestData.*;
+import static ru.otus.spring.QuestionTestData.QUESTION_LIST;
 
 class QuestionServiceImplTest {
     @Test

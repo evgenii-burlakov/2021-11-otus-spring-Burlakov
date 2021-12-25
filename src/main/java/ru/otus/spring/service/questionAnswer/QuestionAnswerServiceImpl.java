@@ -6,7 +6,7 @@ import ru.otus.spring.domain.QuestionAnswers;
 import ru.otus.spring.domain.QuestionType;
 
 @Service
-public class QuestionAnswerServiceImpl implements QuestionAnswerService{
+public class QuestionAnswerServiceImpl implements QuestionAnswerService {
     @Override
     public QuestionAnswers getRightAnswer(Question question) {
         if (question.getQuestionType().equals(QuestionType.FREE_ANSWER)) {

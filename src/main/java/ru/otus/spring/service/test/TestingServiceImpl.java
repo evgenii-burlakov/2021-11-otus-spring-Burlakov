@@ -1,5 +1,6 @@
 package ru.otus.spring.service.test;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.otus.spring.domain.Answer;
 import ru.otus.spring.domain.Question;
@@ -7,36 +8,31 @@ import ru.otus.spring.domain.User;
 import ru.otus.spring.domain.UserTest;
 import ru.otus.spring.service.answer.AnswerService;
 import ru.otus.spring.service.clientData.ClientDataService;
+import ru.otus.spring.service.locale.LocaleService;
 import ru.otus.spring.service.question.QuestionService;
 import ru.otus.spring.service.string.StringService;
 import ru.otus.spring.service.user.UserService;
 import ru.otus.spring.service.userTestService.UserTestService;
 
+import java.util.List;
+
 @Service
+@AllArgsConstructor
 public class TestingServiceImpl implements TestingService {
-    private final QuestionService questionService;
     private final UserService userService;
     private final AnswerService answerService;
     private final UserTestService userTestService;
     private final ClientDataService clientDataService;
     private final StringService stringService;
-
-    public TestingServiceImpl(QuestionService questionService, UserService userService, AnswerService answerService,
-                              UserTestService userTestService, ClientDataService clientDataService,
-                              StringService stringService) {
-        this.questionService = questionService;
-        this.userService = userService;
-        this.answerService = answerService;
-        this.userTestService = userTestService;
-        this.clientDataService = clientDataService;
-        this.stringService = stringService;
-    }
+    private final LocaleService localeService;
+    private final QuestionService questionService;
 
     @Override
     public void printTest() {
+        List<Question> questions = questionService.getAll();
         User user = requestUser();
         UserTest userTest = userTestService.addUserTest(user);
-        for (Question question : questionService.getAll()) {
+        for (Question question : questions) {
             Answer answer = requestAnswer(user, question);
             userTest.applyAnswer(answer);
         }
@@ -45,19 +41,21 @@ public class TestingServiceImpl implements TestingService {
 
     private void printResult(boolean result) {
         if (result) {
-            clientDataService.printString("Test passed. You are genius!");
+            clientDataService.printString(localeService.getMessage("strings.passedTest"));
         } else {
-            clientDataService.printString("Test failed. You can try again.");
+            clientDataService.printString(localeService.getMessage("strings.failedTest"));
         }
     }
 
+
     private User requestUser() {
-        clientDataService.printString("Enter your first name:");
-        String firstName = clientDataService.getString();
-        clientDataService.printString("Enter your second name:");
-        String secondName = clientDataService.getString();
-        clientDataService.printString("Enter your surname:");
-        String surname = clientDataService.getString();
+        String errorMessage = localeService.getMessage("strings.notEmptyStringError");
+        clientDataService.printString(localeService.getMessage("strings.getFirstName"));
+        String firstName = clientDataService.getNotEmptyString(errorMessage);
+        clientDataService.printString(localeService.getMessage("strings.getSecondName"));
+        String secondName = clientDataService.getNotEmptyString(errorMessage);
+        clientDataService.printString(localeService.getMessage("strings.getSurname"));
+        String surname = clientDataService.getNotEmptyString(errorMessage);
 
         return userService.addUser(firstName, secondName, surname);
     }
@@ -65,12 +63,12 @@ public class TestingServiceImpl implements TestingService {
     private Answer requestAnswer(User user, Question question) {
         clientDataService.printString(stringService.toStringQuestion(question));
         while (true) {
-            String answer = clientDataService.getString();
+            String answer = clientDataService.getNotEmptyString(localeService.getMessage("strings.notEmptyStringError"));
             if (answerService.validateAnswer(answer, question)) {
                 clientDataService.printString("-----------------------------------------------------------------");
                 return answerService.addAnswer(answer, user, question);
             } else {
-                clientDataService.printString("Please, write correct answer");
+                clientDataService.printString(localeService.getMessage("strings.getCorrectAnswer"));
             }
         }
     }
