@@ -1,4 +1,8 @@
 spring:
+  shell:
+    interactive:
+      enabled: false
+
   main:
     allow-circular-references: true
 
@@ -7,9 +11,14 @@ spring:
     fallback-to-system-locale: false
 
 application:
-#  language: ru-RU
+  #  language: ru-RU
   language: en-EN
+
 dao:
   questionFile: /questions.csv
 passedTest:
   rightAnswers: 4
+
+logging:
+  level:
+    org.springframework.test.context.cache: debug
