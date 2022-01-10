@@ -1,6 +1,7 @@
 package ru.otus.libraryapplication.dao.author;
 
 import ru.otus.libraryapplication.domain.Author;
+import ru.otus.libraryapplication.domain.Genre;
 
 import java.util.List;
 
@@ -9,9 +10,13 @@ public interface AuthorDao {
 
     Author getById(long Id);
 
+    Author getByName(String name);
+
     void deleteById(long id);
 
     void update(long id, String name);
 
-    void create(String name);
+    long create(String name);
+
+    List<Long> getUniqueAuthorsToGenre(long genreId);
 }

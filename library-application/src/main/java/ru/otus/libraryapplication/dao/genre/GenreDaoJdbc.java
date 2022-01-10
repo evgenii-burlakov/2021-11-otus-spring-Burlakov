@@ -1,8 +1,12 @@
 package ru.otus.libraryapplication.dao.genre;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.otus.libraryapplication.domain.Genre;
 
@@ -14,7 +18,7 @@ import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
-public class GenreDaoImpl implements GenreDao {
+public class GenreDaoJdbc implements GenreDao {
     private final NamedParameterJdbcOperations jdbc;
 
     @Override
@@ -30,7 +34,16 @@ public class GenreDaoImpl implements GenreDao {
         String sql = "select id, name " +
                 "from genres " +
                 "where id = :id";
-        return jdbc.queryForObject(sql, params, new GenreMapper());
+        return DataAccessUtils.singleResult(jdbc.query(sql, params, new GenreMapper()));
+    }
+
+    @Override
+    public Genre getByName(String name) {
+        Map<String, Object> params = Collections.singletonMap("name", name);
+        String sql = "select id, name " +
+                "from genres " +
+                "where name = :name";
+        return DataAccessUtils.singleResult(jdbc.query(sql, params, new GenreMapper()));
     }
 
     @Override
@@ -50,11 +63,26 @@ public class GenreDaoImpl implements GenreDao {
     }
 
     @Override
-    public void create(String name) {
-        Map<String, Object> params = Map.of("name", name);
-        jdbc.update(
-                "insert into genres(name) values (:name)", params
-        );
+    public long create(String name) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("name", name);
+
+        KeyHolder kh = new GeneratedKeyHolder();
+
+        jdbc.update("insert into genres(name) values (:name)", params, kh);
+
+        return kh.getKey().longValue();
+    }
+
+    @Override
+    public List<Long> getUniqueGenresToAuthor(long authorId) {
+        Map<String, Object> params = Collections.singletonMap("author_id", authorId);
+        String sql = "select genre_id  " +
+                "from books " +
+                "group by genre_id " +
+                "having count(distinct author_id) = 1 " +
+                "and genre_id = any (select genre_id from books where author_id = :author_id)";
+        return jdbc.query(sql, params, (rs, rowNum) -> rs.getLong("genre_id"));
     }
 
     private static class GenreMapper implements RowMapper<Genre> {

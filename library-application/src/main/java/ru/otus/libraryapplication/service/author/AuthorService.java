@@ -9,9 +9,13 @@ public interface AuthorService {
 
     Author getById(long id);
 
+    Author getByName(String author);
+
     void deleteById(long id);
 
     void update(long id, String name);
 
-    void create(String name);
+    long create(String name);
+
+    void deleteAllUnusedAuthorByGenresId(long genreId);
 }

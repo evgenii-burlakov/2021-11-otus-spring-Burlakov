@@ -36,9 +36,14 @@ public class ShellController {
         bookService.deleteById(id);
     }
 
-    @ShellMethod(value = "Update book name by id command", key = {"ub", "updateBookName"})
-    public void updateBookName(@ShellOption long id, @ShellOption(defaultValue = "__NULL__") String name) {
-        bookService.updateBookName(id, name);
+    @ShellMethod(value = "Create book command", key = {"cb", "createBook"})
+    public void createBook(@ShellOption String bookName, String authorName, String genreName) {
+        bookService.create(bookName, authorName, genreName);
+    }
+
+    @ShellMethod(value = "Update book command", key = {"ub", "updateBook"})
+    public void updateBook(@ShellOption long id, String bookName, String authorName, String genreName) {
+        bookService.update(id, bookName, authorName, genreName);
     }
 
 

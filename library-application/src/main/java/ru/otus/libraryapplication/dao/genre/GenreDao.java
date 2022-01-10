@@ -9,9 +9,13 @@ public interface GenreDao {
 
     Genre getById(long id);
 
+    Genre getByName(String name);
+
     void deleteById(long id);
 
     void update(long id, String name);
 
-    void create(String name);
+    long create(String name);
+
+    List<Long> getUniqueGenresToAuthor(long authorId);
 }
