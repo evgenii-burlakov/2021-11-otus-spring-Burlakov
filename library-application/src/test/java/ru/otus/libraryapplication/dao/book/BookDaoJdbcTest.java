@@ -5,30 +5,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import ru.otus.libraryapplication.dao.author.AuthorDaoJdbc;
-import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.domain.Book;
-import ru.otus.libraryapplication.domain.Genre;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.junit.jupiter.api.Assertions.*;
+import static ru.otus.libraryapplication.LibraryUnitTestData.*;
 
 @JdbcTest
 @DisplayName("DAO для работы с книгами должно ")
 @Import(BookDaoJdbc.class)
 class BookDaoJdbcTest {
-    private static final Author AUTHOR1 = new Author(1, "PUSHKIN");
-    private static final Author AUTHOR2 = new Author(2, "MONTGOMERY");
-
-    private static final Genre GENRE1 = new Genre(1, "POEM");
-    private static final Genre GENRE2 = new Genre(2, "NOVEL");
-
-    private static final Book BOOK1 = new Book(1, "EVGENII ONEGIN", AUTHOR1, GENRE1);
-    private static final Book BOOK2 = new Book(2, "ANNE OF GREEN GABLES", AUTHOR2, GENRE2);
-    private static final Book BOOK3 = new Book(3, "ANNE OF GREEN GABLES POEM EDITION", AUTHOR2, GENRE1);
 
     @Autowired
     private BookDaoJdbc dao;

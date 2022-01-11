@@ -16,6 +16,4 @@ public interface AuthorService {
     void update(long id, String name);
 
     long create(String name);
-
-    void deleteAllUnusedAuthorByGenresId(long genreId);
 }

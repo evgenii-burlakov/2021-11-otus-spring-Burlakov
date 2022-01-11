@@ -2,6 +2,7 @@ package ru.otus.libraryapplication.service.genre;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.otus.libraryapplication.dao.author.AuthorDao;
 import ru.otus.libraryapplication.dao.genre.GenreDao;
 import ru.otus.libraryapplication.domain.Genre;
 import ru.otus.libraryapplication.service.author.AuthorService;
@@ -12,46 +13,41 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class GenreServiceImpl implements GenreService {
-    private final GenreDao dao;
-    private final AuthorService authorService;
+    private final GenreDao genreDao;
+    private final AuthorDao authorDao;
     private final StringService stringService;
 
     @Override
     public List<Genre> getAll() {
-        return dao.getAll();
+        return genreDao.getAll();
     }
 
     @Override
     public Genre getById(long id) {
-        return dao.getById(id);
+        return genreDao.getById(id);
     }
 
     @Override
     public Genre getByName(String name) {
-        return dao.getByName(name);
+        return genreDao.getByName(name);
     }
 
     @Override
     public void deleteById(long id) {
-        authorService.deleteAllUnusedAuthorByGenresId(id);
+        authorDao.getUniqueAuthorsToGenre(id).forEach(authorDao::deleteById);
 
-        dao.deleteById(id);
+        genreDao.deleteById(id);
     }
 
     @Override
     public void update(long id, String name) {
         String genreName = stringService.beautifyStringName(name);
-        dao.update(id, genreName);
+        genreDao.update(id, genreName);
     }
 
     @Override
     public long create(String name) {
         String genreName = stringService.beautifyStringName(name);
-        return dao.create(genreName);
-    }
-
-    @Override
-    public void deleteAllUnusedGenresByAuthorId(long authorId) {
-        dao.getUniqueGenresToAuthor(authorId).forEach(dao::deleteById);
+        return genreDao.create(genreName);
     }
 }
