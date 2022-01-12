@@ -2,7 +2,6 @@ package ru.otus.libraryapplication.service.book;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.otus.libraryapplication.dao.book.BookDao;
 import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.domain.Book;
@@ -11,6 +10,7 @@ import ru.otus.libraryapplication.service.author.AuthorService;
 import ru.otus.libraryapplication.service.genre.GenreService;
 import ru.otus.libraryapplication.service.string.StringService;
 
+import javax.validation.constraints.Null;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,49 +53,56 @@ public class BookServiceImpl implements BookService {
     public void update(long id, String name, String authorName, String genreName) {
         String author = stringService.beautifyStringName(authorName);
         String genre = stringService.beautifyStringName(genreName);
-
-        Book book = dao.getById(id);
-        Author bookAuthor = book.getAuthor();
-        Long oldBookAuthorForDeletion = null;
-        if (!bookAuthor.getName().equals(author)) {
-            int count = dao.countByAuthor(bookAuthor.getId());
-            if (count == 1) {
-                oldBookAuthorForDeletion= bookAuthor.getId();
-            }
-
-            bookAuthor = getOrCreateAuthor(authorName);
-        }
-
-        Genre bookGenre = book.getGenre();
-        Long oldBookGenreForDeletion = null;
-        if (!bookGenre.getName().equals(genre)) {
-            int count = dao.countByGenre(bookGenre.getId());
-            if (count == 1) {
-                oldBookGenreForDeletion = bookGenre.getId();
-            }
-
-            bookGenre = getOrCreateGenre(genreName);
-        }
-
         String bookName = stringService.beautifyStringName(name);
 
-        dao.update(id, bookName, bookAuthor, bookGenre);
+        if (stringService.verifyNotBlank(bookName, author, genre)) {
+            Book book = dao.getById(id);
 
-        Optional.ofNullable(oldBookAuthorForDeletion).ifPresent(authorService::deleteById);
-        Optional.ofNullable(oldBookGenreForDeletion).ifPresent(genreService::deleteById);
+            if (!book.getName().equals(bookName) || !book.getAuthor().getName().equals(authorName) || !book.getGenre().getName().equals(genreName)) {
+                Author bookAuthor = book.getAuthor();
+                Long oldBookAuthorForDeletion = null;
+                if (!bookAuthor.getName().equals(author)) {
+                    int count = dao.countByAuthor(bookAuthor.getId());
+                    if (count == 1) {
+                        oldBookAuthorForDeletion = bookAuthor.getId();
+                    }
+
+                    bookAuthor = getOrCreateAuthor(authorName);
+                }
+
+                Genre bookGenre = book.getGenre();
+                Long oldBookGenreForDeletion = null;
+                if (!bookGenre.getName().equals(genre)) {
+                    int count = dao.countByGenre(bookGenre.getId());
+                    if (count == 1) {
+                        oldBookGenreForDeletion = bookGenre.getId();
+                    }
+
+                    bookGenre = getOrCreateGenre(genreName);
+                }
+
+
+                dao.update(id, bookName, bookAuthor, bookGenre);
+
+                Optional.ofNullable(oldBookAuthorForDeletion).ifPresent(authorService::deleteById);
+                Optional.ofNullable(oldBookGenreForDeletion).ifPresent(genreService::deleteById);
+            }
+        }
     }
 
     @Override
     public void create(String name, String authorName, String genreName) {
         String author = stringService.beautifyStringName(authorName);
-        Author bookAuthor = getOrCreateAuthor(author);
-
         String genre = stringService.beautifyStringName(genreName);
-        Genre bookGenre = getOrCreateGenre(genre);
-
         String bookName = stringService.beautifyStringName(name);
 
-        dao.create(bookName, bookAuthor, bookGenre);
+        if (stringService.verifyNotBlank(bookName, author, genre) && !dao.isEqualBookExist(bookName, author, genre)) {
+            Author bookAuthor = getOrCreateAuthor(author);
+
+            Genre bookGenre = getOrCreateGenre(genre);
+
+            dao.create(bookName, bookAuthor, bookGenre);
+        }
     }
 
     private Genre getOrCreateGenre(String genre) {

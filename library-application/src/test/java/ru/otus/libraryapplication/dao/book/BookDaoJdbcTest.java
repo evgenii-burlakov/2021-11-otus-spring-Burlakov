@@ -56,6 +56,20 @@ class BookDaoJdbcTest {
         assertThatCode(() -> dao.deleteById(4)).doesNotThrowAnyException();
     }
 
+    @DisplayName("возвращать true, если такая книга уже есть в БД")
+    @Test
+    void shouldReturnTrueIfEqualBookExist() {
+        boolean actual = dao.isEqualBookExist("EVGENII ONEGIN", "PUSHKIN", "POEM");
+        assertThat(actual).isTrue();
+    }
+
+    @DisplayName("возвращать false, если такой книги нет в БД")
+    @Test
+    void shouldReturnFalseIfEqualBookNotExist() {
+        boolean actual = dao.isEqualBookExist("EVGENII ONEGIN", "LERMONTOV", "POEM");
+        assertThat(actual).isFalse();
+    }
+
     @DisplayName("записывать новую книгу в БД")
     @Test
     void createNewBook() {

@@ -11,7 +11,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static ru.otus.libraryapplication.LibraryUnitTestData.*;
+import static ru.otus.libraryapplication.LibraryUnitTestData.GENRE1;
+import static ru.otus.libraryapplication.LibraryUnitTestData.GENRE2;
 
 @JdbcTest
 @DisplayName("DAO для работы с жанрами должно ")

@@ -5,13 +5,11 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import ru.otus.libraryapplication.dao.author.AuthorDao;
+import ru.otus.libraryapplication.dao.book.BookDao;
 import ru.otus.libraryapplication.dao.genre.GenreDao;
-import ru.otus.libraryapplication.service.author.AuthorService;
-import ru.otus.libraryapplication.service.author.AuthorServiceImpl;
-import ru.otus.libraryapplication.service.string.StringService;
-import ru.otus.libraryapplication.service.string.StringServiceImpl;
 
 @SpringBootConfiguration
+@ComponentScan("ru.otus.libraryapplication.service")
 public class TestSpringBootServiceConfiguration {
     @Bean
     public AuthorDao authorDao() {
@@ -24,12 +22,7 @@ public class TestSpringBootServiceConfiguration {
     }
 
     @Bean
-    public StringService stringService() {
-        return new StringServiceImpl();
-    }
-
-    @Bean
-    public AuthorService authorService() {
-        return new AuthorServiceImpl(authorDao(), genreDao(), stringService());
+    public BookDao bookDao() {
+        return Mockito.mock(BookDao.class);
     }
 }

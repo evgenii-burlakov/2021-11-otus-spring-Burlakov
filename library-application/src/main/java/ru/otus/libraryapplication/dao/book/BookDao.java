@@ -20,4 +20,6 @@ public interface BookDao {
     int countByAuthor(long id);
 
     int countByGenre(long id);
+
+    boolean isEqualBookExist(String bookName, String author, String genre);
 }

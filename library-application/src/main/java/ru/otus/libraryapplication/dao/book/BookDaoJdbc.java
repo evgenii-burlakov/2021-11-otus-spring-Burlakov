@@ -50,6 +50,25 @@ public class BookDaoJdbc implements BookDao {
     }
 
     @Override
+    public boolean isEqualBookExist(String bookName, String author, String genre) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("bookName", bookName);
+        params.addValue("author", author);
+        params.addValue("genre", genre);
+
+        String sql = "select count(*) " +
+                "from books b " +
+                "inner join authors a on b.author_id=a.id " +
+                "inner join genres g on b.genre_id=g.id " +
+                "where b.name = :bookName " +
+                "and a.name = :author " +
+                "and g.name = :genre";
+
+        Integer count = jdbc.queryForObject(sql, params, Integer.class);
+        return count != 0;
+    }
+
+    @Override
     public void deleteById(long id) {
         Map<String, Object> params = Collections.singletonMap("id", id);
         jdbc.update("delete from books where id = :id", params);
@@ -79,15 +98,16 @@ public class BookDaoJdbc implements BookDao {
     public int countByAuthor(long id) {
         Map<String, Object> params = Map.of("author_id", id);
         Integer count = jdbc.queryForObject("select count(*) from books where author_id = :author_id", params, Integer.class);
-        return count == null? 0: count;
+        return count == null ? 0 : count;
     }
 
     @Override
     public int countByGenre(long id) {
         Map<String, Object> params = Map.of("genre_id", id);
         Integer count = jdbc.queryForObject("select count(*) from books where genre_id = :genre_id", params, Integer.class);
-        return count == null? 0: count;
+        return count == null ? 0 : count;
     }
+
 
     private static class BookMapper implements RowMapper<Book> {
 

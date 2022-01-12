@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import ru.otus.libraryapplication.dao.author.AuthorDao;
 import ru.otus.libraryapplication.dao.genre.GenreDao;
 import ru.otus.libraryapplication.domain.Genre;
-import ru.otus.libraryapplication.service.author.AuthorService;
 import ru.otus.libraryapplication.service.string.StringService;
 
 import java.util.List;
@@ -42,12 +41,18 @@ public class GenreServiceImpl implements GenreService {
     @Override
     public void update(long id, String name) {
         String genreName = stringService.beautifyStringName(name);
-        genreDao.update(id, genreName);
+        if (stringService.verifyNotBlank(genreName)) {
+            genreDao.update(id, genreName);
+        }
     }
 
     @Override
-    public long create(String name) {
+    public Long create(String name) {
         String genreName = stringService.beautifyStringName(name);
-        return genreDao.create(genreName);
+        if (stringService.verifyNotBlank(genreName)) {
+            return genreDao.create(genreName);
+        }
+
+        return null;
     }
 }

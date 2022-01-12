@@ -1,7 +1,6 @@
 package ru.otus.libraryapplication.dao.author;
 
 import ru.otus.libraryapplication.domain.Author;
-import ru.otus.libraryapplication.domain.Genre;
 
 import java.util.List;
 
