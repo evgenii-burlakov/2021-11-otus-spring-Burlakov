@@ -10,7 +10,6 @@ import ru.otus.libraryapplication.service.author.AuthorService;
 import ru.otus.libraryapplication.service.genre.GenreService;
 import ru.otus.libraryapplication.service.string.StringService;
 
-import javax.validation.constraints.Null;
 import java.util.List;
 import java.util.Optional;
 
@@ -108,8 +107,8 @@ public class BookServiceImpl implements BookService {
     private Genre getOrCreateGenre(String genre) {
         Genre bookGenre = genreService.getByName(genre);
         if (bookGenre == null) {
-            long genreId = genreService.create(genre);
-            bookGenre = new Genre(genreId, genre);
+            Long genreId = genreService.create(genre);
+            bookGenre = genreId == null ? null : new Genre(genreId, genre);
         }
         return bookGenre;
     }
@@ -117,8 +116,8 @@ public class BookServiceImpl implements BookService {
     private Author getOrCreateAuthor(String author) {
         Author bookAuthor = authorService.getByName(author);
         if (bookAuthor == null) {
-            long authorId = authorService.create(author);
-            bookAuthor = new Author(authorId, author);
+            Long authorId = authorService.create(author);
+            bookAuthor = authorId == null ? null : new Author(authorId, author);
         }
         return bookAuthor;
     }
