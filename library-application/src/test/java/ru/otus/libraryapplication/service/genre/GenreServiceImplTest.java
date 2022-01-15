@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.otus.libraryapplication.dao.author.AuthorDao;
+import ru.otus.libraryapplication.dao.book.BookDao;
 import ru.otus.libraryapplication.dao.genre.GenreDao;
 import ru.otus.libraryapplication.domain.Genre;
 import ru.otus.libraryapplication.service.string.StringService;
@@ -28,6 +29,12 @@ class GenreServiceImplTest {
 
     @MockBean
     private GenreDao genreDao;
+
+    @MockBean
+    private AuthorDao authorDao;
+
+    @MockBean
+    private BookDao bookDao;
 
     @Test
     @DisplayName("корректно возвращать список всех жанров")
