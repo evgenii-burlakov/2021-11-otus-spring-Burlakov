@@ -27,9 +27,6 @@ class GenreServiceImplTest {
     private StringService stringService;
 
     @MockBean
-    private AuthorDao authorDao;
-
-    @MockBean
     private GenreDao genreDao;
 
     @Test
@@ -58,23 +55,9 @@ class GenreServiceImplTest {
     }
 
     @Test
-    @DisplayName("корректно удалять жанр по ИД и удалять неиспользуемых авторов, если такие имеются")
+    @DisplayName("корректно удалять жанр по ИД")
     void shouldCorrectDeleteGenreAndUnusedAuthorsById() {
-        Mockito.when(authorDao.getUniqueAuthorsToGenre(2)).thenReturn(List.of(3L, 4L));
         genreService.deleteById(2);
-        Mockito.verify(authorDao, Mockito.times(1)).getUniqueAuthorsToGenre(2);
-        Mockito.verify(authorDao, Mockito.times(1)).deleteById(3);
-        Mockito.verify(authorDao, Mockito.times(1)).deleteById(4);
-        Mockito.verify(genreDao, Mockito.times(1)).deleteById(2);
-    }
-
-    @Test
-    @DisplayName("корректно удалять жанр по ИД и не удалять неиспользуемых авторов, если таких нет")
-    void shouldCorrectDeleteGenreById() {
-        Mockito.when(authorDao.getUniqueAuthorsToGenre(2)).thenReturn(List.of());
-        genreService.deleteById(2);
-        Mockito.verify(authorDao, Mockito.times(1)).getUniqueAuthorsToGenre(2);
-        Mockito.verify(authorDao, Mockito.never()).deleteById(Mockito.anyLong());
         Mockito.verify(genreDao, Mockito.times(1)).deleteById(2);
     }
 
@@ -85,7 +68,7 @@ class GenreServiceImplTest {
         Mockito.when(stringService.verifyNotBlank("DETECTIVE")).thenReturn(true);
         genreService.update(1, "DETECTIVE");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("DETECTIVE");
-        Mockito.verify(genreDao, Mockito.times(1)).update(1, "DETECTIVE");
+        Mockito.verify(genreDao, Mockito.times(1)).update(new Genre(1, "DETECTIVE"));
     }
 
     @Test
@@ -96,7 +79,7 @@ class GenreServiceImplTest {
         genreService.update(1, "  ");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("  ");
         Mockito.verify(stringService, Mockito.times(1)).verifyNotBlank("");
-        Mockito.verify(genreDao, Mockito.never()).update(Mockito.anyLong(), Mockito.anyString());
+        Mockito.verify(genreDao, Mockito.never()).update(Mockito.any());
     }
 
     @Test

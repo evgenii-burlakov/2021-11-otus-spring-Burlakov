@@ -11,7 +11,6 @@ import ru.otus.libraryapplication.service.genre.GenreService;
 import ru.otus.libraryapplication.service.string.StringService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,19 +32,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void deleteById(long id) {
-        Book book = dao.getById(id);
-
         dao.deleteById(id);
-
-        long authorId = book.getAuthor().getId();
-        if (dao.countByAuthor(authorId) == 0) {
-            authorService.deleteById(authorId);
-        }
-
-        long genreId = book.getGenre().getId();
-        if (dao.countByGenre(genreId) == 0) {
-            genreService.deleteById(genreId);
-        }
     }
 
     @Override
@@ -55,37 +42,10 @@ public class BookServiceImpl implements BookService {
         String bookName = stringService.beautifyStringName(name);
 
         if (stringService.verifyNotBlank(bookName, author, genre)) {
-            Book book = dao.getById(id);
-
-            if (!book.getName().equals(bookName) || !book.getAuthor().getName().equals(authorName) || !book.getGenre().getName().equals(genreName)) {
-                Author bookAuthor = book.getAuthor();
-                Long oldBookAuthorForDeletion = null;
-                if (!bookAuthor.getName().equals(author)) {
-                    int count = dao.countByAuthor(bookAuthor.getId());
-                    if (count == 1) {
-                        oldBookAuthorForDeletion = bookAuthor.getId();
-                    }
-
-                    bookAuthor = getOrCreateAuthor(authorName);
-                }
-
-                Genre bookGenre = book.getGenre();
-                Long oldBookGenreForDeletion = null;
-                if (!bookGenre.getName().equals(genre)) {
-                    int count = dao.countByGenre(bookGenre.getId());
-                    if (count == 1) {
-                        oldBookGenreForDeletion = bookGenre.getId();
-                    }
-
-                    bookGenre = getOrCreateGenre(genreName);
-                }
-
-
-                dao.update(id, bookName, bookAuthor, bookGenre);
-
-                Optional.ofNullable(oldBookAuthorForDeletion).ifPresent(authorService::deleteById);
-                Optional.ofNullable(oldBookGenreForDeletion).ifPresent(genreService::deleteById);
-            }
+            Author bookAuthor = getOrCreateAuthor(author);
+            Genre bookGenre = getOrCreateGenre(genre);
+            Book book = new Book(id, bookName, bookAuthor, bookGenre);
+            dao.update(book);
         }
     }
 

@@ -74,7 +74,8 @@ class AuthorDaoJdbcTest {
     @DisplayName("обновлять автора в БД, если он там существует")
     @Test
     void updateExistingAuthor() {
-        dao.update(2, "WES MONTGOMERY");
+        Author newAuthor = new Author(2, "WES MONTGOMERY");
+        dao.update(newAuthor);
         Author actualAuthor = dao.getById(2);
         Author expectedAuthor = new Author(2, "WES MONTGOMERY");
         assertThat(actualAuthor).isEqualTo(expectedAuthor);
@@ -83,7 +84,8 @@ class AuthorDaoJdbcTest {
     @DisplayName("не генерировать ошибки при обновлении автора в БД, если он там не существует")
     @Test
     void updateNonExistAuthor() {
-        assertThatCode(() -> dao.update(3, "WES MONTGOMERY")).doesNotThrowAnyException();
+        Author newAuthor = new Author(3, "WES MONTGOMERY");
+        assertThatCode(() -> dao.update(newAuthor)).doesNotThrowAnyException();
     }
 
     @DisplayName("записывать нового автора в БД")
@@ -93,32 +95,5 @@ class AuthorDaoJdbcTest {
         Author actualAuthor = dao.getById(actualAuthorId);
         Author expectedAuthor = new Author(3, "Pallanik");
         assertThat(actualAuthor).isEqualTo(expectedAuthor);
-    }
-
-    @DisplayName("отдавать корректный список ИД авторов, для которых данный жанр был уникальным, в случае если такие авторы существуют " +
-            "(у жанра есть уникальные авторы)")
-    @Test
-    void getExistingAuthorsToGenre() {
-        List<Long> actualAuthorsId = dao.getUniqueAuthorsToGenre(1);
-        List<Long> expectedAuthorsId = List.of(1L);
-        assertThat(actualAuthorsId).isEqualTo(expectedAuthorsId);
-    }
-
-    @DisplayName("отдавать пустой список ИД авторов, для которых данный жанр был уникальным, в случае если такие авторы не существуют " +
-            "(у жанра нет уникальных авторов, так как они писали (и) в других жанрах)")
-    @Test
-    void getNonExistAuthorsToGenre() {
-        List<Long> actualAuthorsId = dao.getUniqueAuthorsToGenre(2);
-        List<Long> expectedAuthorsId = List.of();
-        assertThat(actualAuthorsId).isEqualTo(expectedAuthorsId);
-    }
-
-    @DisplayName("отдавать пустой список ИД авторов, для которых данный жанр был уникальным, в случае если в таком жанре не писал никто " +
-            "(жанр не встречается ни у одного писателя)")
-    @Test
-    void getNonExistAuthorsToNonExistGenre() {
-        List<Long> actualAuthorsId = dao.getUniqueAuthorsToGenre(3);
-        List<Long> expectedAuthorsId = List.of();
-        assertThat(actualAuthorsId).isEqualTo(expectedAuthorsId);
     }
 }

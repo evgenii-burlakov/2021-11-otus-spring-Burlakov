@@ -53,8 +53,11 @@ public class AuthorDaoJdbc implements AuthorDao {
     }
 
     @Override
-    public void update(long id, String name) {
-        Map<String, Object> params = Map.of("id", id, "name", name);
+    public void update(Author author) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("id", author.getId());
+        params.addValue("name", author.getName());
+
         jdbc.update("update authors set name = :name where id = :id", params);
     }
 
@@ -68,17 +71,6 @@ public class AuthorDaoJdbc implements AuthorDao {
         jdbc.update("insert into authors(name) values (:name)", params, kh);
 
         return kh.getKey().longValue();
-    }
-
-    @Override
-    public List<Long> getUniqueAuthorsToGenre(long genreId) {
-        Map<String, Object> params = Collections.singletonMap("genre_id", genreId);
-        String sql = "select author_id  " +
-                "from books " +
-                "group by author_id " +
-                "having count(distinct genre_id) = 1 " +
-                "and author_id = any (select author_id from books where genre_id = :genre_id)";
-        return jdbc.query(sql, params, (rs, rowNum) -> rs.getLong("author_id"));
     }
 
     private static class AuthorMapper implements RowMapper<Author> {

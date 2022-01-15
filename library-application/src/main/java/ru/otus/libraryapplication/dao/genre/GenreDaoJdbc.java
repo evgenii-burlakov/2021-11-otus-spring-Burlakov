@@ -55,8 +55,10 @@ public class GenreDaoJdbc implements GenreDao {
     }
 
     @Override
-    public void update(long id, String name) {
-        Map<String, Object> params = Map.of("id", id, "name", name);
+    public void update(Genre genre) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("id", genre.getId());
+        params.addValue("name", genre.getName());
         jdbc.update(
                 "update genres set name = :name where id = :id", params
         );
@@ -72,17 +74,6 @@ public class GenreDaoJdbc implements GenreDao {
         jdbc.update("insert into genres(name) values (:name)", params, kh);
 
         return kh.getKey().longValue();
-    }
-
-    @Override
-    public List<Long> getUniqueGenresToAuthor(long authorId) {
-        Map<String, Object> params = Collections.singletonMap("author_id", authorId);
-        String sql = "select genre_id  " +
-                "from books " +
-                "group by genre_id " +
-                "having count(distinct author_id) = 1 " +
-                "and genre_id = any (select genre_id from books where author_id = :author_id)";
-        return jdbc.query(sql, params, (rs, rowNum) -> rs.getLong("genre_id"));
     }
 
     private static class GenreMapper implements RowMapper<Genre> {

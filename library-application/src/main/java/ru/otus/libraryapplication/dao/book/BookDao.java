@@ -15,11 +15,7 @@ public interface BookDao {
 
     long create(String bookName, Author bookAuthor, Genre bookGenre);
 
-    void update(long id, String bookName, Author bookAuthor, Genre bookGenre);
-
-    int countByAuthor(long id);
-
-    int countByGenre(long id);
+    void update(Book book);
 
     boolean isEqualBookExist(String bookName, String author, String genre);
 }

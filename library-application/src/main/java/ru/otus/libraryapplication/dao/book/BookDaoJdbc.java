@@ -89,25 +89,14 @@ public class BookDaoJdbc implements BookDao {
     }
 
     @Override
-    public void update(long id, String bookName, Author bookAuthor, Genre bookGenre) {
-        Map<String, Object> params = Map.of("id", id, "name", bookName, "author_id", bookAuthor.getId(), "genre_id", bookGenre.getId());
+    public void update(Book book) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("id", book.getId());
+        params.addValue("name", book.getName());
+        params.addValue("author_id", book.getAuthor().getId());
+        params.addValue("genre_id", book.getGenre().getId());
         jdbc.update("update books set name = :name, author_id = :author_id, genre_id = :genre_id where id = :id", params);
     }
-
-    @Override
-    public int countByAuthor(long id) {
-        Map<String, Object> params = Map.of("author_id", id);
-        Integer count = jdbc.queryForObject("select count(*) from books where author_id = :author_id", params, Integer.class);
-        return count == null ? 0 : count;
-    }
-
-    @Override
-    public int countByGenre(long id) {
-        Map<String, Object> params = Map.of("genre_id", id);
-        Integer count = jdbc.queryForObject("select count(*) from books where genre_id = :genre_id", params, Integer.class);
-        return count == null ? 0 : count;
-    }
-
 
     private static class BookMapper implements RowMapper<Book> {
 

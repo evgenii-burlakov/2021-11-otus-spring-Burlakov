@@ -30,9 +30,6 @@ class AuthorServiceImplTest {
     @MockBean
     private AuthorDao authorDao;
 
-    @MockBean
-    private GenreDao genreDao;
-
     @Test
     @DisplayName("корректно возвращать список всех авторов")
     void shouldCorrectGetAllAuthors() {
@@ -59,23 +56,9 @@ class AuthorServiceImplTest {
     }
 
     @Test
-    @DisplayName("корректно удалять автора по ИД и удалять неиспользуемые жанры, если такие имеются")
+    @DisplayName("корректно удалять автора по ИД")
     void shouldCorrectDeleteAuthorAndUnusedGenresById() {
-        Mockito.when(genreDao.getUniqueGenresToAuthor(2)).thenReturn(List.of(3L, 4L));
         authorService.deleteById(2);
-        Mockito.verify(genreDao, Mockito.times(1)).getUniqueGenresToAuthor(2);
-        Mockito.verify(genreDao, Mockito.times(1)).deleteById(3);
-        Mockito.verify(genreDao, Mockito.times(1)).deleteById(4);
-        Mockito.verify(authorDao, Mockito.times(1)).deleteById(2);
-    }
-
-    @Test
-    @DisplayName("корректно удалять автора по ИД и не удалять неиспользуемые жанры, если таких нет")
-    void shouldCorrectDeleteAuthorById() {
-        Mockito.when(genreDao.getUniqueGenresToAuthor(2)).thenReturn(List.of());
-        authorService.deleteById(2);
-        Mockito.verify(genreDao, Mockito.times(1)).getUniqueGenresToAuthor(2);
-        Mockito.verify(genreDao, Mockito.never()).deleteById(Mockito.anyLong());
         Mockito.verify(authorDao, Mockito.times(1)).deleteById(2);
     }
 
@@ -86,7 +69,7 @@ class AuthorServiceImplTest {
         Mockito.when(stringService.verifyNotBlank("LERMONTOV")).thenReturn(true);
         authorService.update(1, "LERMONTOV");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("LERMONTOV");
-        Mockito.verify(authorDao, Mockito.times(1)).update(1, "LERMONTOV");
+        Mockito.verify(authorDao, Mockito.times(1)).update(new Author(1, "LERMONTOV"));
     }
 
     @Test
@@ -97,7 +80,7 @@ class AuthorServiceImplTest {
         authorService.update(1, "  ");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("  ");
         Mockito.verify(stringService, Mockito.times(1)).verifyNotBlank("");
-        Mockito.verify(authorDao, Mockito.never()).update(Mockito.anyLong(), Mockito.anyString());
+        Mockito.verify(authorDao, Mockito.never()).update(Mockito.any());
     }
 
     @Test

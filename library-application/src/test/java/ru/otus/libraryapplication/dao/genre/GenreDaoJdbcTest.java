@@ -74,7 +74,8 @@ class GenreDaoJdbcTest {
     @DisplayName("обновлять жанр в БД, если он там существует")
     @Test
     void updateExistingGenre() {
-        dao.update(2, "DETECTIVE");
+        Genre newGenre = new Genre(2, "DETECTIVE");
+        dao.update(newGenre);
         Genre actualGenre = dao.getById(2);
         Genre expectedGenre = new Genre(2, "DETECTIVE");
         assertThat(actualGenre).isEqualTo(expectedGenre);
@@ -83,7 +84,8 @@ class GenreDaoJdbcTest {
     @DisplayName("не генерировать ошибки при обновлении жанра в БД, если он там не существует")
     @Test
     void updateNonExistGenre() {
-        assertThatCode(() -> dao.update(3, "DETECTIVE")).doesNotThrowAnyException();
+        Genre newGenre = new Genre(3, "DETECTIVE");
+        assertThatCode(() -> dao.update(newGenre)).doesNotThrowAnyException();
     }
 
     @DisplayName("записывать новый жанр в БД")
@@ -93,32 +95,5 @@ class GenreDaoJdbcTest {
         Genre actualGenre = dao.getById(actualGenreId);
         Genre expectedGenre = new Genre(3, "DETECTIVE");
         assertThat(actualGenre).isEqualTo(expectedGenre);
-    }
-
-    @DisplayName("отдавать корректный список ИД жанров, для которых данный автор был уникальным, в случае если такие жанры существуют " +
-            "(у автора есть уникальные жанры)")
-    @Test
-    void getExistingGenresToAuthor() {
-        List<Long> actualGenresId = dao.getUniqueGenresToAuthor(2);
-        List<Long> expectedGenresId = List.of(2L);
-        assertThat(actualGenresId).isEqualTo(expectedGenresId);
-    }
-
-    @DisplayName("отдавать пустой список ИД жанров, для которых данный автор был уникальным, в случае если такие жанры не существуют " +
-            "(у автора нет уникальных жанров, так как в них писали другие авторы)")
-    @Test
-    void getNonExistGenresToAuthor() {
-        List<Long> actualGenresId = dao.getUniqueGenresToAuthor(1);
-        List<Long> expectedGenresId = List.of();
-        assertThat(actualGenresId).isEqualTo(expectedGenresId);
-    }
-
-    @DisplayName("отдавать пустой список ИД жанров, для которых данный автор был уникальным, в случае если автор не писал ни в каком жанре " +
-            "(автор не встречается ни у одного жанра)")
-    @Test
-    void getNonExistGenresToNonExistAuthor() {
-        List<Long> actualGenresId = dao.getUniqueGenresToAuthor(3);
-        List<Long> expectedGenresId = List.of();
-        assertThat(actualGenresId).isEqualTo(expectedGenresId);
     }
 }

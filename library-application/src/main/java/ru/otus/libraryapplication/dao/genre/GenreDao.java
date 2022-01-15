@@ -13,9 +13,7 @@ public interface GenreDao {
 
     void deleteById(long id);
 
-    void update(long id, String name);
+    void update(Genre genre);
 
     long create(String name);
-
-    List<Long> getUniqueGenresToAuthor(long authorId);
 }

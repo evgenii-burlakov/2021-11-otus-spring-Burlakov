@@ -82,7 +82,8 @@ class BookDaoJdbcTest {
     @DisplayName("обновлять книгу в БД, если она там существует")
     @Test
     void updateExistingBook() {
-        dao.update(2, "ANNE OF GREEN GABLES", AUTHOR1, GENRE2);
+        Book newBook = new Book(2, "ANNE OF GREEN GABLES", AUTHOR1, GENRE2);
+        dao.update(newBook);
         Book actualBook = dao.getById(2);
         Book expectedBook = new Book(2, "ANNE OF GREEN GABLES", AUTHOR1, GENRE2);
         assertThat(actualBook).isEqualTo(expectedBook);
@@ -91,38 +92,7 @@ class BookDaoJdbcTest {
     @DisplayName("не генерировать ошибки при обновлении книги в БД, если ее там не существует")
     @Test
     void updateNonExistAuthor() {
-        assertThatCode(() -> dao.update(4, "ANNE OF GREEN GABLES", AUTHOR1, GENRE2)).doesNotThrowAnyException();
-    }
-
-    @DisplayName("корректно считать количество книг автора из БД, если они там существуют")
-    @Test
-    void countExistingBookByAuthor() {
-        int actualCount = dao.countByAuthor(2);
-        int expectedCount = 2;
-        assertThat(actualCount).isEqualTo(expectedCount);
-    }
-
-    @DisplayName("корректно считать количество книг автора из БД, если они там не существуют")
-    @Test
-    void countNonExistingBooksByAuthor() {
-        int actualCount = dao.countByAuthor(3);
-        int expectedCount = 0;
-        assertThat(actualCount).isEqualTo(expectedCount);
-    }
-
-    @DisplayName("корректно считать количество книг жанра из БД, если они там существуют")
-    @Test
-    void countExistingBookByGenre() {
-        int actualCount = dao.countByGenre(1);
-        int expectedCount = 2;
-        assertThat(actualCount).isEqualTo(expectedCount);
-    }
-
-    @DisplayName("корректно считать количество книг жанра из БД, если они там не существуют")
-    @Test
-    void countNonExistingBooksByGenre() {
-        int actualCount = dao.countByGenre(3);
-        int expectedCount = 0;
-        assertThat(actualCount).isEqualTo(expectedCount);
+        Book newBook = new Book(4, "ANNE OF GREEN GABLES", AUTHOR1, GENRE2);
+        assertThatCode(() -> dao.update(newBook)).doesNotThrowAnyException();
     }
 }

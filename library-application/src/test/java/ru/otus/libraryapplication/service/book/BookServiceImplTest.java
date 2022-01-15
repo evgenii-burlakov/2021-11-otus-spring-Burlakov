@@ -54,54 +54,10 @@ class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("корректно удалять книгу по ИД и удалять автора и жанр, если по ним больше не осталось книг")
+    @DisplayName("корректно удалять книгу по ИД")
     void shouldCorrectDeleteBookAndUnusedAuthorAndGenreById() {
-        Mockito.when(bookDao.getById(1)).thenReturn(BOOK1);
-        long book1AuthorId = BOOK1.getAuthor().getId();
-        Mockito.when(bookDao.countByAuthor(book1AuthorId)).thenReturn(0);
-        long book1GenreId = BOOK1.getGenre().getId();
-        Mockito.when(bookDao.countByGenre(book1GenreId)).thenReturn(0);
         bookService.deleteById(1);
         Mockito.verify(bookDao, Mockito.times(1)).deleteById(1);
-        Mockito.verify(authorService, Mockito.times(1)).deleteById(book1AuthorId);
-        Mockito.verify(genreService, Mockito.times(1)).deleteById(book1GenreId);
-    }
-
-    @Test
-    @DisplayName("корректно удалять книгу по ИД и не удалять автора и жанр, если по ним еще остались книги")
-    void shouldCorrectDeleteBookById() {
-        Mockito.when(bookDao.getById(1)).thenReturn(BOOK1);
-        long book1AuthorId = BOOK1.getAuthor().getId();
-        Mockito.when(bookDao.countByAuthor(book1AuthorId)).thenReturn(1);
-        long book1GenreId = BOOK1.getGenre().getId();
-        Mockito.when(bookDao.countByGenre(book1GenreId)).thenReturn(1);
-        bookService.deleteById(1);
-        Mockito.verify(bookDao, Mockito.times(1)).deleteById(1);
-        Mockito.verify(authorService, Mockito.never()).deleteById(Mockito.anyLong());
-        Mockito.verify(genreService, Mockito.never()).deleteById(Mockito.anyLong());
-    }
-
-    @Test
-    @DisplayName("не обновлять книгу, если ни одно поле не поменялось")
-    void dontUpdateUnchangedBook() {
-        Mockito.when(bookDao.getById(1)).thenReturn(BOOK1);
-
-        Mockito.when(stringService.beautifyStringName("EVGENII ONEGIN")).thenReturn("EVGENII ONEGIN");
-        Mockito.when(stringService.beautifyStringName("PUSHKIN")).thenReturn("PUSHKIN");
-        Mockito.when(stringService.beautifyStringName("POEM")).thenReturn("POEM");
-
-        bookService.update(1, "EVGENII ONEGIN", "PUSHKIN", "POEM");
-
-        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("EVGENII ONEGIN");
-        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("PUSHKIN");
-        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("POEM");
-
-        Mockito.verify(authorService, Mockito.never()).create(Mockito.anyString());
-        Mockito.verify(genreService, Mockito.never()).create(Mockito.anyString());
-
-        Mockito.verify(bookDao, Mockito.never()).update(Mockito.anyLong(), Mockito.anyString(), Mockito.any(), Mockito.any());
-        Mockito.verify(authorService, Mockito.never()).deleteById(Mockito.anyLong());
-        Mockito.verify(genreService, Mockito.never()).deleteById(Mockito.anyLong());
     }
 
     @Test
@@ -122,42 +78,11 @@ class BookServiceImplTest {
         Mockito.verify(authorService, Mockito.never()).create(Mockito.anyString());
         Mockito.verify(genreService, Mockito.never()).create(Mockito.anyString());
 
-        Mockito.verify(bookDao, Mockito.never()).update(Mockito.anyLong(), Mockito.anyString(), Mockito.any(), Mockito.any());
-        Mockito.verify(authorService, Mockito.never()).deleteById(Mockito.anyLong());
-        Mockito.verify(genreService, Mockito.never()).deleteById(Mockito.anyLong());
+        Mockito.verify(bookDao, Mockito.never()).update(Mockito.any());
     }
 
     @Test
-    @DisplayName("обновлять книгу, создавать нового автора, если его не было в БД и удалять старого, если это была его единственная книга," +
-            "не обновлять жанр, если он не поменялся")
-    void correctUpdateBookAndAddNewAuthorAndDeleteOldAuthor() {
-        Mockito.when(bookDao.getById(1)).thenReturn(BOOK1);
-
-        Mockito.when(stringService.beautifyStringName("EVGENII ONEGIN")).thenReturn("EVGENII ONEGIN");
-        Mockito.when(stringService.beautifyStringName("LERMONTOV")).thenReturn("LERMONTOV");
-        Mockito.when(stringService.beautifyStringName("POEM")).thenReturn("POEM");
-        Mockito.when(stringService.verifyNotBlank("EVGENII ONEGIN", "LERMONTOV", "POEM")).thenReturn(true);
-
-        Mockito.when(bookDao.countByAuthor(1)).thenReturn(1);
-        Mockito.when(authorService.getByName("LERMONTOV")).thenReturn(null);
-        Mockito.when(authorService.create("LERMONTOV")).thenReturn(3L);
-        bookService.update(1, "EVGENII ONEGIN", "LERMONTOV", "POEM");
-
-        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("EVGENII ONEGIN");
-        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("LERMONTOV");
-        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("POEM");
-
-        Mockito.verify(authorService, Mockito.times(1)).create("LERMONTOV");
-        Mockito.verify(genreService, Mockito.never()).create(Mockito.anyString());
-
-        Mockito.verify(bookDao, Mockito.times(1)).update(1, "EVGENII ONEGIN", new Author(3, "LERMONTOV"), GENRE1);
-        Mockito.verify(authorService, Mockito.times(1)).deleteById(1);
-        Mockito.verify(genreService, Mockito.never()).deleteById(Mockito.anyLong());
-    }
-
-    @Test
-    @DisplayName("обновлять книгу, создавать нового автора, если его не было в БД и не удалять старого, если это была его не единственная книга," +
-            "обновлять жанр, но не создавать новый, если он уже есть в БД, удалять старый, если он был единственный")
+    @DisplayName("обновлять книгу, создавать нового автора, если его не было в БД, обновлять жанр, но не создавать новый, если он уже есть в БД")
     void correctUpdateBookAndAddNewAuthorNotDeleteOldAuthorGetNewGenreDeleteOldGenre() {
         Mockito.when(bookDao.getById(1)).thenReturn(BOOK1);
 
@@ -166,11 +91,10 @@ class BookServiceImplTest {
         Mockito.when(stringService.beautifyStringName("NOVEL")).thenReturn("NOVEL");
         Mockito.when(stringService.verifyNotBlank("EVGENII ONEGIN", "LERMONTOV", "NOVEL")).thenReturn(true);
 
-        Mockito.when(bookDao.countByAuthor(1)).thenReturn(2);
+
         Mockito.when(authorService.getByName("LERMONTOV")).thenReturn(null);
         Mockito.when(authorService.create("LERMONTOV")).thenReturn(3L);
 
-        Mockito.when(bookDao.countByGenre(1)).thenReturn(1);
         Mockito.when(genreService.getByName("NOVEL")).thenReturn(GENRE2);
 
         bookService.update(1, "EVGENII ONEGIN", "LERMONTOV", "NOVEL");
@@ -182,9 +106,7 @@ class BookServiceImplTest {
         Mockito.verify(authorService, Mockito.times(1)).create("LERMONTOV");
         Mockito.verify(genreService, Mockito.never()).create(Mockito.anyString());
 
-        Mockito.verify(bookDao, Mockito.times(1)).update(1, "EVGENII ONEGIN", new Author(3, "LERMONTOV"), GENRE2);
-        Mockito.verify(authorService, Mockito.never()).deleteById(Mockito.anyLong());
-        Mockito.verify(genreService, Mockito.times(1)).deleteById(1);
+        Mockito.verify(bookDao, Mockito.times(1)).update(new Book(1, "EVGENII ONEGIN", new Author(3, "LERMONTOV"), GENRE2));
     }
 
     @Test
@@ -215,7 +137,7 @@ class BookServiceImplTest {
 
     @Test
     @DisplayName("не добавлять книгу, она уже есть в БД")
-    void dontCreateBook() {
+    void notCreateBook() {
         Mockito.when(bookDao.isEqualBookExist("EVGENII ONEGIN", "LERMONTOV", "NOVEL")).thenReturn(true);
         Mockito.when(stringService.beautifyStringName("EVGENII ONEGIN")).thenReturn("EVGENII ONEGIN");
         Mockito.when(stringService.beautifyStringName("LERMONTOV")).thenReturn("LERMONTOV");
