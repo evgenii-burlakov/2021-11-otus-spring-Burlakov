@@ -74,26 +74,26 @@ class GenreDaoJdbcTest {
     @DisplayName("обновлять жанр в БД, если он там существует")
     @Test
     void updateExistingGenre() {
-        Genre newGenre = new Genre(2, "DETECTIVE");
+        Genre newGenre = new Genre(2L, "DETECTIVE");
         dao.update(newGenre);
         Genre actualGenre = dao.getById(2);
-        Genre expectedGenre = new Genre(2, "DETECTIVE");
+        Genre expectedGenre = new Genre(2L, "DETECTIVE");
         assertThat(actualGenre).isEqualTo(expectedGenre);
     }
 
     @DisplayName("не генерировать ошибки при обновлении жанра в БД, если он там не существует")
     @Test
     void updateNonExistGenre() {
-        Genre newGenre = new Genre(3, "DETECTIVE");
+        Genre newGenre = new Genre(3L, "DETECTIVE");
         assertThatCode(() -> dao.update(newGenre)).doesNotThrowAnyException();
     }
 
     @DisplayName("записывать новый жанр в БД")
     @Test
     void createNewGenre() {
-        long actualGenreId = dao.create("DETECTIVE");
+        long actualGenreId = dao.create(new Genre(null, "DETECTIVE"));
         Genre actualGenre = dao.getById(actualGenreId);
-        Genre expectedGenre = new Genre(3, "DETECTIVE");
+        Genre expectedGenre = new Genre(3L, "DETECTIVE");
         assertThat(actualGenre).isEqualTo(expectedGenre);
     }
 }

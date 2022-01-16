@@ -15,5 +15,5 @@ public interface GenreDao {
 
     void update(Genre genre);
 
-    long create(String name);
+    long create(Genre genre);
 }

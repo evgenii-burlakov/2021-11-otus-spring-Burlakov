@@ -11,10 +11,12 @@ import ru.otus.libraryapplication.dao.book.BookDao;
 import ru.otus.libraryapplication.dao.genre.GenreDao;
 import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.service.string.StringService;
+import ru.otus.libraryapplication.util.exeption.ApplicationException;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static ru.otus.libraryapplication.LibraryUnitTestData.AUTHOR1;
 import static ru.otus.libraryapplication.LibraryUnitTestData.AUTHOR2;
 
@@ -72,11 +74,11 @@ class AuthorServiceImplTest {
     @Test
     @DisplayName("корректно обновлять автора")
     void shouldCorrectUpdateAuthor() {
-        Mockito.when(stringService.beautifyStringName("LERMONTOV")).thenReturn("LERMONTOV");
+        Mockito.when(stringService.beautifyStringName("lermontov")).thenReturn("LERMONTOV");
         Mockito.when(stringService.verifyNotBlank("LERMONTOV")).thenReturn(true);
-        authorService.update(1, "LERMONTOV");
-        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("LERMONTOV");
-        Mockito.verify(authorDao, Mockito.times(1)).update(new Author(1, "LERMONTOV"));
+        authorService.update(1, "lermontov");
+        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("lermontov");
+        Mockito.verify(authorDao, Mockito.times(1)).update(new Author(1L, "LERMONTOV"));
     }
 
     @Test
@@ -84,7 +86,7 @@ class AuthorServiceImplTest {
     void shouldNotUpdateBlankAuthorName() {
         Mockito.when(stringService.beautifyStringName("  ")).thenReturn("");
         Mockito.when(stringService.verifyNotBlank("")).thenReturn(false);
-        authorService.update(1, "  ");
+        assertThatThrownBy(() -> authorService.update(1, "  ")).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("  ");
         Mockito.verify(stringService, Mockito.times(1)).verifyNotBlank("");
         Mockito.verify(authorDao, Mockito.never()).update(Mockito.any());
@@ -93,19 +95,19 @@ class AuthorServiceImplTest {
     @Test
     @DisplayName("корректно создавать автора")
     void shouldCorrectCreateAuthor() {
-        Mockito.when(stringService.beautifyStringName("LERMONTOV")).thenReturn("LERMONTOV");
+        Mockito.when(stringService.beautifyStringName("lermontov")).thenReturn("LERMONTOV");
         Mockito.when(stringService.verifyNotBlank("LERMONTOV")).thenReturn(true);
-        authorService.create("LERMONTOV");
-        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("LERMONTOV");
-        Mockito.verify(authorDao, Mockito.times(1)).create("LERMONTOV");
+        authorService.create("lermontov");
+        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("lermontov");
+        Mockito.verify(authorDao, Mockito.times(1)).create(new Author(null, "LERMONTOV"));
     }
 
     @Test
-    @DisplayName("не создавать не валидного автора")
+    @DisplayName("выкидывать ошибку при создании не валидного автора")
     void shouldNotCreateNullAuthor() {
         Mockito.when(stringService.beautifyStringName(null)).thenReturn(null);
         Mockito.when(stringService.verifyNotBlank((String) null)).thenReturn(false);
-        authorService.create(null);
+        assertThatThrownBy(() -> authorService.create(null)).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName(null);
         Mockito.verify(authorDao, Mockito.never()).create(null);
     }

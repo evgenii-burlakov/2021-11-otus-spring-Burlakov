@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.otus.libraryapplication.dao.author.AuthorDao;
 import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.service.string.StringService;
+import ru.otus.libraryapplication.util.exeption.ApplicationException;
 
 import java.util.List;
 
@@ -38,8 +39,10 @@ public class AuthorServiceImpl implements AuthorService {
     public void update(long id, String name) {
         String authorName = stringService.beautifyStringName(name);
         if (stringService.verifyNotBlank(authorName)) {
-            Author author = new Author(id, name);
+            Author author = new Author(id, authorName);
             authorDao.update(author);
+        } else {
+            throw new ApplicationException("Invalid author name");
         }
     }
 
@@ -47,9 +50,10 @@ public class AuthorServiceImpl implements AuthorService {
     public Long create(String name) {
         String authorName = stringService.beautifyStringName(name);
         if (stringService.verifyNotBlank(authorName)) {
-            return authorDao.create(authorName);
+            Author author = new Author(null, authorName);
+            return authorDao.create(author);
         }
 
-        return null;
+        throw new ApplicationException("Invalid author name");
     }
 }

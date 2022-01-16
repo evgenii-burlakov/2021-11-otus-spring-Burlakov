@@ -50,7 +50,7 @@ public class BookDaoJdbc implements BookDao {
     }
 
     @Override
-    public boolean isEqualBookExist(String bookName, String author, String genre) {
+    public boolean existByBookAuthorAndGenreNames(String bookName, String author, String genre) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("bookName", bookName);
         params.addValue("author", author);
@@ -75,11 +75,11 @@ public class BookDaoJdbc implements BookDao {
     }
 
     @Override
-    public long create(String bookName, Author bookAuthor, Genre bookGenre) {
+    public long create(Book book) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("name", bookName);
-        params.addValue("author_id", bookAuthor.getId());
-        params.addValue("genre_id", bookGenre.getId());
+        params.addValue("name", book.getName());
+        params.addValue("author_id", book.getAuthor().getId());
+        params.addValue("genre_id", book.getGenre().getId());
 
         KeyHolder kh = new GeneratedKeyHolder();
 

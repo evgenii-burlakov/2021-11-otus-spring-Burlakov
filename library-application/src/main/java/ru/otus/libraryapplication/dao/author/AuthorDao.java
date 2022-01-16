@@ -15,5 +15,5 @@ public interface AuthorDao {
 
     void update(Author author);
 
-    long create(String name);
+    long create(Author author);
 }

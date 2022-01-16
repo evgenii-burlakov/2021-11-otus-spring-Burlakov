@@ -11,10 +11,12 @@ import ru.otus.libraryapplication.dao.book.BookDao;
 import ru.otus.libraryapplication.dao.genre.GenreDao;
 import ru.otus.libraryapplication.domain.Genre;
 import ru.otus.libraryapplication.service.string.StringService;
+import ru.otus.libraryapplication.util.exeption.ApplicationException;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static ru.otus.libraryapplication.LibraryUnitTestData.GENRE1;
 import static ru.otus.libraryapplication.LibraryUnitTestData.GENRE2;
 
@@ -71,11 +73,11 @@ class GenreServiceImplTest {
     @Test
     @DisplayName("корректно обновлять жанр")
     void shouldCorrectUpdateGenre() {
-        Mockito.when(stringService.beautifyStringName("DETECTIVE")).thenReturn("DETECTIVE");
+        Mockito.when(stringService.beautifyStringName("detective")).thenReturn("DETECTIVE");
         Mockito.when(stringService.verifyNotBlank("DETECTIVE")).thenReturn(true);
-        genreService.update(1, "DETECTIVE");
-        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("DETECTIVE");
-        Mockito.verify(genreDao, Mockito.times(1)).update(new Genre(1, "DETECTIVE"));
+        genreService.update(1, "detective");
+        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("detective");
+        Mockito.verify(genreDao, Mockito.times(1)).update(new Genre(1L, "DETECTIVE"));
     }
 
     @Test
@@ -83,7 +85,7 @@ class GenreServiceImplTest {
     void shouldNotUpdateBlankGenreName() {
         Mockito.when(stringService.beautifyStringName("  ")).thenReturn("");
         Mockito.when(stringService.verifyNotBlank("")).thenReturn(false);
-        genreService.update(1, "  ");
+        assertThatThrownBy(() -> genreService.update(1, "  ")).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("  ");
         Mockito.verify(stringService, Mockito.times(1)).verifyNotBlank("");
         Mockito.verify(genreDao, Mockito.never()).update(Mockito.any());
@@ -92,11 +94,11 @@ class GenreServiceImplTest {
     @Test
     @DisplayName("корректно создавать жанр")
     void shouldCorrectCreateGenre() {
-        Mockito.when(stringService.beautifyStringName("DETECTIVE")).thenReturn("DETECTIVE");
+        Mockito.when(stringService.beautifyStringName("detective")).thenReturn("DETECTIVE");
         Mockito.when(stringService.verifyNotBlank("DETECTIVE")).thenReturn(true);
-        genreService.create("DETECTIVE");
-        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("DETECTIVE");
-        Mockito.verify(genreDao, Mockito.times(1)).create("DETECTIVE");
+        genreService.create("detective");
+        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("detective");
+        Mockito.verify(genreDao, Mockito.times(1)).create(new Genre(null, "DETECTIVE"));
     }
 
     @Test
@@ -104,7 +106,7 @@ class GenreServiceImplTest {
     void shouldNotCreateNullGenre() {
         Mockito.when(stringService.beautifyStringName(null)).thenReturn(null);
         Mockito.when(stringService.verifyNotBlank((String) null)).thenReturn(false);
-        genreService.create(null);
+        assertThatThrownBy(() -> genreService.create(null)).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName(null);
         Mockito.verify(genreDao, Mockito.never()).create(null);
     }

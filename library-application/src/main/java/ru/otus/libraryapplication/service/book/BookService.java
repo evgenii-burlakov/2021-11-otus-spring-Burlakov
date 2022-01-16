@@ -13,5 +13,5 @@ public interface BookService {
 
     void update(long id, String name, String authorName, String genreName);
 
-    void create(String name, String authorName, String genreName);
+    Long create(String name, String authorName, String genreName);
 }

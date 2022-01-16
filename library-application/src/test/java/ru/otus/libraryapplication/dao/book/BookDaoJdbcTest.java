@@ -59,40 +59,40 @@ class BookDaoJdbcTest {
     @DisplayName("возвращать true, если такая книга уже есть в БД")
     @Test
     void shouldReturnTrueIfEqualBookExist() {
-        boolean actual = dao.isEqualBookExist("EVGENII ONEGIN", "PUSHKIN", "POEM");
+        boolean actual = dao.existByBookAuthorAndGenreNames("EVGENII ONEGIN", "PUSHKIN", "POEM");
         assertThat(actual).isTrue();
     }
 
     @DisplayName("возвращать false, если такой книги нет в БД")
     @Test
     void shouldReturnFalseIfEqualBookNotExist() {
-        boolean actual = dao.isEqualBookExist("EVGENII ONEGIN", "LERMONTOV", "POEM");
+        boolean actual = dao.existByBookAuthorAndGenreNames("EVGENII ONEGIN", "LERMONTOV", "POEM");
         assertThat(actual).isFalse();
     }
 
     @DisplayName("записывать новую книгу в БД")
     @Test
     void createNewBook() {
-        long actualBookId = dao.create("MEDNII VSADNIK", AUTHOR1, GENRE1);
+        long actualBookId = dao.create(new Book(null, "MEDNII VSADNIK", AUTHOR1, GENRE1));
         Book actualBook = dao.getById(actualBookId);
-        Book expectedBook = new Book(4, "MEDNII VSADNIK", AUTHOR1, GENRE1);
+        Book expectedBook = new Book(4L, "MEDNII VSADNIK", AUTHOR1, GENRE1);
         assertThat(actualBook).isEqualTo(expectedBook);
     }
 
     @DisplayName("обновлять книгу в БД, если она там существует")
     @Test
     void updateExistingBook() {
-        Book newBook = new Book(2, "ANNE OF GREEN GABLES", AUTHOR1, GENRE2);
+        Book newBook = new Book(2L, "ANNE OF GREEN GABLES", AUTHOR1, GENRE2);
         dao.update(newBook);
         Book actualBook = dao.getById(2);
-        Book expectedBook = new Book(2, "ANNE OF GREEN GABLES", AUTHOR1, GENRE2);
+        Book expectedBook = new Book(2L, "ANNE OF GREEN GABLES", AUTHOR1, GENRE2);
         assertThat(actualBook).isEqualTo(expectedBook);
     }
 
     @DisplayName("не генерировать ошибки при обновлении книги в БД, если ее там не существует")
     @Test
     void updateNonExistAuthor() {
-        Book newBook = new Book(4, "ANNE OF GREEN GABLES", AUTHOR1, GENRE2);
+        Book newBook = new Book(4L, "ANNE OF GREEN GABLES", AUTHOR1, GENRE2);
         assertThatCode(() -> dao.update(newBook)).doesNotThrowAnyException();
     }
 }

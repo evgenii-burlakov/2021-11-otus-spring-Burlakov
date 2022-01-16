@@ -74,26 +74,26 @@ class AuthorDaoJdbcTest {
     @DisplayName("обновлять автора в БД, если он там существует")
     @Test
     void updateExistingAuthor() {
-        Author newAuthor = new Author(2, "WES MONTGOMERY");
+        Author newAuthor = new Author(2L, "WES MONTGOMERY");
         dao.update(newAuthor);
         Author actualAuthor = dao.getById(2);
-        Author expectedAuthor = new Author(2, "WES MONTGOMERY");
+        Author expectedAuthor = new Author(2L, "WES MONTGOMERY");
         assertThat(actualAuthor).isEqualTo(expectedAuthor);
     }
 
     @DisplayName("не генерировать ошибки при обновлении автора в БД, если он там не существует")
     @Test
     void updateNonExistAuthor() {
-        Author newAuthor = new Author(3, "WES MONTGOMERY");
+        Author newAuthor = new Author(3L, "WES MONTGOMERY");
         assertThatCode(() -> dao.update(newAuthor)).doesNotThrowAnyException();
     }
 
     @DisplayName("записывать нового автора в БД")
     @Test
     void createNewAuthor() {
-        long actualAuthorId = dao.create("Pallanik");
+        long actualAuthorId = dao.create(new Author(null, "Pallanik"));
         Author actualAuthor = dao.getById(actualAuthorId);
-        Author expectedAuthor = new Author(3, "Pallanik");
+        Author expectedAuthor = new Author(3L, "Pallanik");
         assertThat(actualAuthor).isEqualTo(expectedAuthor);
     }
 }

@@ -65,9 +65,9 @@ public class GenreDaoJdbc implements GenreDao {
     }
 
     @Override
-    public long create(String name) {
+    public long create(Genre genre) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("name", name);
+        params.addValue("name", genre.getName());
 
         KeyHolder kh = new GeneratedKeyHolder();
 

@@ -1,8 +1,6 @@
 package ru.otus.libraryapplication.dao.book;
 
-import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.domain.Book;
-import ru.otus.libraryapplication.domain.Genre;
 
 import java.util.List;
 
@@ -13,9 +11,9 @@ public interface BookDao {
 
     void deleteById(long id);
 
-    long create(String bookName, Author bookAuthor, Genre bookGenre);
+    long create(Book book);
 
     void update(Book book);
 
-    boolean isEqualBookExist(String bookName, String author, String genre);
+    boolean existByBookAuthorAndGenreNames(String bookName, String author, String genre);
 }

@@ -9,6 +9,7 @@ import ru.otus.libraryapplication.domain.Genre;
 import ru.otus.libraryapplication.service.author.AuthorService;
 import ru.otus.libraryapplication.service.genre.GenreService;
 import ru.otus.libraryapplication.service.string.StringService;
+import ru.otus.libraryapplication.util.exeption.ApplicationException;
 
 import java.util.List;
 
@@ -46,21 +47,28 @@ public class BookServiceImpl implements BookService {
             Genre bookGenre = getOrCreateGenre(genre);
             Book book = new Book(id, bookName, bookAuthor, bookGenre);
             dao.update(book);
+        } else {
+            throw new ApplicationException("Invalid book parameters");
         }
     }
 
     @Override
-    public void create(String name, String authorName, String genreName) {
+    public Long create(String name, String authorName, String genreName) {
         String author = stringService.beautifyStringName(authorName);
         String genre = stringService.beautifyStringName(genreName);
         String bookName = stringService.beautifyStringName(name);
 
-        if (stringService.verifyNotBlank(bookName, author, genre) && !dao.isEqualBookExist(bookName, author, genre)) {
+        if (!stringService.verifyNotBlank(bookName, author, genre)) {
+            throw new ApplicationException("Invalid book parameters");
+        } else if (dao.existByBookAuthorAndGenreNames(bookName, author, genre)) {
+            throw new ApplicationException("Book already exist");
+        } else {
             Author bookAuthor = getOrCreateAuthor(author);
 
             Genre bookGenre = getOrCreateGenre(genre);
 
-            dao.create(bookName, bookAuthor, bookGenre);
+            Book book = new Book(null, bookName, bookAuthor, bookGenre);
+            return dao.create(book);
         }
     }
 
