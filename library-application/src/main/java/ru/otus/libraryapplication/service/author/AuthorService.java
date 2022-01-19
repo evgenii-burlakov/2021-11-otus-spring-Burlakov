@@ -15,5 +15,5 @@ public interface AuthorService {
 
     void update(long id, String name);
 
-    Long create(String name);
+    Author create(String name);
 }

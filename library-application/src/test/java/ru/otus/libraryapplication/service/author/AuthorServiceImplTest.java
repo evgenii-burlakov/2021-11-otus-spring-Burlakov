@@ -6,10 +6,10 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ru.otus.libraryapplication.dao.author.AuthorDao;
-import ru.otus.libraryapplication.dao.book.BookDao;
-import ru.otus.libraryapplication.dao.genre.GenreDao;
 import ru.otus.libraryapplication.domain.Author;
+import ru.otus.libraryapplication.repositories.author.AuthorRepositoryJpa;
+import ru.otus.libraryapplication.repositories.book.BookRepositoryJpa;
+import ru.otus.libraryapplication.repositories.genre.GenreRepositoryJpa;
 import ru.otus.libraryapplication.service.string.StringService;
 import ru.otus.libraryapplication.util.exeption.ApplicationException;
 
@@ -31,19 +31,19 @@ class AuthorServiceImplTest {
     private StringService stringService;
 
     @MockBean
-    private AuthorDao authorDao;
+    private AuthorRepositoryJpa authorRepositoryJpa;
 
     @MockBean
-    private BookDao bookDao;
+    private BookRepositoryJpa bookRepositoryJpa;
 
     @MockBean
-    private GenreDao genreDao;
+    private GenreRepositoryJpa genreRepositoryJpa;
 
     @Test
     @DisplayName("корректно возвращать список всех авторов")
     void shouldCorrectGetAllAuthors() {
         List<Author> expectedAuthors = List.of(AUTHOR1, AUTHOR2);
-        Mockito.when(authorDao.getAll()).thenReturn(expectedAuthors);
+        Mockito.when(authorRepositoryJpa.getAll()).thenReturn(expectedAuthors);
         List<Author> actualAuthors = authorService.getAll();
         assertThat(actualAuthors).usingRecursiveComparison().isEqualTo(expectedAuthors);
     }
@@ -51,7 +51,7 @@ class AuthorServiceImplTest {
     @Test
     @DisplayName("корректно возвращать автора по ИД")
     void shouldCorrectGetAuthorById() {
-        Mockito.when(authorDao.getById(1)).thenReturn(AUTHOR1);
+        Mockito.when(authorRepositoryJpa.getById(1)).thenReturn(AUTHOR1);
         Author actualAuthor = authorService.getById(1);
         assertThat(actualAuthor).isEqualTo(AUTHOR1);
     }
@@ -59,7 +59,7 @@ class AuthorServiceImplTest {
     @Test
     @DisplayName("корректно возвращать автора названию")
     void shouldCorrectGetAuthorByName() {
-        Mockito.when(authorDao.getByName("PUSHKIN")).thenReturn(AUTHOR1);
+        Mockito.when(authorRepositoryJpa.getByName("PUSHKIN")).thenReturn(AUTHOR1);
         Author actualAuthor = authorService.getByName("PUSHKIN");
         assertThat(actualAuthor).isEqualTo(AUTHOR1);
     }
@@ -68,7 +68,7 @@ class AuthorServiceImplTest {
     @DisplayName("корректно удалять автора по ИД")
     void shouldCorrectDeleteAuthorAndUnusedGenresById() {
         authorService.deleteById(2);
-        Mockito.verify(authorDao, Mockito.times(1)).deleteById(2);
+        Mockito.verify(authorRepositoryJpa, Mockito.times(1)).deleteById(2);
     }
 
     @Test
@@ -78,7 +78,7 @@ class AuthorServiceImplTest {
         Mockito.when(stringService.verifyNotBlank("LERMONTOV")).thenReturn(true);
         authorService.update(1, "lermontov");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("lermontov");
-        Mockito.verify(authorDao, Mockito.times(1)).update(new Author(1L, "LERMONTOV"));
+        Mockito.verify(authorRepositoryJpa, Mockito.times(1)).update(new Author(1L, "LERMONTOV"));
     }
 
     @Test
@@ -89,7 +89,7 @@ class AuthorServiceImplTest {
         assertThatThrownBy(() -> authorService.update(1, "  ")).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("  ");
         Mockito.verify(stringService, Mockito.times(1)).verifyNotBlank("");
-        Mockito.verify(authorDao, Mockito.never()).update(Mockito.any());
+        Mockito.verify(authorRepositoryJpa, Mockito.never()).update(Mockito.any());
     }
 
     @Test
@@ -99,7 +99,7 @@ class AuthorServiceImplTest {
         Mockito.when(stringService.verifyNotBlank("LERMONTOV")).thenReturn(true);
         authorService.create("lermontov");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("lermontov");
-        Mockito.verify(authorDao, Mockito.times(1)).create(new Author(null, "LERMONTOV"));
+        Mockito.verify(authorRepositoryJpa, Mockito.times(1)).create(new Author(null, "LERMONTOV"));
     }
 
     @Test
@@ -109,6 +109,6 @@ class AuthorServiceImplTest {
         Mockito.when(stringService.verifyNotBlank((String) null)).thenReturn(false);
         assertThatThrownBy(() -> authorService.create(null)).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName(null);
-        Mockito.verify(authorDao, Mockito.never()).create(null);
+        Mockito.verify(authorRepositoryJpa, Mockito.never()).create(null);
     }
 }

@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ru.otus.libraryapplication.dao.author.AuthorDao;
-import ru.otus.libraryapplication.dao.book.BookDao;
-import ru.otus.libraryapplication.dao.genre.GenreDao;
+import ru.otus.libraryapplication.repositories.author.AuthorRepositoryJpa;
+import ru.otus.libraryapplication.repositories.book.BookRepositoryJpa;
+import ru.otus.libraryapplication.repositories.genre.GenreRepositoryJpa;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,13 +18,13 @@ class StringServiceImplTest {
     private StringService stringService;
 
     @MockBean
-    private AuthorDao authorDao;
+    private AuthorRepositoryJpa authorRepositoryJpa;
 
     @MockBean
-    private BookDao bookDao;
+    private BookRepositoryJpa bookRepositoryJpa;
 
     @MockBean
-    private GenreDao genreDao;
+    private GenreRepositoryJpa genreRepositoryJpa;
 
     @Test
     @DisplayName("корректно форматировать строки")

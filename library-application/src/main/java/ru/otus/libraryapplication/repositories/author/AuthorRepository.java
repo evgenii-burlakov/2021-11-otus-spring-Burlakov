@@ -1,10 +1,10 @@
-package ru.otus.libraryapplication.dao.author;
+package ru.otus.libraryapplication.repositories.author;
 
 import ru.otus.libraryapplication.domain.Author;
 
 import java.util.List;
 
-public interface AuthorDao {
+public interface AuthorRepository {
     List<Author> getAll();
 
     Author getById(long Id);
@@ -15,5 +15,5 @@ public interface AuthorDao {
 
     void update(Author author);
 
-    long create(Author author);
+    Author create(Author author);
 }

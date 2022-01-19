@@ -6,10 +6,10 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ru.otus.libraryapplication.dao.author.AuthorDao;
-import ru.otus.libraryapplication.dao.book.BookDao;
-import ru.otus.libraryapplication.dao.genre.GenreDao;
 import ru.otus.libraryapplication.domain.Genre;
+import ru.otus.libraryapplication.repositories.author.AuthorRepositoryJpa;
+import ru.otus.libraryapplication.repositories.book.BookRepositoryJpa;
+import ru.otus.libraryapplication.repositories.genre.GenreRepositoryJpa;
 import ru.otus.libraryapplication.service.string.StringService;
 import ru.otus.libraryapplication.util.exeption.ApplicationException;
 
@@ -30,19 +30,19 @@ class GenreServiceImplTest {
     private StringService stringService;
 
     @MockBean
-    private GenreDao genreDao;
+    private GenreRepositoryJpa genreRepositoryJpa;
 
     @MockBean
-    private AuthorDao authorDao;
+    private AuthorRepositoryJpa authorRepositoryJpa;
 
     @MockBean
-    private BookDao bookDao;
+    private BookRepositoryJpa bookRepositoryJpa;
 
     @Test
     @DisplayName("корректно возвращать список всех жанров")
     void shouldCorrectGetAllGenres() {
         List<Genre> expectedGenres = List.of(GENRE1, GENRE2);
-        Mockito.when(genreDao.getAll()).thenReturn(expectedGenres);
+        Mockito.when(genreRepositoryJpa.getAll()).thenReturn(expectedGenres);
         List<Genre> actualGenres = genreService.getAll();
         assertThat(actualGenres).usingRecursiveComparison().isEqualTo(expectedGenres);
     }
@@ -50,7 +50,7 @@ class GenreServiceImplTest {
     @Test
     @DisplayName("корректно возвращать жанр по ИД")
     void shouldCorrectGetGenreById() {
-        Mockito.when(genreDao.getById(1)).thenReturn(GENRE1);
+        Mockito.when(genreRepositoryJpa.getById(1)).thenReturn(GENRE1);
         Genre actualGenre = genreService.getById(1);
         assertThat(actualGenre).isEqualTo(GENRE1);
     }
@@ -58,7 +58,7 @@ class GenreServiceImplTest {
     @Test
     @DisplayName("корректно возвращать жанр названию")
     void shouldCorrectGetGenreByName() {
-        Mockito.when(genreDao.getByName("POEM")).thenReturn(GENRE1);
+        Mockito.when(genreRepositoryJpa.getByName("POEM")).thenReturn(GENRE1);
         Genre actualGenre = genreService.getByName("POEM");
         assertThat(actualGenre).isEqualTo(GENRE1);
     }
@@ -67,7 +67,7 @@ class GenreServiceImplTest {
     @DisplayName("корректно удалять жанр по ИД")
     void shouldCorrectDeleteGenreAndUnusedAuthorsById() {
         genreService.deleteById(2);
-        Mockito.verify(genreDao, Mockito.times(1)).deleteById(2);
+        Mockito.verify(genreRepositoryJpa, Mockito.times(1)).deleteById(2);
     }
 
     @Test
@@ -77,7 +77,7 @@ class GenreServiceImplTest {
         Mockito.when(stringService.verifyNotBlank("DETECTIVE")).thenReturn(true);
         genreService.update(1, "detective");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("detective");
-        Mockito.verify(genreDao, Mockito.times(1)).update(new Genre(1L, "DETECTIVE"));
+        Mockito.verify(genreRepositoryJpa, Mockito.times(1)).update(new Genre(1L, "DETECTIVE"));
     }
 
     @Test
@@ -88,7 +88,7 @@ class GenreServiceImplTest {
         assertThatThrownBy(() -> genreService.update(1, "  ")).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("  ");
         Mockito.verify(stringService, Mockito.times(1)).verifyNotBlank("");
-        Mockito.verify(genreDao, Mockito.never()).update(Mockito.any());
+        Mockito.verify(genreRepositoryJpa, Mockito.never()).update(Mockito.any());
     }
 
     @Test
@@ -98,7 +98,7 @@ class GenreServiceImplTest {
         Mockito.when(stringService.verifyNotBlank("DETECTIVE")).thenReturn(true);
         genreService.create("detective");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("detective");
-        Mockito.verify(genreDao, Mockito.times(1)).create(new Genre(null, "DETECTIVE"));
+        Mockito.verify(genreRepositoryJpa, Mockito.times(1)).create(new Genre(null, "DETECTIVE"));
     }
 
     @Test
@@ -108,6 +108,6 @@ class GenreServiceImplTest {
         Mockito.when(stringService.verifyNotBlank((String) null)).thenReturn(false);
         assertThatThrownBy(() -> genreService.create(null)).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName(null);
-        Mockito.verify(genreDao, Mockito.never()).create(null);
+        Mockito.verify(genreRepositoryJpa, Mockito.never()).create(null);
     }
 }

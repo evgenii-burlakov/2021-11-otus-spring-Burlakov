@@ -1,10 +1,10 @@
-package ru.otus.libraryapplication.dao.genre;
+package ru.otus.libraryapplication.repositories.genre;
 
 import ru.otus.libraryapplication.domain.Genre;
 
 import java.util.List;
 
-public interface GenreDao {
+public interface GenreRepository {
     List<Genre> getAll();
 
     Genre getById(long id);
@@ -15,5 +15,5 @@ public interface GenreDao {
 
     void update(Genre genre);
 
-    long create(Genre genre);
+    Genre create(Genre genre);
 }

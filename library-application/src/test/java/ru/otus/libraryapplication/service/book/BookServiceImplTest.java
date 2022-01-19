@@ -6,9 +6,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ru.otus.libraryapplication.dao.book.BookDao;
 import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.domain.Book;
+import ru.otus.libraryapplication.repositories.book.BookRepositoryJpa;
 import ru.otus.libraryapplication.service.author.AuthorService;
 import ru.otus.libraryapplication.service.genre.GenreService;
 import ru.otus.libraryapplication.service.string.StringService;
@@ -36,13 +36,13 @@ class BookServiceImplTest {
     private GenreService genreService;
 
     @MockBean
-    private BookDao bookDao;
+    private BookRepositoryJpa bookRepositoryJpa;
 
     @Test
     @DisplayName("корректно возвращать список всех книг")
     void shouldCorrectGetAllBooks() {
         List<Book> expectedBooks = List.of(BOOK1, BOOK2);
-        Mockito.when(bookDao.getAll()).thenReturn(expectedBooks);
+        Mockito.when(bookRepositoryJpa.getAll()).thenReturn(expectedBooks);
         List<Book> actualBooks = bookService.getAll();
         assertThat(actualBooks).usingRecursiveComparison().isEqualTo(expectedBooks);
     }
@@ -50,7 +50,7 @@ class BookServiceImplTest {
     @Test
     @DisplayName("корректно возвращать книгу по ИД")
     void shouldCorrectGetBookById() {
-        Mockito.when(bookDao.getById(1)).thenReturn(BOOK1);
+        Mockito.when(bookRepositoryJpa.getById(1)).thenReturn(BOOK1);
         Book actualBook = bookService.getById(1);
         assertThat(actualBook).isEqualTo(BOOK1);
     }
@@ -59,7 +59,7 @@ class BookServiceImplTest {
     @DisplayName("корректно удалять книгу по ИД")
     void shouldCorrectDeleteBookAndUnusedAuthorAndGenreById() {
         bookService.deleteById(1);
-        Mockito.verify(bookDao, Mockito.times(1)).deleteById(1);
+        Mockito.verify(bookRepositoryJpa, Mockito.times(1)).deleteById(1);
     }
 
     @Test
@@ -69,7 +69,7 @@ class BookServiceImplTest {
         Mockito.when(stringService.beautifyStringName("")).thenReturn("");
         Mockito.when(stringService.beautifyStringName("POEM")).thenReturn("POEM");
         Mockito.when(stringService.verifyNotBlank("EVGENII ONEGIN", "", "POEM")).thenReturn(false);
-        Mockito.when(bookDao.getById(1)).thenReturn(BOOK1);
+        Mockito.when(bookRepositoryJpa.getById(1)).thenReturn(BOOK1);
 
         assertThatThrownBy(() -> bookService.update(1, "EVGENII ONEGIN", "", "POEM")).isInstanceOf(ApplicationException.class);
 
@@ -80,13 +80,13 @@ class BookServiceImplTest {
         Mockito.verify(authorService, Mockito.never()).create(Mockito.anyString());
         Mockito.verify(genreService, Mockito.never()).create(Mockito.anyString());
 
-        Mockito.verify(bookDao, Mockito.never()).update(Mockito.any());
+        Mockito.verify(bookRepositoryJpa, Mockito.never()).update(Mockito.any());
     }
 
     @Test
     @DisplayName("обновлять книгу, создавать нового автора, если его не было в БД, обновлять жанр, но не создавать новый, если он уже есть в БД")
     void correctUpdateBookAndAddNewAuthorNotDeleteOldAuthorGetNewGenreDeleteOldGenre() {
-        Mockito.when(bookDao.getById(1)).thenReturn(BOOK1);
+        Mockito.when(bookRepositoryJpa.getById(1)).thenReturn(BOOK1);
 
         Mockito.when(stringService.beautifyStringName("EVGENII ONEGIN")).thenReturn("EVGENII ONEGIN");
         Mockito.when(stringService.beautifyStringName("LERMONTOV")).thenReturn("LERMONTOV");
@@ -95,7 +95,7 @@ class BookServiceImplTest {
 
 
         Mockito.when(authorService.getByName("LERMONTOV")).thenReturn(null);
-        Mockito.when(authorService.create("LERMONTOV")).thenReturn(3L);
+        Mockito.when(authorService.create("LERMONTOV")).thenReturn(new Author(3L, "LERMONTOV"));
 
         Mockito.when(genreService.getByName("NOVEL")).thenReturn(GENRE2);
 
@@ -108,20 +108,20 @@ class BookServiceImplTest {
         Mockito.verify(authorService, Mockito.times(1)).create("LERMONTOV");
         Mockito.verify(genreService, Mockito.never()).create(Mockito.anyString());
 
-        Mockito.verify(bookDao, Mockito.times(1)).update(new Book(1L, "EVGENII ONEGIN", new Author(3L, "LERMONTOV"), GENRE2));
+        Mockito.verify(bookRepositoryJpa, Mockito.times(1)).update(new Book(1L, "EVGENII ONEGIN", new Author(3L, "LERMONTOV"), GENRE2));
     }
 
     @Test
     @DisplayName("корректно добавлять книгу, и ее автора, если таких нет в БД, при не нахождении книги в бд")
     void correctCreateBookAndAuthor() {
-        Mockito.when(bookDao.existByBookAuthorAndGenreNames("EVGENII ONEGIN", "LERMONTOV", "NOVEL")).thenReturn(false);
+        Mockito.when(bookRepositoryJpa.existByBookAuthorAndGenreNames("EVGENII ONEGIN", "LERMONTOV", "NOVEL")).thenReturn(false);
         Mockito.when(stringService.beautifyStringName("EVGENII ONEGIN")).thenReturn("EVGENII ONEGIN");
         Mockito.when(stringService.beautifyStringName("LERMONTOV")).thenReturn("LERMONTOV");
         Mockito.when(stringService.beautifyStringName("NOVEL")).thenReturn("NOVEL");
         Mockito.when(stringService.verifyNotBlank("EVGENII ONEGIN", "LERMONTOV", "NOVEL")).thenReturn(true);
 
         Mockito.when(authorService.getByName("LERMONTOV")).thenReturn(null);
-        Mockito.when(authorService.create("LERMONTOV")).thenReturn(3L);
+        Mockito.when(authorService.create("LERMONTOV")).thenReturn(new Author(3L, "LERMONTOV"));
 
         Mockito.when(genreService.getByName("NOVEL")).thenReturn(GENRE2);
 
@@ -134,13 +134,13 @@ class BookServiceImplTest {
         Mockito.verify(authorService, Mockito.times(1)).create("LERMONTOV");
         Mockito.verify(genreService, Mockito.never()).create(Mockito.anyString());
 
-        Mockito.verify(bookDao, Mockito.times(1)).create(new Book(null, "EVGENII ONEGIN", new Author(3L, "LERMONTOV"), GENRE2));
+        Mockito.verify(bookRepositoryJpa, Mockito.times(1)).create(new Book(null, "EVGENII ONEGIN", new Author(3L, "LERMONTOV"), GENRE2));
     }
 
     @Test
     @DisplayName("не добавлять книгу, она уже есть в БД")
     void notCreateBook() {
-        Mockito.when(bookDao.existByBookAuthorAndGenreNames("EVGENII ONEGIN", "LERMONTOV", "NOVEL")).thenReturn(true);
+        Mockito.when(bookRepositoryJpa.existByBookAuthorAndGenreNames("EVGENII ONEGIN", "LERMONTOV", "NOVEL")).thenReturn(true);
         Mockito.when(stringService.beautifyStringName("EVGENII ONEGIN")).thenReturn("EVGENII ONEGIN");
         Mockito.when(stringService.beautifyStringName("LERMONTOV")).thenReturn("LERMONTOV");
         Mockito.when(stringService.beautifyStringName("NOVEL")).thenReturn("NOVEL");
@@ -154,7 +154,7 @@ class BookServiceImplTest {
         Mockito.verify(authorService, Mockito.never()).create(Mockito.anyString());
         Mockito.verify(genreService, Mockito.never()).create(Mockito.anyString());
 
-        Mockito.verify(bookDao, Mockito.never()).create(Mockito.any());
+        Mockito.verify(bookRepositoryJpa, Mockito.never()).create(Mockito.any());
     }
 
     @Test
@@ -164,7 +164,7 @@ class BookServiceImplTest {
         Mockito.when(stringService.beautifyStringName("LERMONTOV")).thenReturn("LERMONTOV");
         Mockito.when(stringService.beautifyStringName("NOVEL")).thenReturn("NOVEL");
         Mockito.when(stringService.verifyNotBlank(null, "LERMONTOV", "NOVEL")).thenReturn(false);
-        Mockito.when(bookDao.existByBookAuthorAndGenreNames("EVGENII ONEGIN", "LERMONTOV", "NOVEL")).thenReturn(true);
+        Mockito.when(bookRepositoryJpa.existByBookAuthorAndGenreNames("EVGENII ONEGIN", "LERMONTOV", "NOVEL")).thenReturn(true);
 
 
         assertThatThrownBy(() -> bookService.create(null, "LERMONTOV", "NOVEL")).isInstanceOf(ApplicationException.class);
@@ -176,6 +176,6 @@ class BookServiceImplTest {
         Mockito.verify(authorService, Mockito.never()).create(Mockito.anyString());
         Mockito.verify(genreService, Mockito.never()).create(Mockito.anyString());
 
-        Mockito.verify(bookDao, Mockito.never()).create(Mockito.any());
+        Mockito.verify(bookRepositoryJpa, Mockito.never()).create(Mockito.any());
     }
 }

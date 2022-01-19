@@ -15,5 +15,5 @@ public interface GenreService {
 
     void update(long id, String name);
 
-    Long create(String name);
+    Genre create(String name);
 }

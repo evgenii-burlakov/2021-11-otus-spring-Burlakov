@@ -1,17 +1,17 @@
-package ru.otus.libraryapplication.dao.book;
+package ru.otus.libraryapplication.repositories.book;
 
 import ru.otus.libraryapplication.domain.Book;
 
 import java.util.List;
 
-public interface BookDao {
+public interface BookRepository {
     List<Book> getAll();
 
     Book getById(long id);
 
     void deleteById(long id);
 
-    long create(Book book);
+    Book create(Book book);
 
     void update(Book book);
 
