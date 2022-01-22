@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import ru.otus.libraryapplication.domain.Author;
 
@@ -15,12 +16,15 @@ import static ru.otus.libraryapplication.LibraryUnitTestData.AUTHOR1;
 import static ru.otus.libraryapplication.LibraryUnitTestData.AUTHOR2;
 
 @DataJpaTest
-@DisplayName("DAO для работы с авторами должно ")
+@DisplayName("Репозиторий для работы с авторами должен ")
 @Import(AuthorRepositoryJpa.class)
 class AuthorRepositoryJpaTest {
 
     @Autowired
     private AuthorRepositoryJpa authorRepositoryJpa;
+
+    @Autowired
+    private TestEntityManager em;
 
     @DisplayName("возвращать всех авторов из БД")
     @Test
@@ -28,20 +32,6 @@ class AuthorRepositoryJpaTest {
         List<Author> expectedAuthors = List.of(AUTHOR1, AUTHOR2);
         List<Author> actualAuthors = authorRepositoryJpa.getAll();
         assertThat(actualAuthors).usingRecursiveComparison().isEqualTo(expectedAuthors);
-    }
-
-    @DisplayName("возвращать по ИД автора из БД, если он там существует")
-    @Test
-    void shouldReturnExistAuthorById() {
-        Author actualAuthor = authorRepositoryJpa.getById(1);
-        assertThat(actualAuthor).usingRecursiveComparison().isEqualTo(AUTHOR1);
-    }
-
-    @DisplayName("возвращать по ИД автора null из БД, если он там не существует")
-    @Test
-    void shouldReturnNullForNonExistAuthorById() {
-        Author actualAuthor = authorRepositoryJpa.getById(3);
-        assertThat(actualAuthor).isNull();
     }
 
     @DisplayName("возвращать по названию автора из БД, если он там существует")
@@ -62,7 +52,7 @@ class AuthorRepositoryJpaTest {
     @Test
     void shouldCorrectDeleteAuthorById() {
         authorRepositoryJpa.deleteById(2);
-        assertThatCode(() -> authorRepositoryJpa.getById(2)).isNull();
+        assertThatCode(() -> em.find(Author.class, 2L)).isNull();
     }
 
     @DisplayName("не генерировать ошибки при удалении по ИД автора из БД, если его там не существует")
@@ -76,7 +66,7 @@ class AuthorRepositoryJpaTest {
     void updateExistingAuthor() {
         Author newAuthor = new Author(2L, "WES MONTGOMERY");
         authorRepositoryJpa.update(newAuthor);
-        Author actualAuthor = authorRepositoryJpa.getById(2);
+        Author actualAuthor = em.find(Author.class, 2L);
         Author expectedAuthor = new Author(2L, "WES MONTGOMERY");
         assertThat(actualAuthor).isEqualTo(expectedAuthor);
     }

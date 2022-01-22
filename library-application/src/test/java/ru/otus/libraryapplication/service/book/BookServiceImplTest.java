@@ -10,6 +10,7 @@ import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.domain.Book;
 import ru.otus.libraryapplication.repositories.book.BookRepositoryJpa;
 import ru.otus.libraryapplication.service.author.AuthorService;
+import ru.otus.libraryapplication.service.comment.CommentService;
 import ru.otus.libraryapplication.service.genre.GenreService;
 import ru.otus.libraryapplication.service.string.StringService;
 import ru.otus.libraryapplication.util.exeption.ApplicationException;
@@ -28,6 +29,9 @@ class BookServiceImplTest {
 
     @MockBean
     private StringService stringService;
+
+    @MockBean
+    private CommentService commentService;
 
     @MockBean
     private AuthorService authorService;

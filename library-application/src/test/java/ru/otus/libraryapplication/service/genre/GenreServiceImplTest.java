@@ -10,6 +10,7 @@ import ru.otus.libraryapplication.domain.Genre;
 import ru.otus.libraryapplication.repositories.author.AuthorRepositoryJpa;
 import ru.otus.libraryapplication.repositories.book.BookRepositoryJpa;
 import ru.otus.libraryapplication.repositories.genre.GenreRepositoryJpa;
+import ru.otus.libraryapplication.service.comment.CommentService;
 import ru.otus.libraryapplication.service.string.StringService;
 import ru.otus.libraryapplication.util.exeption.ApplicationException;
 
@@ -28,6 +29,9 @@ class GenreServiceImplTest {
 
     @MockBean
     private StringService stringService;
+
+    @MockBean
+    private CommentService commentService;
 
     @MockBean
     private GenreRepositoryJpa genreRepositoryJpa;

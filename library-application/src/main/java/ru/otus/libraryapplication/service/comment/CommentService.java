@@ -7,8 +7,6 @@ import java.util.List;
 public interface CommentService {
     List<Comment> getAllByBookId(Long bookId);
 
-    Comment getById(long id);
-
     void deleteById(long id);
 
     void update(long id, String comment, long bookId);

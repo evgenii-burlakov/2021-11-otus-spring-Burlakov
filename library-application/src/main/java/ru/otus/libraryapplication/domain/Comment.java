@@ -19,7 +19,7 @@ public class Comment {
     @Column(name = "COMMENT", nullable = false)
     private String comment;
 
-    @ManyToOne(targetEntity = Book.class)
-    @JoinColumn(name = "BOOK_ID", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "BOOK_ID")
     private Book book;
 }

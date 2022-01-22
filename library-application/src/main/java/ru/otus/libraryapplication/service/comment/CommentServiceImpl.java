@@ -2,6 +2,7 @@ package ru.otus.libraryapplication.service.comment;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.libraryapplication.domain.Book;
 import ru.otus.libraryapplication.domain.Comment;
 import ru.otus.libraryapplication.repositories.comment.CommentRepository;
@@ -19,21 +20,24 @@ public class CommentServiceImpl implements CommentService {
     private final StringService stringService;
 
     @Override
+    @Transactional(readOnly = true)
     public List<Comment> getAllByBookId(Long bookId) {
-        return commentRepository.getAllByBookId(bookId);
+        Book book = bookService.getById(bookId);
+        if (book != null) {
+            return commentRepository.getAllByBook(book);
+        } else {
+            throw new ApplicationException("Invalid book id");
+        }
     }
 
     @Override
-    public Comment getById(long id) {
-        return commentRepository.getById(id);
-    }
-
-    @Override
+    @Transactional
     public void deleteById(long id) {
-        commentRepository.getById(id);
+        commentRepository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public void update(long id, String comment, long bookId) {
         if (stringService.verifyNotBlank(comment)) {
             Book book = bookService.getById(bookId);
@@ -44,11 +48,12 @@ public class CommentServiceImpl implements CommentService {
                 throw new ApplicationException("Invalid book id");
             }
         } else {
-            throw new ApplicationException("Invalid string comment");
+            throw new ApplicationException("Invalid comment");
         }
     }
 
     @Override
+    @Transactional
     public Comment create(String comment, Long bookId) {
         if (stringService.verifyNotBlank(comment)) {
             Book book = bookService.getById(bookId);
@@ -59,7 +64,7 @@ public class CommentServiceImpl implements CommentService {
                 throw new ApplicationException("Invalid book id");
             }
         } else {
-            throw new ApplicationException("Invalid string comment");
+            throw new ApplicationException("Invalid comment");
         }
     }
 }

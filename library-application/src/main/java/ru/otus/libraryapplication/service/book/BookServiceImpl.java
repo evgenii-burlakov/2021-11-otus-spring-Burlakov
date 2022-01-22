@@ -2,6 +2,7 @@ package ru.otus.libraryapplication.service.book;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.domain.Book;
 import ru.otus.libraryapplication.domain.Genre;
@@ -11,11 +12,9 @@ import ru.otus.libraryapplication.service.genre.GenreService;
 import ru.otus.libraryapplication.service.string.StringService;
 import ru.otus.libraryapplication.util.exeption.ApplicationException;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
@@ -24,21 +23,25 @@ public class BookServiceImpl implements BookService {
     private final StringService stringService;
 
     @Override
+    @Transactional(readOnly = true)
     public List<Book> getAll() {
         return bookRepository.getAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Book getById(long id) {
         return bookRepository.getById(id);
     }
 
     @Override
+    @Transactional
     public void deleteById(long id) {
         bookRepository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public void update(long id, String name, String authorName, String genreName) {
         String author = stringService.beautifyStringName(authorName);
         String genre = stringService.beautifyStringName(genreName);
@@ -55,6 +58,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public Book create(String name, String authorName, String genreName) {
         String author = stringService.beautifyStringName(authorName);
         String genre = stringService.beautifyStringName(genreName);

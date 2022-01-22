@@ -1,13 +1,12 @@
 package ru.otus.libraryapplication.repositories.comment;
 
+import ru.otus.libraryapplication.domain.Book;
 import ru.otus.libraryapplication.domain.Comment;
 
 import java.util.List;
 
 public interface CommentRepository {
-    List<Comment> getAllByBookId(Long bookId);
-
-    Comment getById(long id);
+    List<Comment> getAllByBook(Book book);
 
     void deleteById(long id);
 

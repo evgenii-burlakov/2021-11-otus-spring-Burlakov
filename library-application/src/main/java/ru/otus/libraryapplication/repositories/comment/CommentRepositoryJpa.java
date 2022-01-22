@@ -18,19 +18,14 @@ public class CommentRepositoryJpa implements CommentRepository {
     private final EntityManager em;
 
     @Override
-    public List<Comment> getAllByBookId(Long bookId) {
-        TypedQuery<Book> query = em.createQuery("select b " +
-                        "from Book b " +
-                        "join fetch b.author " +
-                        "join fetch b.genre",
-                Book.class);
+    public List<Comment> getAllByBook(Book book) {
+        TypedQuery<Comment> query = em.createQuery("select c " +
+                        "from Comment c " +
+                        "where c.book= :book ",
+                Comment.class);
+        query.setParameter("book", book);
 
         return query.getResultList();
-    }
-
-    @Override
-    public Comment getById(long id) {
-        return em.find(Book.class, id);
     }
 
     @Override
@@ -55,9 +50,11 @@ public class CommentRepositoryJpa implements CommentRepository {
     @Override
     public void update(Comment comment) {
         Query query = em.createQuery("update Comment c " +
-                "set c.comment = :comment " +
+                "set c.comment = :comment, " +
+                "c.book = :book " +
                 "where c.id = :id");
-        query.setParameter("name", comment.getComment());
+        query.setParameter("comment", comment.getComment());
+        query.setParameter("book", comment.getBook());
         query.setParameter("id", comment.getId());
         query.executeUpdate();
     }

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import ru.otus.libraryapplication.domain.Book;
 
@@ -14,40 +15,29 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static ru.otus.libraryapplication.LibraryUnitTestData.*;
 
 @DataJpaTest
-@DisplayName("DAO для работы с книгами должно ")
+@DisplayName("Репозиторий для работы с книгами должен ")
 @Import(BookRepositoryJpa.class)
 class BookRepositoryJpaTest {
 
     @Autowired
     private BookRepositoryJpa bookRepositoryJpa;
 
+    @Autowired
+    private TestEntityManager em;
+
     @DisplayName("возвращать все книги из БД")
     @Test
     void shouldReturnAllBooks() {
         List<Book> expectedBooks = List.of(BOOK1, BOOK2, BOOK3);
         List<Book> actualBooks = bookRepositoryJpa.getAll();
-        assertThat(actualBooks).usingRecursiveComparison().isEqualTo(expectedBooks);
-    }
-
-    @DisplayName("возвращать по ИД книгу из БД, если она там существует")
-    @Test
-    void shouldReturnExistBookById() {
-        Book actualBook = bookRepositoryJpa.getById(1);
-        assertThat(actualBook).usingRecursiveComparison().isEqualTo(BOOK1);
-    }
-
-    @DisplayName("возвращать по ИД книги null из БД, если ее там не существует")
-    @Test
-    void shouldReturnNullForNonExistBookById() {
-        Book actualBook = bookRepositoryJpa.getById(4);
-        assertThat(actualBook).isNull();
+        assertThat(actualBooks).isEqualTo(expectedBooks);
     }
 
     @DisplayName("удалять по ИД книгу из БД, если она там существует")
     @Test
     void shouldCorrectDeleteBookById() {
         bookRepositoryJpa.deleteById(2);
-        assertThatCode(() -> bookRepositoryJpa.getById(2)).isNull();
+        assertThatCode(() -> em.find(Book.class, 2L)).isNull();
     }
 
     @DisplayName("не генерировать ошибки при удалении по ИД книги из БД, если ее там не существует")
@@ -83,7 +73,7 @@ class BookRepositoryJpaTest {
     void updateExistingBook() {
         Book newBook = new Book(2L, "ANNE OF GREEN GABLES", AUTHOR1, GENRE2);
         bookRepositoryJpa.update(newBook);
-        Book actualBook = bookRepositoryJpa.getById(2);
+        Book actualBook = em.find(Book.class, 2L);
         Book expectedBook = new Book(2L, "ANNE OF GREEN GABLES", AUTHOR1, GENRE2);
         assertThat(actualBook).isEqualTo(expectedBook);
     }

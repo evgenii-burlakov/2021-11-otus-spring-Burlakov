@@ -2,6 +2,7 @@ package ru.otus.libraryapplication;
 
 import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.domain.Book;
+import ru.otus.libraryapplication.domain.Comment;
 import ru.otus.libraryapplication.domain.Genre;
 
 public final class LibraryUnitTestData {
@@ -14,4 +15,8 @@ public final class LibraryUnitTestData {
     public static final Book BOOK1 = new Book(1L, "EVGENII ONEGIN", AUTHOR1, GENRE1);
     public static final Book BOOK2 = new Book(2L, "ANNE OF GREEN GABLES", AUTHOR2, GENRE2);
     public static final Book BOOK3 = new Book(3L, "ANNE OF GREEN GABLES POEM EDITION", AUTHOR2, GENRE1);
+
+    public static final Comment COMMENT1 = new Comment(1L, "ЧИТАЛ ЕЕ В ШКОЛЕ", BOOK1);
+    public static final Comment COMMENT2 = new Comment(2L, "Пушкин ван лав", BOOK1);
+    public static final Comment COMMENT3 = new Comment(3L, "СкУчНоТиЩа", BOOK1);
 }

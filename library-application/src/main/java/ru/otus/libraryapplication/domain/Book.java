@@ -1,15 +1,18 @@
 package ru.otus.libraryapplication.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+@EqualsAndHashCode(exclude = "comments")
+@ToString(exclude = "comments")
 @Entity
 @Table(name = "BOOKS")
 public class Book {
@@ -20,15 +23,23 @@ public class Book {
     @Column(name = "NAME", nullable = false, unique = true)
     private String name;
 
-    @OneToOne(targetEntity = Author.class)
+    @ManyToOne(targetEntity = Author.class)
     @JoinColumn(name = "AUTHOR_ID", nullable = false)
     private Author author;
 
-    @OneToOne(targetEntity = Genre.class)
+    @ManyToOne(targetEntity = Genre.class)
     @JoinColumn(name = "GENRE_ID", nullable = false)
     private Genre genre;
 
-    @OneToMany
-
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, orphanRemoval = true)
+    @BatchSize(size = 15)
     private List<Comment> comments;
+
+    public Book(Long id, String name, Author author, Genre genre) {
+        this.id = id;
+        this.name = name;
+        this.author = author;
+        this.genre = genre;
+    }
 }

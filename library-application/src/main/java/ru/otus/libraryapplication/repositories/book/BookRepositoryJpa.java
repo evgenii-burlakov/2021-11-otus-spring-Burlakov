@@ -2,7 +2,6 @@ package ru.otus.libraryapplication.repositories.book;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import ru.otus.libraryapplication.domain.Book;
 
 import javax.persistence.EntityManager;

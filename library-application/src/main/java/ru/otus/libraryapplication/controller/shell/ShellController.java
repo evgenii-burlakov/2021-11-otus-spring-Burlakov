@@ -121,7 +121,7 @@ public class ShellController {
     }
 
     @ShellMethod(value = "Create comment command", key = {"cc", "createComment"})
-    public void createComment(@ShellOption String comment, long bookId) {
+    public void createComment(@ShellOption long bookId, String comment) {
         commentService.create(comment, bookId);
     }
 }
