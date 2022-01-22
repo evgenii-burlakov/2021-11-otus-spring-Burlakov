@@ -9,7 +9,6 @@ import javax.persistence.*;
 import java.util.List;
 
 @Repository
-@Transactional
 @RequiredArgsConstructor
 public class AuthorRepositoryJpa implements AuthorRepository {
 

@@ -6,9 +6,11 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.domain.Book;
+import ru.otus.libraryapplication.domain.Comment;
 import ru.otus.libraryapplication.domain.Genre;
 import ru.otus.libraryapplication.service.author.AuthorService;
 import ru.otus.libraryapplication.service.book.BookService;
+import ru.otus.libraryapplication.service.comment.CommentService;
 import ru.otus.libraryapplication.service.genre.GenreService;
 
 import java.util.List;
@@ -19,6 +21,7 @@ public class ShellController {
     private final BookService bookService;
     private final AuthorService authorService;
     private final GenreService genreService;
+    private final CommentService commentService;
 
     //Books
     @ShellMethod(value = "Get all books command", key = {"ab", "allBooks"})
@@ -98,5 +101,27 @@ public class ShellController {
     @ShellMethod(value = "Create genre command", key = {"cg", "createGenre"})
     public void createGenre(@ShellOption String name) {
         genreService.create(name);
+    }
+
+
+    //Comments
+    @ShellMethod(value = "Get all comments by book id", key = {"ac", "getAllCommentsByBookId"})
+    public List<Comment> getAllCommentsByBookId(@ShellOption long id) {
+        return commentService.getAllByBookId(id);
+    }
+
+    @ShellMethod(value = "Delete comment by id command", key = {"dc", "deleteCommentById"})
+    public void deleteCommentById(@ShellOption long id) {
+        commentService.deleteById(id);
+    }
+
+    @ShellMethod(value = "Update comment by id command", key = {"uc", "updateComment"})
+    public void updateComment(@ShellOption long id, String name, long bookId) {
+        commentService.update(id, name, bookId);
+    }
+
+    @ShellMethod(value = "Create comment command", key = {"cc", "createComment"})
+    public void createComment(@ShellOption String comment, long bookId) {
+        commentService.create(comment, bookId);
     }
 }

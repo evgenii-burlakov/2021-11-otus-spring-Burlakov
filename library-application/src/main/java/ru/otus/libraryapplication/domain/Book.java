@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -26,4 +27,8 @@ public class Book {
     @OneToOne(targetEntity = Genre.class)
     @JoinColumn(name = "GENRE_ID", nullable = false)
     private Genre genre;
+
+    @OneToMany
+
+    private List<Comment> comments;
 }
