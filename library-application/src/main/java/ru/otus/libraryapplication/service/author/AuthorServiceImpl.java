@@ -19,19 +19,19 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     @Transactional(readOnly = true)
     public List<Author> getAll() {
-        return authorRepository.getAll();
+        return authorRepository.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Author getById(long id) {
-        return authorRepository.getById(id);
+        return authorRepository.findById(id).orElse(null);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Author getByName(String author) {
-        return authorRepository.getByName(author);
+        return authorRepository.findByName(author).orElse(null);
     }
 
     @Override
@@ -45,9 +45,10 @@ public class AuthorServiceImpl implements AuthorService {
     public void update(long id, String name) {
         String authorName = stringService.beautifyStringName(name);
         if (stringService.verifyNotBlank(authorName)) {
-            if (authorRepository.getById(id) != null) {
-                Author author = new Author(id, authorName);
-                authorRepository.create(author);
+            Author author = authorRepository.findById(id).orElse(null);
+            if (author != null) {
+                author.setName(authorName);
+                authorRepository.save(author);
             } else {
                 throw new ApplicationException("Invalid author id");
             }
@@ -62,7 +63,7 @@ public class AuthorServiceImpl implements AuthorService {
         String authorName = stringService.beautifyStringName(name);
         if (stringService.verifyNotBlank(authorName)) {
             Author author = new Author(null, authorName);
-            return authorRepository.create(author);
+            return authorRepository.save(author);
         }
 
         throw new ApplicationException("Invalid author name");

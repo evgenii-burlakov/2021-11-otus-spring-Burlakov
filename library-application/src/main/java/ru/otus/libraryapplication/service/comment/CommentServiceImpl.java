@@ -38,13 +38,15 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void update(long id, String comment, long bookId) {
-        if (stringService.verifyNotBlank(comment)) {
+    public void update(long id, String stringComment, long bookId) {
+        if (stringService.verifyNotBlank(stringComment)) {
             Book book = bookService.getById(bookId);
             if (book != null) {
-                if (commentRepository.getById(id) != null) {
-                    Comment newComment = new Comment(id, comment, book);
-                    commentRepository.create(newComment);
+                Comment comment = commentRepository.findById(id).orElse(null);
+                if (comment != null) {
+                    comment.setComment(stringComment);
+                    comment.setBook(book);
+                    commentRepository.save(comment);
                 } else {
                     throw new ApplicationException("Invalid comment id");
                 }
@@ -63,7 +65,7 @@ public class CommentServiceImpl implements CommentService {
             Book book = bookService.getById(bookId);
             if (book != null) {
                 Comment newComment = new Comment(null, comment, book);
-                return commentRepository.create(newComment);
+                return commentRepository.save(newComment);
             } else {
                 throw new ApplicationException("Invalid book id");
             }

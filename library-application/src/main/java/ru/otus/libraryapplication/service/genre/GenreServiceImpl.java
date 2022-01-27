@@ -19,19 +19,19 @@ public class GenreServiceImpl implements GenreService {
     @Override
     @Transactional(readOnly = true)
     public List<Genre> getAll() {
-        return genreRepository.getAll();
+        return genreRepository.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Genre getById(long id) {
-        return genreRepository.getById(id);
+        return genreRepository.findById(id).orElse(null);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Genre getByName(String name) {
-        return genreRepository.getByName(name);
+        return genreRepository.findByName(name).orElse(null);
     }
 
     @Override
@@ -45,9 +45,10 @@ public class GenreServiceImpl implements GenreService {
     public void update(long id, String name) {
         String genreName = stringService.beautifyStringName(name);
         if (stringService.verifyNotBlank(genreName)) {
-            Genre genre = new Genre(id, genreName);
-            if (genreRepository.getById(id) != null) {
-                genreRepository.create(genre);
+            Genre genre = genreRepository.findById(id).orElse(null);
+            if (genre != null) {
+                genre.setName(genreName);
+                genreRepository.save(genre);
             } else {
                 throw new ApplicationException("Invalid genre id");
             }
@@ -62,7 +63,7 @@ public class GenreServiceImpl implements GenreService {
         String genreName = stringService.beautifyStringName(name);
         if (stringService.verifyNotBlank(genreName)) {
             Genre genre = new Genre(null, genreName);
-            return genreRepository.create(genre);
+            return genreRepository.save(genre);
         }
 
         throw new ApplicationException("Invalid genre name");

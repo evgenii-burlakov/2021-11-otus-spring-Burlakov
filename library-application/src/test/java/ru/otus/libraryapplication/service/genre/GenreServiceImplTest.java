@@ -7,14 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.otus.libraryapplication.domain.Genre;
-import ru.otus.libraryapplication.repositories.author.AuthorRepositoryJpa;
-import ru.otus.libraryapplication.repositories.book.BookRepositoryJpa;
-import ru.otus.libraryapplication.repositories.genre.GenreRepositoryJpa;
+import ru.otus.libraryapplication.repositories.author.AuthorRepository;
+import ru.otus.libraryapplication.repositories.book.BookRepository;
+import ru.otus.libraryapplication.repositories.genre.GenreRepository;
 import ru.otus.libraryapplication.service.comment.CommentService;
 import ru.otus.libraryapplication.service.string.StringService;
 import ru.otus.libraryapplication.util.exeption.ApplicationException;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -34,19 +35,19 @@ class GenreServiceImplTest {
     private CommentService commentService;
 
     @MockBean
-    private GenreRepositoryJpa genreRepositoryJpa;
+    private GenreRepository genreRepository;
 
     @MockBean
-    private AuthorRepositoryJpa authorRepositoryJpa;
+    private AuthorRepository authorRepository;
 
     @MockBean
-    private BookRepositoryJpa bookRepositoryJpa;
+    private BookRepository bookRepository;
 
     @Test
     @DisplayName("корректно возвращать список всех жанров")
     void shouldCorrectGetAllGenres() {
         List<Genre> expectedGenres = List.of(GENRE1, GENRE2);
-        Mockito.when(genreRepositoryJpa.getAll()).thenReturn(expectedGenres);
+        Mockito.when(genreRepository.findAll()).thenReturn(expectedGenres);
         List<Genre> actualGenres = genreService.getAll();
         assertThat(actualGenres).usingRecursiveComparison().isEqualTo(expectedGenres);
     }
@@ -54,7 +55,7 @@ class GenreServiceImplTest {
     @Test
     @DisplayName("корректно возвращать жанр по ИД")
     void shouldCorrectGetGenreById() {
-        Mockito.when(genreRepositoryJpa.getById(1)).thenReturn(GENRE1);
+        Mockito.when(genreRepository.findById(1)).thenReturn(Optional.of(GENRE1));
         Genre actualGenre = genreService.getById(1);
         assertThat(actualGenre).isEqualTo(GENRE1);
     }
@@ -62,7 +63,7 @@ class GenreServiceImplTest {
     @Test
     @DisplayName("корректно возвращать жанр названию")
     void shouldCorrectGetGenreByName() {
-        Mockito.when(genreRepositoryJpa.getByName("POEM")).thenReturn(GENRE1);
+        Mockito.when(genreRepository.findByName("POEM")).thenReturn(Optional.of(GENRE1));
         Genre actualGenre = genreService.getByName("POEM");
         assertThat(actualGenre).isEqualTo(GENRE1);
     }
@@ -71,7 +72,7 @@ class GenreServiceImplTest {
     @DisplayName("корректно удалять жанр по ИД")
     void shouldCorrectDeleteGenreAndUnusedAuthorsById() {
         genreService.deleteById(2);
-        Mockito.verify(genreRepositoryJpa, Mockito.times(1)).deleteById(2);
+        Mockito.verify(genreRepository, Mockito.times(1)).deleteById(2);
     }
 
     @Test
@@ -79,10 +80,10 @@ class GenreServiceImplTest {
     void shouldCorrectUpdateGenre() {
         Mockito.when(stringService.beautifyStringName("detective")).thenReturn("DETECTIVE");
         Mockito.when(stringService.verifyNotBlank("DETECTIVE")).thenReturn(true);
-        Mockito.when(genreRepositoryJpa.getById(1)).thenReturn(GENRE1);
+        Mockito.when(genreRepository.findById(1)).thenReturn(Optional.of(GENRE1));
         genreService.update(1, "detective");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("detective");
-        Mockito.verify(genreRepositoryJpa, Mockito.times(1)).create(new Genre(1L, "DETECTIVE"));
+        Mockito.verify(genreRepository, Mockito.times(1)).save(new Genre(1L, "DETECTIVE"));
     }
 
     @Test
@@ -93,7 +94,7 @@ class GenreServiceImplTest {
         assertThatThrownBy(() -> genreService.update(1, "  ")).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("  ");
         Mockito.verify(stringService, Mockito.times(1)).verifyNotBlank("");
-        Mockito.verify(genreRepositoryJpa, Mockito.never()).create(Mockito.any());
+        Mockito.verify(genreRepository, Mockito.never()).save(Mockito.any());
     }
 
     @Test
@@ -101,11 +102,11 @@ class GenreServiceImplTest {
     void shouldNotUpdateNotExistGenre() {
         Mockito.when(stringService.beautifyStringName("detective")).thenReturn("DETECTIVE");
         Mockito.when(stringService.verifyNotBlank("DETECTIVE")).thenReturn(true);
-        Mockito.when(genreRepositoryJpa.getById(5)).thenReturn(null);
+        Mockito.when(genreRepository.findById(5)).thenReturn(null);
 
         assertThatThrownBy(() -> genreService.update(5, "lermontov")).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("lermontov");
-        Mockito.verify(authorRepositoryJpa, Mockito.never()).create(Mockito.any());
+        Mockito.verify(authorRepository, Mockito.never()).save(Mockito.any());
     }
 
     @Test
@@ -115,7 +116,7 @@ class GenreServiceImplTest {
         Mockito.when(stringService.verifyNotBlank("DETECTIVE")).thenReturn(true);
         genreService.create("detective");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("detective");
-        Mockito.verify(genreRepositoryJpa, Mockito.times(1)).create(new Genre(null, "DETECTIVE"));
+        Mockito.verify(genreRepository, Mockito.times(1)).save(new Genre(null, "DETECTIVE"));
     }
 
     @Test
@@ -125,6 +126,6 @@ class GenreServiceImplTest {
         Mockito.when(stringService.verifyNotBlank((String) null)).thenReturn(false);
         assertThatThrownBy(() -> genreService.create(null)).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName(null);
-        Mockito.verify(genreRepositoryJpa, Mockito.never()).create(null);
+        Mockito.verify(genreRepository, Mockito.never()).save(Mockito.any());
     }
 }

@@ -25,13 +25,13 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional(readOnly = true)
     public List<Book> getAll() {
-        return bookRepository.getAll();
+        return bookRepository.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Book getById(long id) {
-        return bookRepository.getById(id);
+        return bookRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -48,12 +48,12 @@ public class BookServiceImpl implements BookService {
         String bookName = stringService.beautifyStringName(name);
 
         if (stringService.verifyNotBlank(bookName, author, genre)) {
-            Book book = bookRepository.getById(id);
+            Book book = bookRepository.findById(id).orElse(null);
             if (book != null) {
                 book.setName(bookName);
                 book.setAuthor(getOrCreateAuthor(author));
                 book.setGenre(getOrCreateGenre(genre));
-                bookRepository.create(book);
+                bookRepository.save(book);
             } else {
                 throw new ApplicationException("Invalid book id");
             }
@@ -79,7 +79,7 @@ public class BookServiceImpl implements BookService {
             Genre bookGenre = getOrCreateGenre(genre);
 
             Book book = new Book(null, bookName, bookAuthor, bookGenre);
-            return bookRepository.create(book);
+            return bookRepository.save(book);
         }
     }
 

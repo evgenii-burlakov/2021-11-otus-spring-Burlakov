@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ru.otus.libraryapplication.repositories.author.AuthorRepositoryJpa;
-import ru.otus.libraryapplication.repositories.book.BookRepositoryJpa;
-import ru.otus.libraryapplication.repositories.genre.GenreRepositoryJpa;
+import ru.otus.libraryapplication.repositories.author.AuthorRepository;
+import ru.otus.libraryapplication.repositories.book.BookRepository;
+import ru.otus.libraryapplication.repositories.genre.GenreRepository;
 import ru.otus.libraryapplication.service.comment.CommentService;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,13 +22,13 @@ class StringServiceImplTest {
     private CommentService commentService;
 
     @MockBean
-    private AuthorRepositoryJpa authorRepositoryJpa;
+    private AuthorRepository authorRepository;
 
     @MockBean
-    private BookRepositoryJpa bookRepositoryJpa;
+    private BookRepository bookRepository;
 
     @MockBean
-    private GenreRepositoryJpa genreRepositoryJpa;
+    private GenreRepository genreRepository;
 
     @Test
     @DisplayName("корректно форматировать строки")
