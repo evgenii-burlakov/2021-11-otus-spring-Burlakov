@@ -88,6 +88,27 @@ class BookServiceImplTest {
     }
 
     @Test
+    @DisplayName("не обновлять не существующую в БД книгу")
+    void dontUpdateNotExistBook() {
+        Mockito.when(stringService.beautifyStringName("EVGENII ONEGIN")).thenReturn("EVGENII ONEGIN");
+        Mockito.when(stringService.beautifyStringName("LERMONTOV")).thenReturn("LERMONTOV");
+        Mockito.when(stringService.beautifyStringName("POEM")).thenReturn("POEM");
+        Mockito.when(stringService.verifyNotBlank("EVGENII ONEGIN", "LERMONTOV", "POEM")).thenReturn(true);
+        Mockito.when(bookRepositoryJpa.getById(5)).thenReturn(null);
+
+        assertThatThrownBy(() -> bookService.update(5, "EVGENII ONEGIN", "LERMONTOV", "POEM")).isInstanceOf(ApplicationException.class);
+
+        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("EVGENII ONEGIN");
+        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("LERMONTOV");
+        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("POEM");
+
+        Mockito.verify(authorService, Mockito.never()).create(Mockito.anyString());
+        Mockito.verify(genreService, Mockito.never()).create(Mockito.anyString());
+
+        Mockito.verify(bookRepositoryJpa, Mockito.never()).create(Mockito.any());
+    }
+
+    @Test
     @DisplayName("обновлять книгу, создавать нового автора, если его не было в БД, обновлять жанр, но не создавать новый, если он уже есть в БД")
     void correctUpdateBookAndAddNewAuthorNotDeleteOldAuthorGetNewGenreDeleteOldGenre() {
         Mockito.when(bookRepositoryJpa.getById(1)).thenReturn(BOOK1);

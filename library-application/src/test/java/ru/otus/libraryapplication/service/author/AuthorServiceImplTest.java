@@ -98,6 +98,18 @@ class AuthorServiceImplTest {
     }
 
     @Test
+    @DisplayName("не обновлять автора, если его нет в БД")
+    void shouldNotUpdateNotExistAuthor() {
+        Mockito.when(stringService.beautifyStringName("lermontov")).thenReturn("LERMONTOV");
+        Mockito.when(stringService.verifyNotBlank("LERMONTOV")).thenReturn(true);
+        Mockito.when(authorRepositoryJpa.getById(5)).thenReturn(null);
+
+        assertThatThrownBy(() -> authorService.update(5, "lermontov")).isInstanceOf(ApplicationException.class);
+        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("lermontov");
+        Mockito.verify(authorRepositoryJpa, Mockito.never()).create(Mockito.any());
+    }
+
+    @Test
     @DisplayName("корректно создавать автора")
     void shouldCorrectCreateAuthor() {
         Mockito.when(stringService.beautifyStringName("lermontov")).thenReturn("LERMONTOV");

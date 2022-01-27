@@ -97,6 +97,18 @@ class GenreServiceImplTest {
     }
 
     @Test
+    @DisplayName("не обновлять жанр, если его нет в БД")
+    void shouldNotUpdateNotExistGenre() {
+        Mockito.when(stringService.beautifyStringName("detective")).thenReturn("DETECTIVE");
+        Mockito.when(stringService.verifyNotBlank("DETECTIVE")).thenReturn(true);
+        Mockito.when(genreRepositoryJpa.getById(5)).thenReturn(null);
+
+        assertThatThrownBy(() -> genreService.update(5, "lermontov")).isInstanceOf(ApplicationException.class);
+        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("lermontov");
+        Mockito.verify(authorRepositoryJpa, Mockito.never()).create(Mockito.any());
+    }
+
+    @Test
     @DisplayName("корректно создавать жанр")
     void shouldCorrectCreateGenre() {
         Mockito.when(stringService.beautifyStringName("detective")).thenReturn("DETECTIVE");

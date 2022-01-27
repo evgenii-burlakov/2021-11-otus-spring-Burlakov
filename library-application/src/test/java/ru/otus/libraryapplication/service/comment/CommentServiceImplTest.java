@@ -107,6 +107,18 @@ class CommentServiceImplTest {
     }
 
     @Test
+    @DisplayName("не обновлять не существующий комментарий")
+    void shouldNotUpdateNotExistComment() {
+        Mockito.when(stringService.verifyNotBlank("Это что за книга?")).thenReturn(true);
+        Mockito.when(bookService.getById(1L)).thenReturn(BOOK1);
+        Mockito.when(commentRepositoryJpa.getById(5L)).thenReturn(null);
+
+        assertThatThrownBy(() -> commentService.update(5L, "Это что за книга?", 1L)).isInstanceOf(ApplicationException.class);
+
+        Mockito.verify(commentRepositoryJpa, Mockito.never()).create(Mockito.any());
+    }
+
+    @Test
     @DisplayName("корректно создавать комментарий")
     void shouldCorrectCreateComment() {
         Mockito.when(stringService.verifyNotBlank("Это что за книга?")).thenReturn(true);
