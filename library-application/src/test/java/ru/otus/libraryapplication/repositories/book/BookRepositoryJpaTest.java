@@ -72,16 +72,9 @@ class BookRepositoryJpaTest {
     @Test
     void updateExistingBook() {
         Book newBook = new Book(2L, "ANNE OF GREEN GABLES", AUTHOR1, GENRE2);
-        bookRepositoryJpa.update(newBook);
+        bookRepositoryJpa.create(newBook);
         Book actualBook = em.find(Book.class, 2L);
         Book expectedBook = new Book(2L, "ANNE OF GREEN GABLES", AUTHOR1, GENRE2);
         assertThat(actualBook).isEqualTo(expectedBook);
-    }
-
-    @DisplayName("не генерировать ошибки при обновлении книги в БД, если ее там не существует")
-    @Test
-    void updateNonExistAuthor() {
-        Book newBook = new Book(4L, "ANNE OF GREEN GABLES", AUTHOR1, GENRE2);
-        assertThatCode(() -> bookRepositoryJpa.update(newBook)).doesNotThrowAnyException();
     }
 }

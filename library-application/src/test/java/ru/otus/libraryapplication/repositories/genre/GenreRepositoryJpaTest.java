@@ -65,17 +65,10 @@ class GenreRepositoryJpaTest {
     @Test
     void updateExistingGenre() {
         Genre newGenre = new Genre(2L, "DETECTIVE");
-        genreRepositoryJpa.update(newGenre);
+        genreRepositoryJpa.create(newGenre);
         Genre actualGenre = em.find(Genre.class, 2L);
         Genre expectedGenre = new Genre(2L, "DETECTIVE");
         assertThat(actualGenre).isEqualTo(expectedGenre);
-    }
-
-    @DisplayName("не генерировать ошибки при обновлении жанра в БД, если он там не существует")
-    @Test
-    void updateNonExistGenre() {
-        Genre newGenre = new Genre(3L, "DETECTIVE");
-        assertThatCode(() -> genreRepositoryJpa.update(newGenre)).doesNotThrowAnyException();
     }
 
     @DisplayName("записывать новый жанр в БД")

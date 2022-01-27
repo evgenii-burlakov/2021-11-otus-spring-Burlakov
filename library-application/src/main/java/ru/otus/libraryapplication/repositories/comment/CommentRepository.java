@@ -12,6 +12,5 @@ public interface CommentRepository {
 
     Comment create(Comment comment);
 
-    void update(Comment comment);
-
+    Comment getById(long id);
 }

@@ -1,9 +1,6 @@
 package ru.otus.libraryapplication.domain;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
@@ -23,11 +20,11 @@ public class Book {
     @Column(name = "NAME", nullable = false, unique = true)
     private String name;
 
-    @ManyToOne(targetEntity = Author.class)
+    @ManyToOne(targetEntity = Author.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "AUTHOR_ID", nullable = false)
     private Author author;
 
-    @ManyToOne(targetEntity = Genre.class)
+    @ManyToOne(targetEntity = Genre.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "GENRE_ID", nullable = false)
     private Genre genre;
 

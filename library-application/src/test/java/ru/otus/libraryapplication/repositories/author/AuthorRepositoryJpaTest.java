@@ -65,17 +65,10 @@ class AuthorRepositoryJpaTest {
     @Test
     void updateExistingAuthor() {
         Author newAuthor = new Author(2L, "WES MONTGOMERY");
-        authorRepositoryJpa.update(newAuthor);
+        authorRepositoryJpa.create(newAuthor);
         Author actualAuthor = em.find(Author.class, 2L);
         Author expectedAuthor = new Author(2L, "WES MONTGOMERY");
         assertThat(actualAuthor).isEqualTo(expectedAuthor);
-    }
-
-    @DisplayName("не генерировать ошибки при обновлении автора в БД, если он там не существует")
-    @Test
-    void updateNonExistAuthor() {
-        Author newAuthor = new Author(3L, "WES MONTGOMERY");
-        assertThatCode(() -> authorRepositoryJpa.update(newAuthor)).doesNotThrowAnyException();
     }
 
     @DisplayName("записывать нового автора в БД")

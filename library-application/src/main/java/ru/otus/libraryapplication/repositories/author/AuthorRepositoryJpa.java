@@ -53,16 +53,6 @@ public class AuthorRepositoryJpa implements AuthorRepository {
     }
 
     @Override
-    public void update(Author author) {
-        Query query = em.createQuery("update Author a " +
-                "set a.name = :name " +
-                "where a.id = :id");
-        query.setParameter("name", author.getName());
-        query.setParameter("id", author.getId());
-        query.executeUpdate();
-    }
-
-    @Override
     public Author create(Author author) {
         if (author.getId() == null) {
             em.persist(author);

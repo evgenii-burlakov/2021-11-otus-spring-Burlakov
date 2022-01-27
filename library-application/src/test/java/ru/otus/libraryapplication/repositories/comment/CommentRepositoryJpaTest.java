@@ -66,16 +66,9 @@ class CommentRepositoryJpaTest {
     @Test
     void updateExistingComment() {
         Comment newComment = new Comment(1L, "Читал его в ПТУ", BOOK1);
-        commentRepositoryJpa.update(newComment);
+        commentRepositoryJpa.create(newComment);
         Comment actualComment = em.find(Comment.class, 1L);
         Comment expectedComment = new Comment(1L, "Читал его в ПТУ", BOOK1);
         assertThat(actualComment).isEqualTo(expectedComment);
-    }
-
-    @DisplayName("не генерировать ошибки при обновлении комментария в БД, если его там не существует")
-    @Test
-    void updateNonExistComment() {
-        Comment newComment = new Comment(5L, "Читал его в ПТУ", BOOK1);
-        assertThatCode(() -> commentRepositoryJpa.update(newComment)).doesNotThrowAnyException();
     }
 }

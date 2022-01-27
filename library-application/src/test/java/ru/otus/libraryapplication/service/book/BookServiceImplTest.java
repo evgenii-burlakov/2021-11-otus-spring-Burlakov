@@ -84,7 +84,7 @@ class BookServiceImplTest {
         Mockito.verify(authorService, Mockito.never()).create(Mockito.anyString());
         Mockito.verify(genreService, Mockito.never()).create(Mockito.anyString());
 
-        Mockito.verify(bookRepositoryJpa, Mockito.never()).update(Mockito.any());
+        Mockito.verify(bookRepositoryJpa, Mockito.never()).create(Mockito.any());
     }
 
     @Test
@@ -112,7 +112,7 @@ class BookServiceImplTest {
         Mockito.verify(authorService, Mockito.times(1)).create("LERMONTOV");
         Mockito.verify(genreService, Mockito.never()).create(Mockito.anyString());
 
-        Mockito.verify(bookRepositoryJpa, Mockito.times(1)).update(new Book(1L, "EVGENII ONEGIN", new Author(3L, "LERMONTOV"), GENRE2));
+        Mockito.verify(bookRepositoryJpa, Mockito.times(1)).create(new Book(1L, "EVGENII ONEGIN", new Author(3L, "LERMONTOV"), GENRE2));
     }
 
     @Test

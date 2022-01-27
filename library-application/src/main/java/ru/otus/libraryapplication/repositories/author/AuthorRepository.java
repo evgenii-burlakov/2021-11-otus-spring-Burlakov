@@ -13,7 +13,5 @@ public interface AuthorRepository {
 
     void deleteById(long id);
 
-    void update(Author author);
-
     Author create(Author author);
 }

@@ -1,14 +1,14 @@
 package ru.otus.libraryapplication.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = "book")
+@ToString(exclude = "book")
 @Entity
 @Table(name = "COMMENTS")
 public class Comment {

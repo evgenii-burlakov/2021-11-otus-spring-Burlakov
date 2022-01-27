@@ -68,18 +68,4 @@ public class BookRepositoryJpa implements BookRepository {
             return em.merge(book);
         }
     }
-
-    @Override
-    public void update(Book book) {
-        Query query = em.createQuery("update Book b " +
-                "set b.name = :name, " +
-                "b.author = :author, " +
-                "b.genre = :genre " +
-                "where b.id = :id");
-        query.setParameter("id", book.getId());
-        query.setParameter("name", book.getName());
-        query.setParameter("author", book.getAuthor());
-        query.setParameter("genre", book.getGenre());
-        query.executeUpdate();
-    }
 }

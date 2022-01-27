@@ -79,9 +79,10 @@ class GenreServiceImplTest {
     void shouldCorrectUpdateGenre() {
         Mockito.when(stringService.beautifyStringName("detective")).thenReturn("DETECTIVE");
         Mockito.when(stringService.verifyNotBlank("DETECTIVE")).thenReturn(true);
+        Mockito.when(genreRepositoryJpa.getById(1)).thenReturn(GENRE1);
         genreService.update(1, "detective");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("detective");
-        Mockito.verify(genreRepositoryJpa, Mockito.times(1)).update(new Genre(1L, "DETECTIVE"));
+        Mockito.verify(genreRepositoryJpa, Mockito.times(1)).create(new Genre(1L, "DETECTIVE"));
     }
 
     @Test
@@ -92,7 +93,7 @@ class GenreServiceImplTest {
         assertThatThrownBy(() -> genreService.update(1, "  ")).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("  ");
         Mockito.verify(stringService, Mockito.times(1)).verifyNotBlank("");
-        Mockito.verify(genreRepositoryJpa, Mockito.never()).update(Mockito.any());
+        Mockito.verify(genreRepositoryJpa, Mockito.never()).create(Mockito.any());
     }
 
     @Test

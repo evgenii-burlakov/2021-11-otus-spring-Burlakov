@@ -13,7 +13,5 @@ public interface GenreRepository {
 
     void deleteById(long id);
 
-    void update(Genre genre);
-
     Genre create(Genre genre);
 }

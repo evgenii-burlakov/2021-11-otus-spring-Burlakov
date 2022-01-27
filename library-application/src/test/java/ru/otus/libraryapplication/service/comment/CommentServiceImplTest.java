@@ -78,10 +78,11 @@ class CommentServiceImplTest {
     void shouldCorrectUpdateComment() {
         Mockito.when(stringService.verifyNotBlank("Это что за книга?")).thenReturn(true);
         Mockito.when(bookService.getById(1L)).thenReturn(BOOK1);
+        Mockito.when(commentRepositoryJpa.getById(1L)).thenReturn(COMMENT1);
 
         commentService.update(1L, "Это что за книга?", 1L);
 
-        Mockito.verify(commentRepositoryJpa, Mockito.times(1)).update(new Comment(1L, "Это что за книга?", BOOK1));
+        Mockito.verify(commentRepositoryJpa, Mockito.times(1)).create(new Comment(1L, "Это что за книга?", BOOK1));
     }
 
     @Test
@@ -91,7 +92,7 @@ class CommentServiceImplTest {
 
         assertThatThrownBy(() -> commentService.update(1, "    ", 1L)).isInstanceOf(ApplicationException.class);
 
-        Mockito.verify(commentRepositoryJpa, Mockito.never()).update(Mockito.any());
+        Mockito.verify(commentRepositoryJpa, Mockito.never()).create(Mockito.any());
     }
 
     @Test
@@ -102,7 +103,7 @@ class CommentServiceImplTest {
 
         assertThatThrownBy(() -> commentService.update(1L, "Это что за книга?", 5L)).isInstanceOf(ApplicationException.class);
 
-        Mockito.verify(commentRepositoryJpa, Mockito.never()).update(Mockito.any());
+        Mockito.verify(commentRepositoryJpa, Mockito.never()).create(Mockito.any());
     }
 
     @Test

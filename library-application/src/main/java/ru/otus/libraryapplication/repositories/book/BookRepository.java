@@ -13,7 +13,5 @@ public interface BookRepository {
 
     Book create(Book book);
 
-    void update(Book book);
-
     boolean existByBookAuthorAndGenreNames(String bookName, String author, String genre);
 }

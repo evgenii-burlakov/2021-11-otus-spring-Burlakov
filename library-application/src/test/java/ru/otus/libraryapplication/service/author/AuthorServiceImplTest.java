@@ -80,9 +80,10 @@ class AuthorServiceImplTest {
     void shouldCorrectUpdateAuthor() {
         Mockito.when(stringService.beautifyStringName("lermontov")).thenReturn("LERMONTOV");
         Mockito.when(stringService.verifyNotBlank("LERMONTOV")).thenReturn(true);
+        Mockito.when(authorRepositoryJpa.getById(1)).thenReturn(AUTHOR1);
         authorService.update(1, "lermontov");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("lermontov");
-        Mockito.verify(authorRepositoryJpa, Mockito.times(1)).update(new Author(1L, "LERMONTOV"));
+        Mockito.verify(authorRepositoryJpa, Mockito.times(1)).create(new Author(1L, "LERMONTOV"));
     }
 
     @Test
@@ -93,7 +94,7 @@ class AuthorServiceImplTest {
         assertThatThrownBy(() -> authorService.update(1, "  ")).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("  ");
         Mockito.verify(stringService, Mockito.times(1)).verifyNotBlank("");
-        Mockito.verify(authorRepositoryJpa, Mockito.never()).update(Mockito.any());
+        Mockito.verify(authorRepositoryJpa, Mockito.never()).create(Mockito.any());
     }
 
     @Test
