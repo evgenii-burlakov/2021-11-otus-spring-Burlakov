@@ -7,13 +7,13 @@ import java.util.List;
 public interface AuthorService {
     List<Author> getAll();
 
-    Author getById(long id);
+    Author getById(String id);
 
     Author getByName(String author);
 
-    void deleteById(long id);
+    void deleteById(String id);
 
-    void update(long id, String name);
+    void update(String id, String name);
 
     Author create(String name);
 }

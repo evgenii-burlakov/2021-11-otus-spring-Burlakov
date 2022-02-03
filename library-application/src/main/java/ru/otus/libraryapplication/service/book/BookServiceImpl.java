@@ -30,33 +30,32 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public Book getById(long id) {
+    public Book getById(String id) {
         return bookRepository.findById(id).orElse(null);
     }
 
     @Override
     @Transactional
-    public void deleteById(long id) {
-        bookRepository.deleteById(id);
+    public void deleteById(String id) {
+        bookRepository.deleteWithCommentsByBookId(id);
     }
 
     @Override
     @Transactional
-    public void update(long id, String name, String authorName, String genreName) {
+    public void update(String id, String name, String authorName, String genreName) {
         String author = stringService.beautifyStringName(authorName);
         String genre = stringService.beautifyStringName(genreName);
         String bookName = stringService.beautifyStringName(name);
 
         if (stringService.verifyNotBlank(bookName, author, genre)) {
-            Book book = bookRepository.findById(id).orElse(null);
-            if (book != null) {
+            bookRepository.findById(id).ifPresentOrElse(book -> {
                 book.setName(bookName);
                 book.setAuthor(getOrCreateAuthor(author));
                 book.setGenre(getOrCreateGenre(genre));
                 bookRepository.save(book);
-            } else {
+            }, () -> {
                 throw new ApplicationException("Invalid book id");
-            }
+            });
         } else {
             throw new ApplicationException("Invalid book parameters");
         }

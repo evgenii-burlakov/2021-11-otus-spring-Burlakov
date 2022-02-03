@@ -51,18 +51,18 @@ class CommentServiceImplTest {
     @DisplayName("корректно возвращать список комментариев для книги")
     void shouldCorrectGetAllComments() {
         List<Comment> expectedComments = List.of(COMMENT1, COMMENT2, COMMENT3);
-        Mockito.when(bookService.getById(1L)).thenReturn(BOOK1);
+        Mockito.when(bookService.getById("1")).thenReturn(BOOK1);
         Mockito.when(commentRepository.getAllByBook(BOOK1)).thenReturn(List.of(COMMENT1, COMMENT2, COMMENT3));
-        List<Comment> actualComments = commentService.getAllByBookId(1L);
+        List<Comment> actualComments = commentService.getAllByBookId("1");
         assertThat(actualComments).usingRecursiveComparison().isEqualTo(expectedComments);
     }
 
     @Test
     @DisplayName("возвращать ошибку при получении списока комментариев для несуществующей книги")
     void shouldThrowExceptionWhenBookNotExist() {
-        Mockito.when(bookService.getById(5L)).thenReturn(null);
+        Mockito.when(bookService.getById("5")).thenReturn(null);
 
-        assertThatThrownBy(() -> commentService.getAllByBookId(5L)).isInstanceOf(ApplicationException.class);
+        assertThatThrownBy(() -> commentService.getAllByBookId("5")).isInstanceOf(ApplicationException.class);
 
         Mockito.verify(commentRepository, Mockito.never()).deleteById(Mockito.anyLong());
     }
@@ -70,20 +70,20 @@ class CommentServiceImplTest {
     @Test
     @DisplayName("корректно удалять комментарий")
     void shouldCorrectDeleteComment() {
-        commentService.deleteById(1L);
-        Mockito.verify(commentRepository, Mockito.times(1)).deleteById(1L);
+        commentService.deleteById("1");
+        Mockito.verify(commentRepository, Mockito.times(1)).deleteById("1");
     }
 
     @Test
     @DisplayName("корректно обновлять комментарий")
     void shouldCorrectUpdateComment() {
         Mockito.when(stringService.verifyNotBlank("Это что за книга?")).thenReturn(true);
-        Mockito.when(bookService.getById(1L)).thenReturn(BOOK1);
-        Mockito.when(commentRepository.findById(1L)).thenReturn(Optional.of(COMMENT1));
+        Mockito.when(bookService.getById("1")).thenReturn(BOOK1);
+        Mockito.when(commentRepository.findById("8")).thenReturn(Optional.of(COMMENT1));
 
-        commentService.update(1L, "Это что за книга?", 1L);
+        commentService.update("8", "Это что за книга?", "1");
 
-        Mockito.verify(commentRepository, Mockito.times(1)).save(new Comment(1L, "Это что за книга?", BOOK1));
+        Mockito.verify(commentRepository, Mockito.times(1)).save(new Comment("8", "Это что за книга?", BOOK1));
     }
 
     @Test
@@ -91,7 +91,7 @@ class CommentServiceImplTest {
     void shouldNotUpdateBlankComment() {
         Mockito.when(stringService.verifyNotBlank("    ")).thenReturn(false);
 
-        assertThatThrownBy(() -> commentService.update(1, "    ", 1L)).isInstanceOf(ApplicationException.class);
+        assertThatThrownBy(() -> commentService.update("2", "    ", "1")).isInstanceOf(ApplicationException.class);
 
         Mockito.verify(commentRepository, Mockito.never()).save(Mockito.any());
     }
@@ -100,9 +100,9 @@ class CommentServiceImplTest {
     @DisplayName("не обновлять комментарий при отсутствии книги")
     void shouldNotUpdateCommentNotExistBook() {
         Mockito.when(stringService.verifyNotBlank("Это что за книга?")).thenReturn(true);
-        Mockito.when(bookService.getById(5L)).thenReturn(null);
+        Mockito.when(bookService.getById("5")).thenReturn(null);
 
-        assertThatThrownBy(() -> commentService.update(1L, "Это что за книга?", 5L)).isInstanceOf(ApplicationException.class);
+        assertThatThrownBy(() -> commentService.update("1", "Это что за книга?", "5")).isInstanceOf(ApplicationException.class);
 
         Mockito.verify(commentRepository, Mockito.never()).save(Mockito.any());
     }
@@ -111,10 +111,10 @@ class CommentServiceImplTest {
     @DisplayName("не обновлять не существующий комментарий")
     void shouldNotUpdateNotExistComment() {
         Mockito.when(stringService.verifyNotBlank("Это что за книга?")).thenReturn(true);
-        Mockito.when(bookService.getById(1L)).thenReturn(BOOK1);
-        Mockito.when(commentRepository.findById(5L)).thenReturn(Optional.empty());
+        Mockito.when(bookService.getById("1")).thenReturn(BOOK1);
+        Mockito.when(commentRepository.findById("5")).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> commentService.update(5L, "Это что за книга?", 1L)).isInstanceOf(ApplicationException.class);
+        assertThatThrownBy(() -> commentService.update("5", "Это что за книга?", "1")).isInstanceOf(ApplicationException.class);
 
         Mockito.verify(commentRepository, Mockito.never()).save(Mockito.any());
     }
@@ -123,9 +123,9 @@ class CommentServiceImplTest {
     @DisplayName("корректно создавать комментарий")
     void shouldCorrectCreateComment() {
         Mockito.when(stringService.verifyNotBlank("Это что за книга?")).thenReturn(true);
-        Mockito.when(bookService.getById(1L)).thenReturn(BOOK1);
+        Mockito.when(bookService.getById("1")).thenReturn(BOOK1);
 
-        commentService.create( "Это что за книга?", 1L);
+        commentService.create( "Это что за книга?", "1");
 
         Mockito.verify(commentRepository, Mockito.times(1)).save(new Comment(null, "Это что за книга?", BOOK1));
     }
@@ -135,7 +135,7 @@ class CommentServiceImplTest {
     void shouldNotCreateBlankComment() {
         Mockito.when(stringService.verifyNotBlank("    ")).thenReturn(false);
 
-        assertThatThrownBy(() -> commentService.create("    ", 1L)).isInstanceOf(ApplicationException.class);
+        assertThatThrownBy(() -> commentService.create("    ", "1")).isInstanceOf(ApplicationException.class);
 
         Mockito.verify(commentRepository, Mockito.never()).save(Mockito.any());
     }
@@ -144,9 +144,9 @@ class CommentServiceImplTest {
     @DisplayName("не создавать комментарий при отсутствии книги")
     void shouldNotCreateCommentNotExistBook() {
         Mockito.when(stringService.verifyNotBlank("Это что за книга?")).thenReturn(true);
-        Mockito.when(bookService.getById(5L)).thenReturn(null);
+        Mockito.when(bookService.getById("5")).thenReturn(null);
 
-        assertThatThrownBy(() -> commentService.create("Это что за книга?", 5L)).isInstanceOf(ApplicationException.class);
+        assertThatThrownBy(() -> commentService.create("Это что за книга?", "5")).isInstanceOf(ApplicationException.class);
 
         Mockito.verify(commentRepository, Mockito.never()).save(Mockito.any());
     }

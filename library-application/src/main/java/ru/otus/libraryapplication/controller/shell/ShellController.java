@@ -30,12 +30,12 @@ public class ShellController {
     }
 
     @ShellMethod(value = "Get book by id command", key = {"gb", "getBookById"})
-    public Book getBookById(@ShellOption long id) {
+    public Book getBookById(@ShellOption String id) {
         return bookService.getById(id);
     }
 
     @ShellMethod(value = "Delete book by id command", key = {"db", "deleteBookById"})
-    public void deleteBookById(@ShellOption long id) {
+    public void deleteBookById(@ShellOption String id) {
         bookService.deleteById(id);
     }
 
@@ -45,7 +45,7 @@ public class ShellController {
     }
 
     @ShellMethod(value = "Update book command", key = {"ub", "updateBook"})
-    public void updateBook(@ShellOption long id, String bookName, String authorName, String genreName) {
+    public void updateBook(@ShellOption String id, String bookName, String authorName, String genreName) {
         bookService.update(id, bookName, authorName, genreName);
     }
 
@@ -57,17 +57,17 @@ public class ShellController {
     }
 
     @ShellMethod(value = "Get author by id command", key = {"ga", "getAuthorById"})
-    public Author getAuthorById(@ShellOption long id) {
+    public Author getAuthorById(@ShellOption String id) {
         return authorService.getById(id);
     }
 
     @ShellMethod(value = "Delete author by id command", key = {"da", "deleteAuthorById"})
-    public void deleteAuthorById(@ShellOption long id) {
+    public void deleteAuthorById(@ShellOption String id) {
         authorService.deleteById(id);
     }
 
     @ShellMethod(value = "Update author by id command", key = {"ua", "updateAuthor"})
-    public void updateAuthor(@ShellOption long id, String name) {
+    public void updateAuthor(@ShellOption String id, String name) {
         authorService.update(id, name);
     }
 
@@ -84,17 +84,17 @@ public class ShellController {
     }
 
     @ShellMethod(value = "Get genre by id command", key = {"gg", "getGenreById"})
-    public Genre getGenreById(@ShellOption long id) {
+    public Genre getGenreById(@ShellOption String id) {
         return genreService.getById(id);
     }
 
     @ShellMethod(value = "Delete genre by id command", key = {"dg", "deleteGenreById"})
-    public void deleteGenreById(@ShellOption long id) {
+    public void deleteGenreById(@ShellOption String id) {
         genreService.deleteById(id);
     }
 
     @ShellMethod(value = "Update genre by id command", key = {"ug", "updateGenre"})
-    public void updateGenre(@ShellOption long id, String name) {
+    public void updateGenre(@ShellOption String id, String name) {
         genreService.update(id, name);
     }
 
@@ -106,22 +106,22 @@ public class ShellController {
 
     //Comments
     @ShellMethod(value = "Get all comments by book id", key = {"ac", "getAllCommentsByBookId"})
-    public List<Comment> getAllCommentsByBookId(@ShellOption long id) {
+    public List<Comment> getAllCommentsByBookId(@ShellOption String id) {
         return commentService.getAllByBookId(id);
     }
 
     @ShellMethod(value = "Delete comment by id command", key = {"dc", "deleteCommentById"})
-    public void deleteCommentById(@ShellOption long id) {
+    public void deleteCommentById(@ShellOption String id) {
         commentService.deleteById(id);
     }
 
     @ShellMethod(value = "Update comment by id command", key = {"uc", "updateComment"})
-    public void updateComment(@ShellOption long id, String name, long bookId) {
+    public void updateComment(@ShellOption String id, String name, String bookId) {
         commentService.update(id, name, bookId);
     }
 
     @ShellMethod(value = "Create comment command", key = {"cc", "createComment"})
-    public void createComment(@ShellOption long bookId, String comment) {
+    public void createComment(@ShellOption String bookId, String comment) {
         commentService.create(comment, bookId);
     }
 }

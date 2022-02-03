@@ -56,8 +56,8 @@ class AuthorServiceImplTest {
     @Test
     @DisplayName("корректно возвращать автора по ИД")
     void shouldCorrectGetAuthorById() {
-        Mockito.when(authorRepository.findById(1)).thenReturn(Optional.of(AUTHOR1));
-        Author actualAuthor = authorService.getById(1);
+        Mockito.when(authorRepository.findById("1")).thenReturn(Optional.of(AUTHOR1));
+        Author actualAuthor = authorService.getById("1");
         assertThat(actualAuthor).isEqualTo(AUTHOR1);
     }
 
@@ -72,8 +72,8 @@ class AuthorServiceImplTest {
     @Test
     @DisplayName("корректно удалять автора по ИД")
     void shouldCorrectDeleteAuthorAndUnusedGenresById() {
-        authorService.deleteById(2);
-        Mockito.verify(authorRepository, Mockito.times(1)).deleteById(2);
+        authorService.deleteById("2");
+        Mockito.verify(authorRepository, Mockito.times(1)).deleteWithBooksByAuthorId("2");
     }
 
     @Test
@@ -81,10 +81,10 @@ class AuthorServiceImplTest {
     void shouldCorrectUpdateAuthor() {
         Mockito.when(stringService.beautifyStringName("lermontov")).thenReturn("LERMONTOV");
         Mockito.when(stringService.verifyNotBlank("LERMONTOV")).thenReturn(true);
-        Mockito.when(authorRepository.findById(1)).thenReturn(Optional.of(AUTHOR1));
-        authorService.update(1, "lermontov");
+        Mockito.when(authorRepository.findById("1")).thenReturn(Optional.of(AUTHOR1));
+        authorService.update("1", "lermontov");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("lermontov");
-        Mockito.verify(authorRepository, Mockito.times(1)).save(new Author(1L, "LERMONTOV"));
+        Mockito.verify(authorRepository, Mockito.times(1)).save(new Author("1", "LERMONTOV"));
     }
 
     @Test
@@ -92,7 +92,7 @@ class AuthorServiceImplTest {
     void shouldNotUpdateBlankAuthorName() {
         Mockito.when(stringService.beautifyStringName("  ")).thenReturn("");
         Mockito.when(stringService.verifyNotBlank("")).thenReturn(false);
-        assertThatThrownBy(() -> authorService.update(1, "  ")).isInstanceOf(ApplicationException.class);
+        assertThatThrownBy(() -> authorService.update("1", "  ")).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("  ");
         Mockito.verify(stringService, Mockito.times(1)).verifyNotBlank("");
         Mockito.verify(authorRepository, Mockito.never()).save(Mockito.any());
@@ -103,9 +103,9 @@ class AuthorServiceImplTest {
     void shouldNotUpdateNotExistAuthor() {
         Mockito.when(stringService.beautifyStringName("lermontov")).thenReturn("LERMONTOV");
         Mockito.when(stringService.verifyNotBlank("LERMONTOV")).thenReturn(true);
-        Mockito.when(authorRepository.findById(5)).thenReturn(Optional.empty());
+        Mockito.when(authorRepository.findById("5")).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> authorService.update(5, "lermontov")).isInstanceOf(ApplicationException.class);
+        assertThatThrownBy(() -> authorService.update("5", "lermontov")).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("lermontov");
         Mockito.verify(authorRepository, Mockito.never()).save(Mockito.any());
     }

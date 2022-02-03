@@ -55,8 +55,8 @@ class GenreServiceImplTest {
     @Test
     @DisplayName("корректно возвращать жанр по ИД")
     void shouldCorrectGetGenreById() {
-        Mockito.when(genreRepository.findById(1)).thenReturn(Optional.of(GENRE1));
-        Genre actualGenre = genreService.getById(1);
+        Mockito.when(genreRepository.findById("1")).thenReturn(Optional.of(GENRE1));
+        Genre actualGenre = genreService.getById("1");
         assertThat(actualGenre).isEqualTo(GENRE1);
     }
 
@@ -71,8 +71,8 @@ class GenreServiceImplTest {
     @Test
     @DisplayName("корректно удалять жанр по ИД")
     void shouldCorrectDeleteGenreAndUnusedAuthorsById() {
-        genreService.deleteById(2);
-        Mockito.verify(genreRepository, Mockito.times(1)).deleteById(2);
+        genreService.deleteById("2");
+        Mockito.verify(genreRepository, Mockito.times(1)).deleteWithBooksByGenreId("2");
     }
 
     @Test
@@ -80,10 +80,10 @@ class GenreServiceImplTest {
     void shouldCorrectUpdateGenre() {
         Mockito.when(stringService.beautifyStringName("detective")).thenReturn("DETECTIVE");
         Mockito.when(stringService.verifyNotBlank("DETECTIVE")).thenReturn(true);
-        Mockito.when(genreRepository.findById(1)).thenReturn(Optional.of(GENRE1));
-        genreService.update(1, "detective");
+        Mockito.when(genreRepository.findById("3")).thenReturn(Optional.of(GENRE1));
+        genreService.update("3", "detective");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("detective");
-        Mockito.verify(genreRepository, Mockito.times(1)).save(new Genre(1L, "DETECTIVE"));
+        Mockito.verify(genreRepository, Mockito.times(1)).save(new Genre("3", "DETECTIVE"));
     }
 
     @Test
@@ -91,7 +91,7 @@ class GenreServiceImplTest {
     void shouldNotUpdateBlankGenreName() {
         Mockito.when(stringService.beautifyStringName("  ")).thenReturn("");
         Mockito.when(stringService.verifyNotBlank("")).thenReturn(false);
-        assertThatThrownBy(() -> genreService.update(1, "  ")).isInstanceOf(ApplicationException.class);
+        assertThatThrownBy(() -> genreService.update("1", "  ")).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("  ");
         Mockito.verify(stringService, Mockito.times(1)).verifyNotBlank("");
         Mockito.verify(genreRepository, Mockito.never()).save(Mockito.any());
@@ -102,9 +102,9 @@ class GenreServiceImplTest {
     void shouldNotUpdateNotExistGenre() {
         Mockito.when(stringService.beautifyStringName("detective")).thenReturn("DETECTIVE");
         Mockito.when(stringService.verifyNotBlank("DETECTIVE")).thenReturn(true);
-        Mockito.when(genreRepository.findById(5)).thenReturn(null);
+        Mockito.when(genreRepository.findById("5")).thenReturn(null);
 
-        assertThatThrownBy(() -> genreService.update(5, "lermontov")).isInstanceOf(ApplicationException.class);
+        assertThatThrownBy(() -> genreService.update("5", "lermontov")).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("lermontov");
         Mockito.verify(authorRepository, Mockito.never()).save(Mockito.any());
     }

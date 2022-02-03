@@ -7,13 +7,13 @@ import java.util.List;
 public interface GenreService {
     List<Genre> getAll();
 
-    Genre getById(long id);
+    Genre getById(String id);
 
     Genre getByName(String name);
 
-    void deleteById(long id);
+    void deleteById(String id);
 
-    void update(long id, String name);
+    void update(String id, String name);
 
     Genre create(String name);
 }

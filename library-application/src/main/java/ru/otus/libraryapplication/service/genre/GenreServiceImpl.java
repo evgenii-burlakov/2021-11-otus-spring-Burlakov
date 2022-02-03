@@ -24,7 +24,7 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional(readOnly = true)
-    public Genre getById(long id) {
+    public Genre getById(String id) {
         return genreRepository.findById(id).orElse(null);
     }
 
@@ -36,22 +36,21 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional
-    public void deleteById(long id) {
-        genreRepository.deleteById(id);
+    public void deleteById(String id) {
+        genreRepository.deleteWithBooksByGenreId(id);
     }
 
     @Override
     @Transactional
-    public void update(long id, String name) {
+    public void update(String id, String name) {
         String genreName = stringService.beautifyStringName(name);
         if (stringService.verifyNotBlank(genreName)) {
-            Genre genre = genreRepository.findById(id).orElse(null);
-            if (genre != null) {
+            genreRepository.findById(id).ifPresentOrElse(genre -> {
                 genre.setName(genreName);
                 genreRepository.save(genre);
-            } else {
+            }, () -> {
                 throw new ApplicationException("Invalid genre id");
-            }
+            });
         } else {
             throw new ApplicationException("Invalid genre name");
         }

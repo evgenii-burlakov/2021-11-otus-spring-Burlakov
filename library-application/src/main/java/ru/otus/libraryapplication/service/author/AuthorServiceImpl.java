@@ -24,7 +24,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional(readOnly = true)
-    public Author getById(long id) {
+    public Author getById(String id) {
         return authorRepository.findById(id).orElse(null);
     }
 
@@ -36,22 +36,21 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public void deleteById(long id) {
-        authorRepository.deleteById(id);
+    public void deleteById(String id) {
+        authorRepository.deleteWithBooksByAuthorId(id);
     }
 
     @Override
     @Transactional
-    public void update(long id, String name) {
+    public void update(String id, String name) {
         String authorName = stringService.beautifyStringName(name);
         if (stringService.verifyNotBlank(authorName)) {
-            Author author = authorRepository.findById(id).orElse(null);
-            if (author != null) {
+            authorRepository.findById(id).ifPresentOrElse(author -> {
                 author.setName(authorName);
                 authorRepository.save(author);
-            } else {
+            }, () -> {
                 throw new ApplicationException("Invalid author id");
-            }
+            });
         } else {
             throw new ApplicationException("Invalid author name");
         }

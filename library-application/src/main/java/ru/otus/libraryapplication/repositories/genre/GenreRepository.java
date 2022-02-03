@@ -1,19 +1,17 @@
 package ru.otus.libraryapplication.repositories.genre;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import ru.otus.libraryapplication.domain.Genre;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface GenreRepository extends JpaRepository<Genre, Long> {
+public interface GenreRepository extends MongoRepository<Genre, Long>, GenreRepositoryCustom {
     List<Genre> findAll();
 
-    Optional<Genre> findById(long id);
+    Optional<Genre> findById(String id);
 
     Optional<Genre> findByName(String name);
-
-    void deleteById(long id);
 
     Genre save(Genre genre);
 }

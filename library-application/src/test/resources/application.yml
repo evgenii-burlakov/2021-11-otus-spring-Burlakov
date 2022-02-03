@@ -6,26 +6,22 @@ spring:
     interactive:
       enabled: false
 
-  datasource:
-    url: jdbc:h2:mem:testdb
-    #initialization-mode: always
-    #schema: schema.sql
-    #data: data.sql
+  mongodb:
+    embedded:
+      version: 3.5.5
+  data:
+    mongodb:
+      port: 0
+      database: library
 
-  sql:
-    init:
-      mode: always
-      data-locations: data.sql
-#      schema-locations: schema.sql
-
-  jpa:
-    generate-ddl: false
-#    generate-ddl: true
-    hibernate:
-      ddl-auto: none
-#      ddl-auto: create-drop
-
-    show-sql: true
+mongock:
+  runner-type: "ApplicationRunner"
+  change-logs-scan-package:
+    - ru.otus.libraryapplication.changelogs
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
 
 logging:
   level:

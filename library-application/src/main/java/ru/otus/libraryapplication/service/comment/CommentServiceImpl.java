@@ -21,7 +21,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Comment> getAllByBookId(Long bookId) {
+    public List<Comment> getAllByBookId(String bookId) {
         Book book = bookService.getById(bookId);
         if (book != null) {
             return commentRepository.getAllByBook(book);
@@ -32,24 +32,23 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void deleteById(long id) {
+    public void deleteById(String id) {
         commentRepository.deleteById(id);
     }
 
     @Override
     @Transactional
-    public void update(long id, String stringComment, long bookId) {
+    public void update(String id, String stringComment, String bookId) {
         if (stringService.verifyNotBlank(stringComment)) {
             Book book = bookService.getById(bookId);
             if (book != null) {
-                Comment comment = commentRepository.findById(id).orElse(null);
-                if (comment != null) {
+                commentRepository.findById(id).ifPresentOrElse(comment -> {
                     comment.setComment(stringComment);
                     comment.setBook(book);
                     commentRepository.save(comment);
-                } else {
+                }, () -> {
                     throw new ApplicationException("Invalid comment id");
-                }
+                });
             } else {
                 throw new ApplicationException("Invalid book id");
             }
@@ -60,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public Comment create(String comment, Long bookId) {
+    public Comment create(String comment, String bookId) {
         if (stringService.verifyNotBlank(comment)) {
             Book book = bookService.getById(bookId);
             if (book != null) {
