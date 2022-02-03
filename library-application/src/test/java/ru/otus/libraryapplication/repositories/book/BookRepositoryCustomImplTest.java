@@ -9,8 +9,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.annotation.DirtiesContext;
+import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.domain.Book;
 import ru.otus.libraryapplication.domain.Comment;
+import ru.otus.libraryapplication.domain.Genre;
 import ru.otus.libraryapplication.repositories.comment.CommentRepository;
 
 import java.util.List;
@@ -33,14 +35,20 @@ class BookRepositoryCustomImplTest {
     @DisplayName("возвращать true, если такая книга уже есть в БД")
     @Test
     void shouldReturnTrueIfEqualBookExist() {
-        boolean actual = bookRepository.existByBookAuthorAndGenreNames("EVGENII ONEGIN", "PUSHKIN", "POEM");
+        Author author = testTemplate.findOne(Query.query(Criteria.where("name").is("PUSHKIN")), Author.class);
+        Genre genre = testTemplate.findOne(Query.query(Criteria.where("name").is("POEM")), Genre.class);
+
+        boolean actual = bookRepository.existByBookAuthorAndGenre("EVGENII ONEGIN", author, genre);
         assertThat(actual).isTrue();
     }
 
     @DisplayName("возвращать false, если такой книги нет в БД")
     @Test
     void shouldReturnFalseIfEqualBookNotExist() {
-        boolean actual = bookRepository.existByBookAuthorAndGenreNames("EVGENII ONEGIN", "LERMONTOV", "POEM");
+        Author author = testTemplate.findOne(Query.query(Criteria.where("name").is("LERMONTOV")), Author.class);
+        Genre genre = testTemplate.findOne(Query.query(Criteria.where("name").is("POEM")), Genre.class);
+
+        boolean actual = bookRepository.existByBookAuthorAndGenre("EVGENII ONEGIN", author, genre);
         assertThat(actual).isFalse();
     }
 

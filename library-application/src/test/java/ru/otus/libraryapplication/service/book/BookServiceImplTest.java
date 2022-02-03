@@ -140,7 +140,6 @@ class BookServiceImplTest {
     @Test
     @DisplayName("корректно добавлять книгу, и ее автора, если таких нет в БД, при не нахождении книги в бд")
     void correctCreateBookAndAuthor() {
-        Mockito.when(bookRepository.existByBookAuthorAndGenreNames("EVGENII ONEGIN", "LERMONTOV", "NOVEL")).thenReturn(false);
         Mockito.when(stringService.beautifyStringName("EVGENII ONEGIN")).thenReturn("EVGENII ONEGIN");
         Mockito.when(stringService.beautifyStringName("LERMONTOV")).thenReturn("LERMONTOV");
         Mockito.when(stringService.beautifyStringName("NOVEL")).thenReturn("NOVEL");
@@ -150,6 +149,8 @@ class BookServiceImplTest {
         Mockito.when(authorService.create("LERMONTOV")).thenReturn(new Author("3", "LERMONTOV"));
 
         Mockito.when(genreService.getByName("NOVEL")).thenReturn(GENRE2);
+
+        Mockito.when(bookRepository.existByBookAuthorAndGenre("EVGENII ONEGIN", new Author("3", "LERMONTOV"), GENRE2)).thenReturn(false);
 
         bookService.create("EVGENII ONEGIN", "LERMONTOV", "NOVEL");
 
@@ -166,15 +167,19 @@ class BookServiceImplTest {
     @Test
     @DisplayName("не добавлять книгу, она уже есть в БД")
     void notCreateBook() {
-        Mockito.when(bookRepository.existByBookAuthorAndGenreNames("EVGENII ONEGIN", "LERMONTOV", "NOVEL")).thenReturn(true);
         Mockito.when(stringService.beautifyStringName("EVGENII ONEGIN")).thenReturn("EVGENII ONEGIN");
-        Mockito.when(stringService.beautifyStringName("LERMONTOV")).thenReturn("LERMONTOV");
+        Mockito.when(stringService.beautifyStringName("MONTGOMERY")).thenReturn("MONTGOMERY");
         Mockito.when(stringService.beautifyStringName("NOVEL")).thenReturn("NOVEL");
 
-        assertThatThrownBy(() -> bookService.create("EVGENII ONEGIN", "LERMONTOV", "NOVEL")).isInstanceOf(ApplicationException.class);
+        Mockito.when(authorService.getByName("MONTGOMERY")).thenReturn(AUTHOR2);
+        Mockito.when(genreService.getByName("NOVEL")).thenReturn(GENRE2);
+
+        Mockito.when(bookRepository.existByBookAuthorAndGenre("EVGENII ONEGIN", AUTHOR2, GENRE2)).thenReturn(true);
+
+        assertThatThrownBy(() -> bookService.create("EVGENII ONEGIN", "MONTGOMERY", "NOVEL")).isInstanceOf(ApplicationException.class);
 
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("EVGENII ONEGIN");
-        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("LERMONTOV");
+        Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("MONTGOMERY");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("NOVEL");
 
         Mockito.verify(authorService, Mockito.never()).create(Mockito.anyString());
@@ -190,7 +195,6 @@ class BookServiceImplTest {
         Mockito.when(stringService.beautifyStringName("LERMONTOV")).thenReturn("LERMONTOV");
         Mockito.when(stringService.beautifyStringName("NOVEL")).thenReturn("NOVEL");
         Mockito.when(stringService.verifyNotBlank(null, "LERMONTOV", "NOVEL")).thenReturn(false);
-        Mockito.when(bookRepository.existByBookAuthorAndGenreNames("EVGENII ONEGIN", "LERMONTOV", "NOVEL")).thenReturn(true);
 
 
         assertThatThrownBy(() -> bookService.create(null, "LERMONTOV", "NOVEL")).isInstanceOf(ApplicationException.class);

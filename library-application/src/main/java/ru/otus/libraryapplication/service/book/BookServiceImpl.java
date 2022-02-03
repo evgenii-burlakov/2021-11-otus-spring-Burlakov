@@ -70,12 +70,13 @@ public class BookServiceImpl implements BookService {
 
         if (!stringService.verifyNotBlank(bookName, author, genre)) {
             throw new ApplicationException("Invalid book parameters");
-        } else if (bookRepository.existByBookAuthorAndGenreNames(bookName, author, genre)) {
-            throw new ApplicationException("Book already exist");
         } else {
             Author bookAuthor = getOrCreateAuthor(author);
-
             Genre bookGenre = getOrCreateGenre(genre);
+
+            if (bookRepository.existByBookAuthorAndGenre(bookName, bookAuthor, bookGenre)) {
+                throw new ApplicationException("Book already exist");
+            }
 
             Book book = new Book(null, bookName, bookAuthor, bookGenre);
             return bookRepository.save(book);

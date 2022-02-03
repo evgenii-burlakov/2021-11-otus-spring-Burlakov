@@ -7,8 +7,12 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.domain.Book;
 import ru.otus.libraryapplication.domain.Comment;
+import ru.otus.libraryapplication.domain.Genre;
+
+import java.util.Optional;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.count;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
@@ -24,11 +28,11 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
     }
 
     @Override
-    public boolean existByBookAuthorAndGenreNames(String bookName, String author, String genre) {
+    public boolean existByBookAuthorAndGenre(String bookName, Author author, Genre genre) {
         val aggregation = Aggregation.newAggregation(
                 match(where("name").is(bookName)),
-                match(where("author.name").is(author)),
-                match(where("genre.name").is(genre)),
+                match(where("author.id").is(Optional.ofNullable(author).map(Author::getId).orElse(null))),
+                match(where("genre.id").is(Optional.ofNullable(genre).map(Genre::getId).orElse(null))),
                 count().as("size"));
 
         val arraySizeProjection =
