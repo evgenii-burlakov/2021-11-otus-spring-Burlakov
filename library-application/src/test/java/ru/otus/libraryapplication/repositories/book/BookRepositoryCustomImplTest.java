@@ -16,7 +16,6 @@ import ru.otus.libraryapplication.domain.Genre;
 import ru.otus.libraryapplication.repositories.comment.CommentRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -59,9 +58,6 @@ class BookRepositoryCustomImplTest {
         Book book = testTemplate.findOne(Query.query(Criteria.where("name").is("EVGENII ONEGIN")), Book.class);
 
         bookRepository.deleteWithCommentsByBookId(book.getId());
-
-        assertThat(bookRepository.findById(book.getId())).isEqualTo(Optional.empty());
-        assertThat(commentRepository.getAllByBook(book)).isEqualTo(List.of());
 
         assertThat(testTemplate.findById(book.getId(), Book.class)).isNull();
         assertThat(testTemplate.find(Query.query(Criteria.where("book.id").is(book.getId())), Comment.class)).isEqualTo(List.of());
