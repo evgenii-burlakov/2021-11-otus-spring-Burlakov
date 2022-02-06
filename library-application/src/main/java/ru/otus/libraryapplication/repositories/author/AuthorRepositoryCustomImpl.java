@@ -14,7 +14,7 @@ public class AuthorRepositoryCustomImpl implements AuthorRepositoryCustom {
     @Override
     public void deleteWithBooksByAuthorId(String id) {
         Query query = Query.query(Criteria.where("author.id").is(id));
-        mongoTemplate.findAllAndRemove(query, Book.class);
+        mongoTemplate.remove(query, Book.class);
 
         mongoTemplate.remove(Query.query(Criteria.where("id").is(id)), Author.class);
     }

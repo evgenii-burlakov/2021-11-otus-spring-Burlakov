@@ -31,6 +31,7 @@ class BookRepositoryCustomImplTest {
     @Autowired
     private MongoTemplate testTemplate;
 
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     @DisplayName("возвращать true, если такая книга уже есть в БД")
     @Test
     void shouldReturnTrueIfEqualBookExist() {
@@ -51,7 +52,7 @@ class BookRepositoryCustomImplTest {
         assertThat(actual).isFalse();
     }
 
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     @DisplayName("каскадно удалять комментарии при удалении книги")
     @Test
     void shouldCascadeDeleteCommentsWithBook() {

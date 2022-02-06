@@ -14,7 +14,7 @@ public class GenreRepositoryCustomImpl implements GenreRepositoryCustom {
     @Override
     public void deleteWithBooksByGenreId(String id) {
         Query query = Query.query(Criteria.where("genre.id").is(id));
-        mongoTemplate.findAllAndRemove(query, Book.class);
+        mongoTemplate.remove(query, Book.class);
 
         mongoTemplate.remove(Query.query(Criteria.where("id").is(id)), Genre.class);
     }
