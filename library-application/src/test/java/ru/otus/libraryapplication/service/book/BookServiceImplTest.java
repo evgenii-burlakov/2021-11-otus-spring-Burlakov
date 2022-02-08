@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.domain.Book;
+import ru.otus.libraryapplication.dto.AuthorDto;
 import ru.otus.libraryapplication.repositories.book.BookRepository;
 import ru.otus.libraryapplication.service.author.AuthorService;
 import ru.otus.libraryapplication.service.comment.CommentService;
@@ -82,7 +83,7 @@ class BookServiceImplTest {
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("POEM");
 
-        Mockito.verify(authorService, Mockito.never()).create(Mockito.anyString());
+        Mockito.verify(authorService, Mockito.never()).create(Mockito.any());
         Mockito.verify(genreService, Mockito.never()).create(Mockito.anyString());
 
         Mockito.verify(bookRepository, Mockito.never()).save(Mockito.any());
@@ -103,7 +104,7 @@ class BookServiceImplTest {
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("LERMONTOV");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("POEM");
 
-        Mockito.verify(authorService, Mockito.never()).create(Mockito.anyString());
+        Mockito.verify(authorService, Mockito.never()).create(Mockito.any());
         Mockito.verify(genreService, Mockito.never()).create(Mockito.anyString());
 
         Mockito.verify(bookRepository, Mockito.never()).save(Mockito.any());
@@ -121,7 +122,7 @@ class BookServiceImplTest {
 
 
         Mockito.when(authorService.getByName("LERMONTOV")).thenReturn(null);
-        Mockito.when(authorService.create("LERMONTOV")).thenReturn(new Author(3L, "LERMONTOV"));
+        Mockito.when(authorService.create(new AuthorDto("LERMONTOV"))).thenReturn(new Author(3L, "LERMONTOV"));
 
         Mockito.when(genreService.getByName("NOVEL")).thenReturn(GENRE2);
 
@@ -131,7 +132,7 @@ class BookServiceImplTest {
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("LERMONTOV");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("NOVEL");
 
-        Mockito.verify(authorService, Mockito.times(1)).create("LERMONTOV");
+        Mockito.verify(authorService, Mockito.times(1)).create(new AuthorDto("LERMONTOV"));
         Mockito.verify(genreService, Mockito.never()).create(Mockito.anyString());
 
         Mockito.verify(bookRepository, Mockito.times(1)).save(new Book(1L, "EVGENII ONEGIN", new Author(3L, "LERMONTOV"), GENRE2));
@@ -147,7 +148,7 @@ class BookServiceImplTest {
         Mockito.when(stringService.verifyNotBlank("EVGENII ONEGIN", "LERMONTOV", "NOVEL")).thenReturn(true);
 
         Mockito.when(authorService.getByName("LERMONTOV")).thenReturn(null);
-        Mockito.when(authorService.create("LERMONTOV")).thenReturn(new Author(3L, "LERMONTOV"));
+        Mockito.when(authorService.create(new AuthorDto("LERMONTOV"))).thenReturn(new Author(3L, "LERMONTOV"));
 
         Mockito.when(genreService.getByName("NOVEL")).thenReturn(GENRE2);
 
@@ -157,7 +158,7 @@ class BookServiceImplTest {
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("LERMONTOV");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("NOVEL");
 
-        Mockito.verify(authorService, Mockito.times(1)).create("LERMONTOV");
+        Mockito.verify(authorService, Mockito.times(1)).create(new AuthorDto("LERMONTOV"));
         Mockito.verify(genreService, Mockito.never()).create(Mockito.anyString());
 
         Mockito.verify(bookRepository, Mockito.times(1)).save(new Book(null, "EVGENII ONEGIN", new Author(3L, "LERMONTOV"), GENRE2));
@@ -177,7 +178,7 @@ class BookServiceImplTest {
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("LERMONTOV");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("NOVEL");
 
-        Mockito.verify(authorService, Mockito.never()).create(Mockito.anyString());
+        Mockito.verify(authorService, Mockito.never()).create(Mockito.any());
         Mockito.verify(genreService, Mockito.never()).create(Mockito.anyString());
 
         Mockito.verify(bookRepository, Mockito.never()).save(Mockito.any());
@@ -199,7 +200,7 @@ class BookServiceImplTest {
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("LERMONTOV");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("NOVEL");
 
-        Mockito.verify(authorService, Mockito.never()).create(Mockito.anyString());
+        Mockito.verify(authorService, Mockito.never()).create(Mockito.any());
         Mockito.verify(genreService, Mockito.never()).create(Mockito.anyString());
 
         Mockito.verify(bookRepository, Mockito.never()).save(Mockito.any());

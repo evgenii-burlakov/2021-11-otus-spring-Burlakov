@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.libraryapplication.domain.Author;
+import ru.otus.libraryapplication.dto.AuthorDto;
 import ru.otus.libraryapplication.repositories.author.AuthorRepository;
 import ru.otus.libraryapplication.service.string.StringService;
 import ru.otus.libraryapplication.util.exeption.ApplicationException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,14 +20,16 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Author> getAll() {
-        return authorRepository.findAll();
+    public List<AuthorDto> getAll() {
+        return authorRepository.findAll().stream()
+                .map(AuthorDto::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Author getById(long id) {
-        return authorRepository.findById(id).orElse(null);
+    public AuthorDto getById(long id) {
+        return authorRepository.findById(id).map(AuthorDto::toDto).orElse(null);
     }
 
     @Override
@@ -42,10 +46,10 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public void update(long id, String name) {
-        String authorName = stringService.beautifyStringName(name);
+    public void update(AuthorDto authorDto) {
+        String authorName = stringService.beautifyStringName(authorDto.getName());
         if (stringService.verifyNotBlank(authorName)) {
-            authorRepository.findById(id).ifPresentOrElse(author -> {
+            authorRepository.findById(authorDto.getId()).ifPresentOrElse(author -> {
                 author.setName(authorName);
                 authorRepository.save(author);
             }, () -> {
@@ -58,8 +62,8 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public Author create(String name) {
-        String authorName = stringService.beautifyStringName(name);
+    public Author create(AuthorDto authorDto) {
+        String authorName = stringService.beautifyStringName(authorDto.getName());
         if (stringService.verifyNotBlank(authorName)) {
             Author author = new Author(null, authorName);
             return authorRepository.save(author);

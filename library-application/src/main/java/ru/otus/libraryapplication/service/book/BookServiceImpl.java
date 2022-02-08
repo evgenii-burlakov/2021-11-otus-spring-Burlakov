@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.domain.Book;
 import ru.otus.libraryapplication.domain.Genre;
+import ru.otus.libraryapplication.dto.AuthorDto;
 import ru.otus.libraryapplication.repositories.book.BookRepository;
 import ru.otus.libraryapplication.service.author.AuthorService;
 import ru.otus.libraryapplication.service.genre.GenreService;
@@ -93,7 +94,7 @@ public class BookServiceImpl implements BookService {
     private Author getOrCreateAuthor(String author) {
         Author bookAuthor = authorService.getByName(author);
         if (bookAuthor == null) {
-            return authorService.create(author);
+            return authorService.create(new AuthorDto(author));
         }
         return bookAuthor;
     }
