@@ -42,14 +42,13 @@ public class CommentServiceImpl implements CommentService {
         if (stringService.verifyNotBlank(stringComment)) {
             Book book = bookService.getById(bookId);
             if (book != null) {
-                Comment comment = commentRepository.findById(id).orElse(null);
-                if (comment != null) {
+                commentRepository.findById(id).ifPresentOrElse(comment -> {
                     comment.setComment(stringComment);
                     comment.setBook(book);
                     commentRepository.save(comment);
-                } else {
+                }, () -> {
                     throw new ApplicationException("Invalid comment id");
-                }
+                });
             } else {
                 throw new ApplicationException("Invalid book id");
             }

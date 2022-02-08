@@ -45,13 +45,12 @@ public class AuthorServiceImpl implements AuthorService {
     public void update(long id, String name) {
         String authorName = stringService.beautifyStringName(name);
         if (stringService.verifyNotBlank(authorName)) {
-            Author author = authorRepository.findById(id).orElse(null);
-            if (author != null) {
+            authorRepository.findById(id).ifPresentOrElse(author -> {
                 author.setName(authorName);
                 authorRepository.save(author);
-            } else {
+            }, () -> {
                 throw new ApplicationException("Invalid author id");
-            }
+            });
         } else {
             throw new ApplicationException("Invalid author name");
         }

@@ -48,15 +48,14 @@ public class BookServiceImpl implements BookService {
         String bookName = stringService.beautifyStringName(name);
 
         if (stringService.verifyNotBlank(bookName, author, genre)) {
-            Book book = bookRepository.findById(id).orElse(null);
-            if (book != null) {
+            bookRepository.findById(id).ifPresentOrElse(book -> {
                 book.setName(bookName);
                 book.setAuthor(getOrCreateAuthor(author));
                 book.setGenre(getOrCreateGenre(genre));
                 bookRepository.save(book);
-            } else {
+            }, () -> {
                 throw new ApplicationException("Invalid book id");
-            }
+            });
         } else {
             throw new ApplicationException("Invalid book parameters");
         }

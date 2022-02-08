@@ -45,13 +45,12 @@ public class GenreServiceImpl implements GenreService {
     public void update(long id, String name) {
         String genreName = stringService.beautifyStringName(name);
         if (stringService.verifyNotBlank(genreName)) {
-            Genre genre = genreRepository.findById(id).orElse(null);
-            if (genre != null) {
+            genreRepository.findById(id).ifPresentOrElse(genre -> {
                 genre.setName(genreName);
                 genreRepository.save(genre);
-            } else {
+            }, () -> {
                 throw new ApplicationException("Invalid genre id");
-            }
+            });
         } else {
             throw new ApplicationException("Invalid genre name");
         }
