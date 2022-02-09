@@ -62,11 +62,11 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public Author create(AuthorDto authorDto) {
+    public AuthorDto create(AuthorDto authorDto) {
         String authorName = stringService.beautifyStringName(authorDto.getName());
         if (stringService.verifyNotBlank(authorName)) {
             Author author = new Author(null, authorName);
-            return authorRepository.save(author);
+            return AuthorDto.toDto(authorRepository.save(author));
         }
 
         throw new ApplicationException("Invalid author name");

@@ -16,5 +16,5 @@ public interface AuthorService {
 
     void update(AuthorDto authorDto);
 
-    Author create(AuthorDto authorDto);
+    AuthorDto create(AuthorDto authorDto);
 }

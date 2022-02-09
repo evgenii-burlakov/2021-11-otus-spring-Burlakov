@@ -24,22 +24,29 @@ public class AuthorController {
     }
 
     @GetMapping("/authors/delete")
-    public String deleteAuthorById(@RequestParam("id") int id, Model model) {
+    public String deleteAuthorById(@RequestParam("id") long id, Model model) {
         authorService.deleteById(id);
         return "redirect:/authors";
     }
 
     @GetMapping("/authors/edit")
-    public String editPage(@RequestParam("id") int id, Model model) {
-        AuthorDto author = authorService.getById(id);
-        model.addAttribute("author", author);
-        return "edit";
+    public String editPage(@RequestParam("id") Long id, Model model) {
+        if (id != null) {
+            AuthorDto author = authorService.getById(id);
+            model.addAttribute("author", author);
+        }
+        return "editAuthor";
     }
 
     @PostMapping("/authors/edit")
     public String updateAuthor(AuthorDto author) {
         authorService.update(author);
         return "redirect:/authors";
+    }
+
+    @GetMapping("/authors/create")
+    public String createPage() {
+        return "createAuthor";
     }
 
     @PostMapping("/authors/create")

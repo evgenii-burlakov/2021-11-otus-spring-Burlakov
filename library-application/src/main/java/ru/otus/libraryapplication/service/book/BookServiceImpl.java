@@ -7,6 +7,8 @@ import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.domain.Book;
 import ru.otus.libraryapplication.domain.Genre;
 import ru.otus.libraryapplication.dto.AuthorDto;
+import ru.otus.libraryapplication.dto.BookDto;
+import ru.otus.libraryapplication.dto.GenreDto;
 import ru.otus.libraryapplication.repositories.book.BookRepository;
 import ru.otus.libraryapplication.service.author.AuthorService;
 import ru.otus.libraryapplication.service.genre.GenreService;
@@ -14,6 +16,7 @@ import ru.otus.libraryapplication.service.string.StringService;
 import ru.otus.libraryapplication.util.exeption.ApplicationException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,14 +28,16 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Book> getAll() {
-        return bookRepository.findAll();
+    public List<BookDto> getAll() {
+        return bookRepository.findAll().stream()
+                .map(BookDto::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Book getById(long id) {
-        return bookRepository.findById(id).orElse(null);
+    public BookDto getById(long id) {
+        return bookRepository.findById(id).map(BookDto::toDto).orElse(null);
     }
 
     @Override
@@ -43,13 +48,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void update(long id, String name, String authorName, String genreName) {
-        String author = stringService.beautifyStringName(authorName);
-        String genre = stringService.beautifyStringName(genreName);
-        String bookName = stringService.beautifyStringName(name);
+    public void update(BookDto bookDto) {
+        String author = stringService.beautifyStringName(bookDto.getAuthor().getName());
+        String genre = stringService.beautifyStringName(bookDto.getGenre().getName());
+        String bookName = stringService.beautifyStringName(bookDto.getName());
 
         if (stringService.verifyNotBlank(bookName, author, genre)) {
-            bookRepository.findById(id).ifPresentOrElse(book -> {
+            bookRepository.findById(bookDto.getId()).ifPresentOrElse(book -> {
                 book.setName(bookName);
                 book.setAuthor(getOrCreateAuthor(author));
                 book.setGenre(getOrCreateGenre(genre));
@@ -64,10 +69,10 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public Book create(String name, String authorName, String genreName) {
-        String author = stringService.beautifyStringName(authorName);
-        String genre = stringService.beautifyStringName(genreName);
-        String bookName = stringService.beautifyStringName(name);
+    public BookDto create(BookDto bookDto) {
+        String author = stringService.beautifyStringName(bookDto.getAuthor().getName());
+        String genre = stringService.beautifyStringName(bookDto.getGenre().getName());
+        String bookName = stringService.beautifyStringName(bookDto.getName());
 
         if (!stringService.verifyNotBlank(bookName, author, genre)) {
             throw new ApplicationException("Invalid book parameters");
@@ -79,14 +84,14 @@ public class BookServiceImpl implements BookService {
             Genre bookGenre = getOrCreateGenre(genre);
 
             Book book = new Book(null, bookName, bookAuthor, bookGenre);
-            return bookRepository.save(book);
+            return BookDto.toDto(bookRepository.save(book));
         }
     }
 
     private Genre getOrCreateGenre(String genre) {
         Genre bookGenre = genreService.getByName(genre);
         if (bookGenre == null) {
-            return genreService.create(genre);
+            return genreService.create(new GenreDto(genre)).toBean();
         }
         return bookGenre;
     }
@@ -94,7 +99,7 @@ public class BookServiceImpl implements BookService {
     private Author getOrCreateAuthor(String author) {
         Author bookAuthor = authorService.getByName(author);
         if (bookAuthor == null) {
-            return authorService.create(new AuthorDto(author));
+            return authorService.create(new AuthorDto(author)).toBean();
         }
         return bookAuthor;
     }

@@ -2,19 +2,19 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Authors</title>
+    <title>Genres</title>
     <style type="text/css">
         body {
             padding: 50px;
         }
 
-        .authors {
+        .genres {
             border: 1px solid steelblue;
             width: 300px;
             border-collapse: collapse;
         }
 
-        .authors tr td, th {
+        .genres tr td, th {
             padding: 5px;
             border: 1px solid steelblue;
         }
@@ -22,9 +22,9 @@
     </style>
 </head>
 <body>
-<h3>Authors:</h3>
+<h3>Genres:</h3>
 
-<table class="authors">
+<table class="genres">
     <thead>
     <tr>
         <th>Name</th>
@@ -33,13 +33,13 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="author : ${authors}">
-        <td th:text="${author.name}">Lermontov</td>
+    <tr th:each="genre : ${genres}">
+        <td th:text="${genre.name}">Novel</td>
         <td>
-            <a th:href="@{/authors/edit(id=${author.id})}" href="#" >Edit</a>
+            <a th:href="@{/genres/edit(id=${genre.id})}" href="#" >Edit</a>
         </td>
         <td>
-            <a th:href="@{/authors/delete(id=${author.id})}" href="#" >Delete</a>
+            <a th:href="@{/genres/delete(id=${genre.id})}" href="#" >Delete</a>
         </td>
     </tr>
     </tbody>
@@ -47,7 +47,7 @@
 
 <br><br>
 
-<div><a href="/authors/create" >Add author</a></div>
+<div><a href="/genres/create" >Add genre</a></div>
 <div><a href="/">Exit</a></div>
 
 </body>

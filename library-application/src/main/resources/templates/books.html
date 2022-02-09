@@ -2,44 +2,52 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Authors</title>
+    <title>Books</title>
     <style type="text/css">
         body {
             padding: 50px;
         }
 
-        .authors {
+        .books {
             border: 1px solid steelblue;
             width: 300px;
             border-collapse: collapse;
         }
 
-        .authors tr td, th {
+        .books tr td, th {
             padding: 5px;
             border: 1px solid steelblue;
         }
 
+
     </style>
 </head>
 <body>
-<h3>Authors:</h3>
+<h3>Books:</h3>
 
-<table class="authors">
+<table class="books">
     <thead>
     <tr>
         <th>Name</th>
+        <th>Author</th>
+        <th>Genre</th>
         <th></th>
         <th></th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="author : ${authors}">
-        <td th:text="${author.name}">Lermontov</td>
+    <tr th:each="book : ${books}">
+
         <td>
-            <a th:href="@{/authors/edit(id=${author.id})}" href="#" >Edit</a>
+            <a th:href="@{/books/get(id=${book.id})}" href="#" th:text="${book.name}">We</a>
+        </td>
+        <td th:text="${book.author.name}">Zamiatin</td>
+        <td th:text="${book.genre.name}">Fantasy</td>
+        <td>
+            <a th:href="@{/books/edit(id=${book.id})}" href="#">Edit</a>
         </td>
         <td>
-            <a th:href="@{/authors/delete(id=${author.id})}" href="#" >Delete</a>
+            <a th:href="@{/books/delete(id=${book.id})}" href="#">Delete</a>
         </td>
     </tr>
     </tbody>
@@ -47,7 +55,7 @@
 
 <br><br>
 
-<div><a href="/authors/create" >Add author</a></div>
+<div><a href="/books/create">Add book</a></div>
 <div><a href="/">Exit</a></div>
 
 </body>
