@@ -7,11 +7,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.otus.libraryapplication.dto.AuthorDto;
 import ru.otus.libraryapplication.dto.GenreDto;
 import ru.otus.libraryapplication.service.genre.GenreService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -20,7 +20,9 @@ public class GenreController {
 
     @GetMapping("/genres")
     public String getAllGenres(Model model) {
-        List<GenreDto> genres = genreService.getAll();
+        List<GenreDto> genres = genreService.getAll().stream()
+                .map(GenreDto::toDto)
+                .collect(Collectors.toList());
         model.addAttribute("genres", genres);
         return "genres";
     }
@@ -33,14 +35,14 @@ public class GenreController {
 
     @GetMapping("/genres/edit")
     public String editPage(@RequestParam("id") Long id, Model model) {
-        GenreDto genre = genreService.getById(id);
+        GenreDto genre = GenreDto.toDto(genreService.getById(id));
         model.addAttribute("genre", genre);
         return "editGenre";
     }
 
     @PostMapping("/genres/edit")
     public String updateGenre(GenreDto genre) {
-        genreService.update(genre);
+        genreService.update(genre.getId(), genre.getName());
         return "redirect:/genres";
     }
 
@@ -51,7 +53,7 @@ public class GenreController {
 
     @PostMapping("/genres/create")
     public String createGenre(GenreDto genre) {
-        genreService.create(genre);
+        genreService.create(genre.getName());
         return "redirect:/genres";
     }
 }

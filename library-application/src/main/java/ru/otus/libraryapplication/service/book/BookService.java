@@ -1,17 +1,17 @@
 package ru.otus.libraryapplication.service.book;
 
-import ru.otus.libraryapplication.dto.BookDto;
+import ru.otus.libraryapplication.domain.Book;
 
 import java.util.List;
 
 public interface BookService {
-    List<BookDto> getAll();
+    List<Book> getAll();
 
-    BookDto getById(long id);
+    Book getById(long id);
 
     void deleteById(long id);
 
-    void update(BookDto bookDto);
+    void update(long id, String name, String authorName, String genreName);
 
-    BookDto create(BookDto bookDto);
+    Book create(String name, String authorName, String genreName);
 }

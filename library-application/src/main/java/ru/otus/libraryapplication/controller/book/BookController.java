@@ -6,13 +6,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.otus.libraryapplication.domain.Comment;
 import ru.otus.libraryapplication.dto.BookDto;
 import ru.otus.libraryapplication.dto.CommentDto;
 import ru.otus.libraryapplication.service.book.BookService;
 import ru.otus.libraryapplication.service.comment.CommentService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,8 +21,10 @@ public class BookController {
     private final CommentService commentService;
 
     @GetMapping("/books")
-    public String getAllAuthors(Model model) {
-        List<BookDto> books = bookService.getAll();
+    public String getAllBooks(Model model) {
+        List<BookDto> books = bookService.getAll().stream()
+                .map(BookDto::toDto)
+                .collect(Collectors.toList());
         model.addAttribute("books", books);
         return "books";
     }
@@ -35,22 +37,24 @@ public class BookController {
 
     @GetMapping("/books/edit")
     public String editPage(@RequestParam("id") Long id, Model model) {
-        BookDto book = bookService.getById(id);
+        BookDto book = BookDto.toDto(bookService.getById(id));
         model.addAttribute("book", book);
         return "editBook";
     }
 
     @PostMapping("/books/edit")
     public String updateBook(BookDto book) {
-        bookService.update(book);
+        bookService.update(book.getId(), book.getName(), book.getAuthor().getName(), book.getGenre().getName());
         return "redirect:/books";
     }
 
     @GetMapping("/books/get")
     public String getPage(@RequestParam("id") Long id, Model model) {
-        BookDto book = bookService.getById(id);
+        BookDto book = BookDto.toDto(bookService.getById(id));
         model.addAttribute("book", book);
-        List<CommentDto> comments = commentService.getAllByBookId(id);
+        List<CommentDto> comments = commentService.getAllByBookId(id).stream()
+                .map(CommentDto::toDto)
+                .collect(Collectors.toList());
         model.addAttribute("comments", comments);
         return "bookPage";
     }
@@ -62,7 +66,7 @@ public class BookController {
 
     @PostMapping("/books/create")
     public String createBook(BookDto book) {
-        bookService.create(book);
+        bookService.create(book.getName(), book.getAuthor().getName(), book.getGenre().getName());
         return "redirect:/books";
     }
 }

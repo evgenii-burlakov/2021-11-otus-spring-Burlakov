@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.otus.libraryapplication.domain.Comment;
 import ru.otus.libraryapplication.dto.CommentDto;
 import ru.otus.libraryapplication.service.comment.CommentService;
 
@@ -25,14 +24,14 @@ public class CommentController {
 
     @PostMapping("/comments/create")
     public String createComment(CommentDto comment, RedirectAttributes redirectAttributes) {
-        commentService.create(comment);
+        commentService.create(comment.getComment(), comment.getBook().getId());
         redirectAttributes.addAttribute("id", comment.getBook().getId());
         return "redirect:/books/get";
     }
 
     @GetMapping("/comments/edit")
     public String editPage(@RequestParam("id") Long id, Model model) {
-        Comment comment = commentService.getById(id);
+        CommentDto comment = CommentDto.toDto(commentService.getById(id));
         model.addAttribute("comment", comment);
         return "editComment";
     }

@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.otus.libraryapplication.domain.Author;
-import ru.otus.libraryapplication.dto.AuthorDto;
 import ru.otus.libraryapplication.repositories.author.AuthorRepository;
 import ru.otus.libraryapplication.repositories.book.BookRepository;
 import ru.otus.libraryapplication.repositories.genre.GenreRepository;
@@ -17,7 +16,6 @@ import ru.otus.libraryapplication.util.exeption.ApplicationException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -51,9 +49,7 @@ class AuthorServiceImplTest {
     void shouldCorrectGetAllAuthors() {
         List<Author> expectedAuthors = List.of(AUTHOR1, AUTHOR2);
         Mockito.when(authorRepository.findAll()).thenReturn(expectedAuthors);
-        List<Author> actualAuthors = authorService.getAll().stream()
-                .map(AuthorDto::toBean)
-                .collect(Collectors.toList());
+        List<Author> actualAuthors = authorService.getAll();
         assertThat(actualAuthors).usingRecursiveComparison().isEqualTo(expectedAuthors);
     }
 
@@ -61,8 +57,8 @@ class AuthorServiceImplTest {
     @DisplayName("корректно возвращать автора по ИД")
     void shouldCorrectGetAuthorById() {
         Mockito.when(authorRepository.findById(1)).thenReturn(Optional.of(AUTHOR1));
-        AuthorDto actualAuthor = authorService.getById(1);
-        assertThat(actualAuthor).isEqualTo(AuthorDto.toDto(AUTHOR1));
+        Author actualAuthor = authorService.getById(1);
+        assertThat(actualAuthor).isEqualTo(AUTHOR1);
     }
 
     @Test
@@ -85,8 +81,8 @@ class AuthorServiceImplTest {
     void shouldCorrectUpdateAuthor() {
         Mockito.when(stringService.beautifyStringName("lermontov")).thenReturn("LERMONTOV");
         Mockito.when(stringService.verifyNotBlank("LERMONTOV")).thenReturn(true);
-        Mockito.when(authorRepository.findById(1L)).thenReturn(Optional.of(AUTHOR1));
-        authorService.update(new AuthorDto(1L, "lermontov"));
+        Mockito.when(authorRepository.findById(1)).thenReturn(Optional.of(AUTHOR1));
+        authorService.update(1, "lermontov");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("lermontov");
         Mockito.verify(authorRepository, Mockito.times(1)).save(new Author(1L, "LERMONTOV"));
     }
@@ -96,7 +92,7 @@ class AuthorServiceImplTest {
     void shouldNotUpdateBlankAuthorName() {
         Mockito.when(stringService.beautifyStringName("  ")).thenReturn("");
         Mockito.when(stringService.verifyNotBlank("")).thenReturn(false);
-        assertThatThrownBy(() -> authorService.update(new AuthorDto(1L, "  "))).isInstanceOf(ApplicationException.class);
+        assertThatThrownBy(() -> authorService.update(1, "  ")).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("  ");
         Mockito.verify(stringService, Mockito.times(1)).verifyNotBlank("");
         Mockito.verify(authorRepository, Mockito.never()).save(Mockito.any());
@@ -109,7 +105,7 @@ class AuthorServiceImplTest {
         Mockito.when(stringService.verifyNotBlank("LERMONTOV")).thenReturn(true);
         Mockito.when(authorRepository.findById(5)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> authorService.update(new AuthorDto(5L, "lermontov"))).isInstanceOf(ApplicationException.class);
+        assertThatThrownBy(() -> authorService.update(5, "lermontov")).isInstanceOf(ApplicationException.class);
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("lermontov");
         Mockito.verify(authorRepository, Mockito.never()).save(Mockito.any());
     }
@@ -119,7 +115,7 @@ class AuthorServiceImplTest {
     void shouldCorrectCreateAuthor() {
         Mockito.when(stringService.beautifyStringName("lermontov")).thenReturn("LERMONTOV");
         Mockito.when(stringService.verifyNotBlank("LERMONTOV")).thenReturn(true);
-        authorService.create(new AuthorDto("lermontov"));
+        authorService.create("lermontov");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("lermontov");
         Mockito.verify(authorRepository, Mockito.times(1)).save(new Author(null, "LERMONTOV"));
     }

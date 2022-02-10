@@ -10,6 +10,7 @@ import ru.otus.libraryapplication.dto.AuthorDto;
 import ru.otus.libraryapplication.service.author.AuthorService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -18,7 +19,9 @@ public class AuthorController {
 
     @GetMapping("/authors")
     public String getAllAuthors(Model model) {
-        List<AuthorDto> authors = authorService.getAll();
+        List<AuthorDto> authors = authorService.getAll().stream()
+                .map(AuthorDto::toDto)
+                .collect(Collectors.toList());
         model.addAttribute("authors", authors);
         return "authors";
     }
@@ -31,16 +34,14 @@ public class AuthorController {
 
     @GetMapping("/authors/edit")
     public String editPage(@RequestParam("id") Long id, Model model) {
-        if (id != null) {
-            AuthorDto author = authorService.getById(id);
-            model.addAttribute("author", author);
-        }
+        AuthorDto author = AuthorDto.toDto(authorService.getById(id));
+        model.addAttribute("author", author);
         return "editAuthor";
     }
 
     @PostMapping("/authors/edit")
     public String updateAuthor(AuthorDto author) {
-        authorService.update(author);
+        authorService.update(author.getId(), author.getName());
         return "redirect:/authors";
     }
 
@@ -51,7 +52,7 @@ public class AuthorController {
 
     @PostMapping("/authors/create")
     public String createAuthor(AuthorDto author) {
-        authorService.create(author);
+        authorService.create(author.getName());
         return "redirect:/authors";
     }
 }

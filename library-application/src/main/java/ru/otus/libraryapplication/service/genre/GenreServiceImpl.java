@@ -4,13 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.libraryapplication.domain.Genre;
-import ru.otus.libraryapplication.dto.GenreDto;
 import ru.otus.libraryapplication.repositories.genre.GenreRepository;
 import ru.otus.libraryapplication.service.string.StringService;
 import ru.otus.libraryapplication.util.exeption.ApplicationException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,16 +18,14 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<GenreDto> getAll() {
-        return genreRepository.findAll().stream()
-                .map(GenreDto::toDto)
-                .collect(Collectors.toList());
+    public List<Genre> getAll() {
+        return genreRepository.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public GenreDto getById(long id) {
-        return genreRepository.findById(id).map(GenreDto::toDto).orElse(null);
+    public Genre getById(long id) {
+        return genreRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -46,10 +42,10 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional
-    public void update(GenreDto genreDto) {
-        String genreName = stringService.beautifyStringName(genreDto.getName());
+    public void update(long id, String name) {
+        String genreName = stringService.beautifyStringName(name);
         if (stringService.verifyNotBlank(genreName)) {
-            genreRepository.findById(genreDto.getId()).ifPresentOrElse(genre -> {
+            genreRepository.findById(id).ifPresentOrElse(genre -> {
                 genre.setName(genreName);
                 genreRepository.save(genre);
             }, () -> {
@@ -62,11 +58,11 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional
-    public GenreDto create(GenreDto genreDto) {
-        String genreName = stringService.beautifyStringName(genreDto.getName());
+    public Genre create(String name) {
+        String genreName = stringService.beautifyStringName(name);
         if (stringService.verifyNotBlank(genreName)) {
             Genre genre = new Genre(null, genreName);
-            return GenreDto.toDto(genreRepository.save(genre));
+            return genreRepository.save(genre);
         }
 
         throw new ApplicationException("Invalid genre name");

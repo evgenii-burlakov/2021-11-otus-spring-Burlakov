@@ -2,6 +2,7 @@ package ru.otus.libraryapplication.dto;
 
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import ru.otus.libraryapplication.domain.Author;
@@ -9,6 +10,7 @@ import ru.otus.libraryapplication.domain.Author;
 @Builder
 @Getter
 @Setter
+@EqualsAndHashCode
 public class AuthorDto {
     private Long id;
 
