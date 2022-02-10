@@ -6,18 +6,19 @@
 </head>
 <body>
 
-<form id="edit-form" action="edit.html" th:action="@{/genres/edit(id=${genre.id})}" th:method="post" th:object="${genre}">
+<form id="edit-form" action="edit.html" th:action="@{/genres/edit(id=${genre.id})}" th:method="post"
+      th:object="${genre}">
     <h3>Genre Info:</h3>
 
     <div class="row">
         <label for="genre-name-input">Name:</label>
         <input id="genre-name-input" name="name" type="text" th:value="*{name}" value="Novel"/>
-<!--        <div class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Wrong person name error</div>-->
+        <!--        <div class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Wrong person name error</div>-->
     </div>
 
     <div class="row">
         <button type="submit">Save</button>
-        <a href="genres.html" th:href="@{/genres}"><button type="button">Cancel</button></a>
+        <button onclick="window.location.href='/genres'; " type="button">Cancel</button>
     </div>
 </form>
 

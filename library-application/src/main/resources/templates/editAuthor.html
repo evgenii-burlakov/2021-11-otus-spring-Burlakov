@@ -6,18 +6,19 @@
 </head>
 <body>
 
-<form id="edit-form" action="edit.html" th:action="@{/authors/edit(id=${author.id})}" th:method="post" th:object="${author}">
+<form id="edit-form" action="edit.html" th:action="@{/authors/edit(id=${author.id})}" th:method="post"
+      th:object="${author}">
     <h3>Author Info:</h3>
 
     <div class="row">
         <label for="author-name-input">Name:</label>
         <input id="author-name-input" name="name" type="text" th:value="*{name}" value="Lermontov"/>
-<!--        <div class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Wrong person name error</div>-->
+        <!--        <div class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Wrong person name error</div>-->
     </div>
 
     <div class="row">
         <button type="submit">Save</button>
-        <a href="authors.html" th:href="@{/authors}"><button type="button">Cancel</button></a>
+        <button onclick="window.location.href='/authors'" type="button">Cancel</button>
     </div>
 </form>
 

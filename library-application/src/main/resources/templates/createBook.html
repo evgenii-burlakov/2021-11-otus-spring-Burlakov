@@ -10,17 +10,17 @@
 
     <div class="row">
         <label for="book-name">Name:</label>
-        <input id="book-name" name="name" type="text" />
+        <input id="book-name" name="name" type="text"/>
         <!--        <div class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Wrong person name error</div>-->
     </div>
     <div class="row">
         <label for="author-name">Author:</label>
-        <input id="author-name" name="author.name" type="text" />
+        <input id="author-name" name="author.name" type="text"/>
         <!--        <div class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Wrong person name error</div>-->
     </div>
     <div class="row">
         <label for="genre-name">Genre:</label>
-        <input id="genre-name" name="genre.name" type="text" />
+        <input id="genre-name" name="genre.name" type="text"/>
         <!--        <div class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Wrong person name error</div>-->
     </div>
 
@@ -28,7 +28,7 @@
 
     <div class="row">
         <button type="submit">Save</button>
-        <a href="books.html" th:href="@{/books}"><button type="button">Cancel</button></a>
+        <button onclick="window.location.href='/books'" type="button">Cancel</button>
     </div>
 </form>
 

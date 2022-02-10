@@ -10,45 +10,51 @@
 
         .genres {
             border: 1px solid steelblue;
-            width: 300px;
+            width: 500px;
             border-collapse: collapse;
         }
 
+        #firstColumn {
+        width: 350px;
+        }
+
         .genres tr td, th {
+            word-break: break-word;
             padding: 5px;
             border: 1px solid steelblue;
         }
-
     </style>
 </head>
 <body>
-<h3>Genres:</h3>
 
-<table class="genres">
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th></th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="genre : ${genres}">
-        <td th:text="${genre.name}">Novel</td>
-        <td>
-            <a th:href="@{/genres/edit(id=${genre.id})}" href="#" >Edit</a>
-        </td>
-        <td>
-            <a th:href="@{/genres/delete(id=${genre.id})}" href="#" >Delete</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+<div th:if="${not #lists.isEmpty(genres)}">
+    <h3>Genres:</h3>
+    <table class="genres">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="genre : ${genres}">
+            <td id="firstColumn" th:text="${genre.name}">Novel</td>
+            <td>
+                <a th:href="@{/genres/edit(id=${genre.id})}" href="#">Edit</a>
+            </td>
+            <td>
+                <a th:href="@{/genres/delete(id=${genre.id})}" href="#">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 
 <br><br>
-
-<div><a href="/genres/create" >Add genre</a></div>
-<div><a href="/">Exit</a></div>
+<button onclick="window.location.href='/genres/create'; " type="button">Add genre</button>
+<br><br>
+<button onclick="window.location.href='/'; " type="button">Exit</button>
 
 </body>
 </html>

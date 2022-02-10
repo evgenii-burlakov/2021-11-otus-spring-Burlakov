@@ -41,6 +41,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public Comment getById(Long id) {
+        return commentRepository.findById(id).orElse(null);
+    }
+
+    @Override
     @Transactional
     public void update(long id, String stringComment, long bookId) {
         if (stringService.verifyNotBlank(stringComment)) {

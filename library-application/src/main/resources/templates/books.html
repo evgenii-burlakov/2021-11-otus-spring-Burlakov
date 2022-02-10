@@ -10,53 +10,66 @@
 
         .books {
             border: 1px solid steelblue;
-            width: 300px;
+            width: 650px;
             border-collapse: collapse;
         }
 
+        #firstBookColumn {
+        width: 300px;
+        }
+
+        #secondBookColumn {
+        width: 100px;
+        }
+
+        #thirdBookColumn {
+        width: 100px;
+        }
+
         .books tr td, th {
+            word-break: break-word;
             padding: 5px;
             border: 1px solid steelblue;
         }
-
-
     </style>
 </head>
 <body>
-<h3>Books:</h3>
 
-<table class="books">
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Author</th>
-        <th>Genre</th>
-        <th></th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="book : ${books}">
+<div th:if="${not #lists.isEmpty(books)}">
+    <h3>Books:</h3>
+    <table class="books">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Author</th>
+            <th>Genre</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${books}">
 
-        <td>
-            <a th:href="@{/books/get(id=${book.id})}" href="#" th:text="${book.name}">We</a>
-        </td>
-        <td th:text="${book.author.name}">Zamiatin</td>
-        <td th:text="${book.genre.name}">Fantasy</td>
-        <td>
-            <a th:href="@{/books/edit(id=${book.id})}" href="#">Edit</a>
-        </td>
-        <td>
-            <a th:href="@{/books/delete(id=${book.id})}" href="#">Delete</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+            <td id="firstBookColumn">
+                <a th:href="@{/books/get(id=${book.id})}" href="#" th:text="${book.name}">We</a>
+            </td>
+            <td id="secondBookColumn" th:text="${book.author.name}">Zamiatin</td>
+            <td id="thirdBookColumn" th:text="${book.genre.name}">Fantasy</td>
+            <td>
+                <a th:href="@{/books/edit(id=${book.id})}" href="#">Edit</a>
+            </td>
+            <td>
+                <a th:href="@{/books/delete(id=${book.id})}" href="#">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 
 <br><br>
-
-<div><a href="/books/create">Add book</a></div>
-<div><a href="/">Exit</a></div>
+<button onclick="window.location.href='/books/create'; " type="button">Add book</button>
+<br><br>
+<button onclick="window.location.href='/'; " type="button">Exit</button>
 
 </body>
 </html>

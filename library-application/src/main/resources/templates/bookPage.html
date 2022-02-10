@@ -10,27 +10,43 @@
 
         .books {
             border: 1px solid steelblue;
-            width: 300px;
+            width: 500px;
             border-collapse: collapse;
         }
 
+        #firstBookColumn {
+        width: 300px;
+        }
+
+        #secondBookColumn {
+        width: 100px;
+        }
+
+        #thirdBookColumn {
+        width: 100px;
+        }
+
         .books tr td, th {
+            word-break: break-word;
             padding: 5px;
             border: 1px solid steelblue;
         }
 
         .comments {
             border: 1px solid steelblue;
-            width: 300px;
+            width: 500px;
             border-collapse: collapse;
         }
 
+        #firstColumn {
+        width: 350px;
+        }
+
         .comments tr td, th {
+            word-break: break-word;
             padding: 5px;
             border: 1px solid steelblue;
         }
-
-
     </style>
 </head>
 <body>
@@ -45,39 +61,45 @@
     </tr>
     </thead>
     <tbody>
-        <td th:text="${book.name}">We</td>
-        <td th:text="${book.author.name}">Zamiatin</td>
-        <td th:text="${book.genre.name}">Fantasy</td>
+    <td id="firstBookColumn" th:text="${book.name}">We</td>
+    <td id="secondBookColumn" th:text="${book.author.name}">Zamiatin</td>
+    <td id="thirdBookColumn" th:text="${book.genre.name}">Fantasy</td>
     </tbody>
 </table>
 
 <br><br>
-<h3>Comments:</h3>
-<table class="comments">
-    <thead>
-    <tr>
-        <th>Comment</th>
-        <th></th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="comment : ${comments}">
-        <td th:text="${comment.comment}">Good job</td>
-        <td>
-            <a th:href="@{/comments/edit(id=${comment.id})}" href="#">Edit</a>
-        </td>
-        <td>
-            <a th:href="@{/comments/delete(id=${comment.id})}" href="#">Delete</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+
+<div th:if="${not #lists.isEmpty(comments)}">
+    <h3>Comments:</h3>
+    <table class="comments">
+        <thead>
+        <tr>
+            <th>Comment</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="comment : ${comments}">
+            <td id="firstColumn" th:text="${comment.comment}">Good job</td>
+            <td>
+                <a th:href="@{/comments/edit(id=${comment.id})}" href="#">Edit</a>
+            </td>
+            <td>
+                <a th:href="@{/comments/delete(id=${comment.id}, bookId=${book.id})}" href="#">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 
 <br><br>
-<button onclick="window.location.href='/comments/create'; "  th:onclick="'window.location.href= \'' + @{/comments/create(bookId=${book.id})} + '\''" type="button">Add comment</button>
+<button onclick="window.location.href='/comments/create'; "
+        th:onclick="'window.location.href= \'' + @{/comments/create(bookId=${book.id})} + '\''" type="button">Add
+    comment
+</button>
 <br><br>
-<button onclick="window.history.back()" type="button">Cancel</button>
+<button onclick="window.location.href='/books'" type="button">Exit</button>
 
 </body>
 </html>
