@@ -1,6 +1,7 @@
 package ru.otus.libraryapplication.dto;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import ru.otus.libraryapplication.domain.Comment;
@@ -8,6 +9,7 @@ import ru.otus.libraryapplication.domain.Comment;
 @Builder
 @Getter
 @Setter
+@EqualsAndHashCode
 public class CommentDto {
     private Long id;
 

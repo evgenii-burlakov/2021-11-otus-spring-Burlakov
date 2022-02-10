@@ -47,7 +47,7 @@ class AuthorControllerTest {
     }
 
     @Test
-    @DisplayName("корректно удалять всех авторов")
+    @DisplayName("корректно удалять автора")
     void correctDeleteAuthorById() throws Exception {
         mvc.perform(get("/authors/delete?id=1"))
                 .andExpect(status().is3xxRedirection())
@@ -57,7 +57,7 @@ class AuthorControllerTest {
 
     @Test
     @DisplayName("корректно возвращать страницу редактирования автора")
-    void correctEditPage() throws Exception {
+    void correctReturnEditPage() throws Exception {
         given(authorService.getById(1L)).willReturn(AUTHOR1);
         AuthorDto expectedResult = AuthorDto.toDto(AUTHOR1);
 
@@ -71,8 +71,6 @@ class AuthorControllerTest {
     @Test
     @DisplayName("корректно редактировать автора")
     void correctUpdateAuthor() throws Exception {
-        AuthorDto dto = AuthorDto.toDto(AUTHOR1);
-
         mvc.perform(post("/authors/edit")
                         .param("id", "1")
                         .param("name", "Pushkin"))
