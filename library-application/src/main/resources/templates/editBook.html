@@ -12,21 +12,18 @@
     <div class="row">
         <label for="book-name-input">Name:</label>
         <input id="book-name-input" name="name" type="text" th:value="*{name}" value="Evgenii Onegin"/>
-        <!--        <div class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Wrong person name error</div>-->
     </div>
 
 
     <div class="row">
         <label for="author-name-input">Author:</label>
         <input id="author-name-input" name="author.name" type="text" th:value="*{author.name}" value="Pushkin"/>
-        <!--        <div class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Wrong person name error</div>-->
     </div>
 
 
     <div class="row">
         <label for="genre-name-input">Genre:</label>
         <input id="genre-name-input" name="genre.name" type="text" th:value="*{genre.name}" value="Poem"/>
-        <!--        <div class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Wrong person name error</div>-->
     </div>
 
     <br><br>
