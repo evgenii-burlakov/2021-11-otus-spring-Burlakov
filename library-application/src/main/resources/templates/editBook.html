@@ -14,16 +14,20 @@
         <input id="book-name-input" name="name" type="text" th:value="*{name}" value="Evgenii Onegin"/>
     </div>
 
-
     <div class="row">
-        <label for="author-name-input">Author:</label>
-        <input id="author-name-input" name="author.name" type="text" th:value="*{author.name}" value="Pushkin"/>
+        <label for="author-name">Author:</label>
+        <select id="author-name" name="author.name" required="required" th:field="*{author.name}">
+            <option th:each="author : ${authors}" th:text="${author.name}" th:value="${author.name}">
+            </option>
+        </select>
     </div>
 
-
     <div class="row">
-        <label for="genre-name-input">Genre:</label>
-        <input id="genre-name-input" name="genre.name" type="text" th:value="*{genre.name}" value="Poem"/>
+        <label for="genre-name">Genre:</label>
+        <select id="genre-name" name="genre.name" required="required" th:field="*{genre.name}">
+            <option th:each="genre : ${genres}" th:text="${genre.name}" th:value="${genre.name}" >
+            </option>
+        </select>
     </div>
 
     <br><br>

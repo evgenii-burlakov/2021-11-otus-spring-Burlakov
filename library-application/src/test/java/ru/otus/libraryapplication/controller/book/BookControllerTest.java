@@ -7,25 +7,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.otus.libraryapplication.controller.author.AuthorController;
 import ru.otus.libraryapplication.dto.AuthorDto;
 import ru.otus.libraryapplication.dto.BookDto;
 import ru.otus.libraryapplication.dto.CommentDto;
+import ru.otus.libraryapplication.dto.GenreDto;
 import ru.otus.libraryapplication.service.author.AuthorService;
 import ru.otus.libraryapplication.service.book.BookService;
 import ru.otus.libraryapplication.service.comment.CommentService;
+import ru.otus.libraryapplication.service.genre.GenreService;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static ru.otus.libraryapplication.LibraryUnitTestData.*;
 
 @WebMvcTest(BookController.class)
@@ -38,6 +37,10 @@ class BookControllerTest {
     private BookService bookService;
     @MockBean
     private CommentService commentService;
+    @MockBean
+    private AuthorService authorService;
+    @MockBean
+    private GenreService genreService;
 
     @Test
     @DisplayName("корректно возвращать все книги")
@@ -70,11 +73,26 @@ class BookControllerTest {
         given(bookService.getById(1L)).willReturn(BOOK1);
         BookDto expectedResult = BookDto.toDto(BOOK1);
 
+        given(authorService.getAll()).willReturn(List.of(AUTHOR1, AUTHOR2));
+        List<AuthorDto> expectedAuthors = Stream.of(AUTHOR1, AUTHOR2)
+                .map(AuthorDto::toDto)
+                .collect(Collectors.toList());
+
+        given(genreService.getAll()).willReturn(List.of(GENRE1, GENRE2));
+        List<GenreDto> expectedGenres = Stream.of(GENRE1, GENRE2)
+                .map(GenreDto::toDto)
+                .collect(Collectors.toList());
+
         mvc.perform(get("/books/edit?id=1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("editBook"))
+                .andExpect(model().size(3))
                 .andExpect(model().attributeExists("book"))
-                .andExpect(model().attribute("book", expectedResult));
+                .andExpect(model().attribute("book", expectedResult))
+                .andExpect(model().attributeExists("authors"))
+                .andExpect(model().attribute("authors", expectedAuthors))
+                .andExpect(model().attributeExists("genres"))
+                .andExpect(model().attribute("genres", expectedGenres));
     }
 
     @Test
@@ -110,9 +128,24 @@ class BookControllerTest {
     @Test
     @DisplayName("корректно возвращать страницу создания книги")
     void correctReturnCreatePage() throws Exception {
+        given(authorService.getAll()).willReturn(List.of(AUTHOR1, AUTHOR2));
+        List<AuthorDto> expectedAuthors = Stream.of(AUTHOR1, AUTHOR2)
+                .map(AuthorDto::toDto)
+                .collect(Collectors.toList());
+
+        given(genreService.getAll()).willReturn(List.of(GENRE1, GENRE2));
+        List<GenreDto> expectedGenres = Stream.of(GENRE1, GENRE2)
+                .map(GenreDto::toDto)
+                .collect(Collectors.toList());
+
         mvc.perform(get("/books/create"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("createBook"));
+                .andExpect(view().name("createBook"))
+                .andExpect(model().size(2))
+                .andExpect(model().attributeExists("authors"))
+                .andExpect(model().attribute("authors", expectedAuthors))
+                .andExpect(model().attributeExists("genres"))
+                .andExpect(model().attribute("genres", expectedGenres));
     }
 
     @Test

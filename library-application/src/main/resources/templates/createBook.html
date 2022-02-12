@@ -12,13 +12,21 @@
         <label for="book-name">Name:</label>
         <input id="book-name" name="name" type="text"/>
     </div>
+
     <div class="row">
         <label for="author-name">Author:</label>
-        <input id="author-name" name="author.name" type="text"/>
+        <select id="author-name" name="author.name" required="required" >
+            <option th:each="author : ${authors}" th:text="${author.name}">
+            </option>
+        </select>
     </div>
+
     <div class="row">
         <label for="genre-name">Genre:</label>
-        <input id="genre-name" name="genre.name" type="text"/>
+        <select id="genre-name" name="genre.name" required="required" >
+            <option th:each="genre : ${genres}" th:text="${genre.name}">
+            </option>
+        </select>
     </div>
 
     <br><br>
