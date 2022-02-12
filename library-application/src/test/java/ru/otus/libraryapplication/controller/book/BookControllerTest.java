@@ -57,7 +57,8 @@ class BookControllerTest {
     @Test
     @DisplayName("корректно удалять книгу")
     void correctDeleteBookById() throws Exception {
-        mvc.perform(get("/books/delete?id=1"))
+        mvc.perform(post("/books/delete")
+                        .param("id", "1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/books"));
         Mockito.verify(bookService, times(1)).deleteById(1L);
@@ -98,7 +99,7 @@ class BookControllerTest {
         List<CommentDto> expectedResult = Stream.of(COMMENT1, COMMENT2, COMMENT3)
                 .map(CommentDto::toDto).collect(Collectors.toList());
 
-        mvc.perform(get("/books/get?id=1"))
+        mvc.perform(get("/books/get/1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("bookPage"))
                 .andExpect(model().attributeExists("book", "comments"))

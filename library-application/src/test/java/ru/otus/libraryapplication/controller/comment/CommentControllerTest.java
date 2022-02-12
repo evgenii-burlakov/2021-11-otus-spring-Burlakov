@@ -46,7 +46,7 @@ class CommentControllerTest {
                         .param("comment", "Nice")
                         .param("book.id", "1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/books/get?id=1"));
+                .andExpect(redirectedUrl("/books/get/1"));
         Mockito.verify(commentService, times(1)).create("Nice", 1L);
     }
 
@@ -71,16 +71,18 @@ class CommentControllerTest {
                         .param("comment", "Nice")
                         .param("book.id", "1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/books/get?id=1"));
+                .andExpect(redirectedUrl("/books/get/1"));
         Mockito.verify(commentService, times(1)).update(1, "Nice", 1L);
     }
 
     @Test
     @DisplayName("корректно удалять комментарий")
     void correctDeleteBookById() throws Exception {
-        mvc.perform(get("/comments/delete?id=1&bookId=2"))
+        mvc.perform(post("/comments/delete")
+                        .param("id", "1")
+                        .param("bookId", "2"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/books/get?id=2"));
+                .andExpect(redirectedUrl("/books/get/2"));
         Mockito.verify(commentService, times(1)).deleteById(1L);
     }
 }

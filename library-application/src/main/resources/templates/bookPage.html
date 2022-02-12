@@ -47,6 +47,7 @@
             padding: 5px;
             border: 1px solid steelblue;
         }
+
     </style>
 </head>
 <body>
@@ -83,10 +84,17 @@
         <tr th:each="comment : ${comments}">
             <td id="firstColumn" th:text="${comment.comment}">Good job</td>
             <td>
-                <a th:href="@{/comments/edit(id=${comment.id})}" href="#">Edit</a>
+                <form method="GET" th:action="@{/comments/edit}">
+                    <button type="submit" name="id" value="value" th:value="${comment.id}" class="link-button">Edit
+                    </button>
+                </form>
             </td>
             <td>
-                <a th:href="@{/comments/delete(id=${comment.id}, bookId=${book.id})}" href="#">Delete</a>
+                <form method="POST" th:action="@{/comments/delete}">
+                    <input type="hidden" name="id" value="value" th:value="${comment.id}"/>
+                    <button type="submit" name="bookId" value="value" th:value="${book.id}" class="link-button">Delete
+                    </button>
+                </form>
             </td>
         </tr>
         </tbody>
@@ -95,8 +103,7 @@
 
 <br><br>
 <button onclick="window.location.href='/comments/create'; "
-        th:onclick="'window.location.href= \'' + @{/comments/create(bookId=${book.id})} + '\''" type="button">Add
-    comment
+        th:onclick="'window.location.href= \'' + @{/comments/create(bookId=${book.id})} + '\''" type="button">Add comment
 </button>
 <br><br>
 <button onclick="window.location.href='/books'" type="button">Exit</button>

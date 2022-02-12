@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.otus.libraryapplication.dto.BookDto;
@@ -29,8 +30,8 @@ public class BookController {
         return "books";
     }
 
-    @GetMapping("/books/delete")
-    public String deleteBookById(@RequestParam("id") long id, Model model) {
+    @PostMapping("/books/delete")
+    public String deleteBookById(@RequestParam("id") long id) {
         bookService.deleteById(id);
         return "redirect:/books";
     }
@@ -48,8 +49,8 @@ public class BookController {
         return "redirect:/books";
     }
 
-    @GetMapping("/books/get")
-    public String getPage(@RequestParam("id") Long id, Model model) {
+    @GetMapping("/books/get/{id}")
+    public String getPage(@PathVariable("id") Long id, Model model) {
         BookDto book = BookDto.toDto(bookService.getById(id));
         model.addAttribute("book", book);
         List<CommentDto> comments = commentService.getAllByBookId(id).stream()

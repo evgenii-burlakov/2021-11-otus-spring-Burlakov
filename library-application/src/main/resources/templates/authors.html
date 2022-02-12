@@ -41,10 +41,14 @@
         <tr th:each="author : ${authors}">
             <td id="firstColumn" th:text="${author.name}">Lermontov</td>
             <td>
-                <a th:href="@{/authors/edit(id=${author.id})}" href="#">Edit</a>
+                <form method="GET" th:action="@{/authors/edit}">
+                    <button type="submit" name="id" value="value" th:value="${author.id}" class="link-button">Edit</button>
+                </form>
             </td>
             <td>
-                <a th:href="@{/authors/delete(id=${author.id})}" href="#">Delete</a>
+                <form method="POST" th:action="@{/authors/delete}">
+                    <button type="submit" name="id" value="value" th:value="${author.id}" class="link-button">Delete</button>
+                </form>
             </td>
         </tr>
         </tbody>

@@ -49,7 +49,8 @@ class GenreControllerTest {
     @Test
     @DisplayName("корректно удалять жанр")
     void correctDeleteGenreById() throws Exception {
-        mvc.perform(get("/genres/delete?id=1"))
+        mvc.perform(post("/genres/delete")
+                        .param("id", "1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/genres"));
         Mockito.verify(genreService, times(1)).deleteById(1L);

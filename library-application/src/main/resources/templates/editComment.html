@@ -24,7 +24,7 @@
     <div class="row">
         <button type="submit">Save</button>
         <button onclick="window.location.href='/books' "
-                th:onclick="'window.location.href= \'' + @{/books/get(id=${comment.book.id})} + '\''"
+                th:onclick="'window.location.href= \'' + @{/books/get/{id}(id=${comment.book.id})} + '\''"
                 type="button">Cancel
         </button>
     </div>

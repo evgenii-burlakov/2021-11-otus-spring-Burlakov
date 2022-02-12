@@ -27,8 +27,8 @@ public class GenreController {
         return "genres";
     }
 
-    @GetMapping("/genres/delete")
-    public String deleteGenreById(@RequestParam("id") long id, Model model) {
+    @PostMapping("/genres/delete")
+    public String deleteGenreById(@RequestParam("id") long id) {
         genreService.deleteById(id);
         return "redirect:/genres";
     }

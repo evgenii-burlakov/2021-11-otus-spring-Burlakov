@@ -51,15 +51,19 @@
         <tr th:each="book : ${books}">
 
             <td id="firstBookColumn">
-                <a th:href="@{/books/get(id=${book.id})}" href="#" th:text="${book.name}">We</a>
+                <a th:href="@{/books/get/{id}(id=${book.id})}" href="#" th:text="${book.name}">We</a>
             </td>
             <td id="secondBookColumn" th:text="${book.author.name}">Zamiatin</td>
             <td id="thirdBookColumn" th:text="${book.genre.name}">Fantasy</td>
             <td>
-                <a th:href="@{/books/edit(id=${book.id})}" href="#">Edit</a>
+                <form method="GET" th:action="@{/books/edit}">
+                    <button type="submit" name="id" value="value" th:value="${book.id}" class="link-button">Edit</button>
+                </form>
             </td>
             <td>
-                <a th:href="@{/books/delete(id=${book.id})}" href="#">Delete</a>
+                <form method="POST" th:action="@{/books/delete}">
+                    <button type="submit" name="id" value="value" th:value="${book.id}" class="link-button">Delete</button>
+                </form>
             </td>
         </tr>
         </tbody>

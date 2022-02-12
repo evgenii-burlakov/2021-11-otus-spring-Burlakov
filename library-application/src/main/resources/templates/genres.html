@@ -41,10 +41,14 @@
         <tr th:each="genre : ${genres}">
             <td id="firstColumn" th:text="${genre.name}">Novel</td>
             <td>
-                <a th:href="@{/genres/edit(id=${genre.id})}" href="#">Edit</a>
+                <form method="GET" th:action="@{/genres/edit}">
+                    <button type="submit" name="id" value="value" th:value="${genre.id}" class="link-button">Edit</button>
+                </form>
             </td>
             <td>
-                <a th:href="@{/genres/delete(id=${genre.id})}" href="#">Delete</a>
+                <form method="POST" th:action="@{/genres/delete}">
+                    <button type="submit" name="id" value="value" th:value="${genre.id}" class="link-button">Delete</button>
+                </form>
             </td>
         </tr>
         </tbody>

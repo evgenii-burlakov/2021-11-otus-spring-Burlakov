@@ -26,7 +26,7 @@ public class CommentController {
     public String createComment(CommentDto comment, RedirectAttributes redirectAttributes) {
         commentService.create(comment.getComment(), comment.getBook().getId());
         redirectAttributes.addAttribute("id", comment.getBook().getId());
-        return "redirect:/books/get";
+        return "redirect:/books/get/{id}";
     }
 
     @GetMapping("/comments/edit")
@@ -40,13 +40,13 @@ public class CommentController {
     public String updateComment(CommentDto comment, RedirectAttributes redirectAttributes) {
         commentService.update(comment.getId(), comment.getComment(), comment.getBook().getId());
         redirectAttributes.addAttribute("id", comment.getBook().getId());
-        return "redirect:/books/get";
+        return "redirect:/books/get/{id}";
     }
 
-    @GetMapping("/comments/delete")
+    @PostMapping("/comments/delete")
     public String deleteComment(@RequestParam("id") long id, @RequestParam("bookId") long bookId, RedirectAttributes redirectAttributes) {
         commentService.deleteById(id);
         redirectAttributes.addAttribute("id", bookId);
-        return "redirect:/books/get";
+        return "redirect:/books/get/{id}";
     }
 }

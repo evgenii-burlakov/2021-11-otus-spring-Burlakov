@@ -49,7 +49,8 @@ class AuthorControllerTest {
     @Test
     @DisplayName("корректно удалять автора")
     void correctDeleteAuthorById() throws Exception {
-        mvc.perform(get("/authors/delete?id=1"))
+        mvc.perform(post("/authors/delete")
+                        .param("id", "1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/authors"));
         Mockito.verify(authorService, times(1)).deleteById(1L);
