@@ -1,58 +1,47 @@
 package ru.otus.libraryapplication.controller.author;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import ru.otus.libraryapplication.dto.AuthorDto;
 import ru.otus.libraryapplication.service.author.AuthorService;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class AuthorController {
     private final AuthorService authorService;
 
     @GetMapping("/authors")
-    public String getAllAuthors(Model model) {
-        List<AuthorDto> authors = authorService.getAll().stream()
+    public List<AuthorDto> getAllAuthors() {
+        return authorService.getAll().stream()
                 .map(AuthorDto::toDto)
                 .collect(Collectors.toList());
-        model.addAttribute("authors", authors);
-        return "authors";
     }
 
-    @PostMapping("/authors/delete")
-    public String deleteAuthorById(@RequestParam("id") long id) {
+    @DeleteMapping("/authors")
+    public ResponseEntity deleteAuthorById(@RequestParam("id") long id) {
         authorService.deleteById(id);
-        return "redirect:/authors";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/authors/edit")
-    public String editPage(@RequestParam("id") Long id, Model model) {
-        AuthorDto author = AuthorDto.toDto(authorService.getById(id));
-        model.addAttribute("author", author);
-        return "editAuthor";
+    @GetMapping("/authors/{id}")
+    public AuthorDto getAuthor(@PathVariable("id") Long id) {
+        return AuthorDto.toDto(authorService.getById(id));
     }
 
-    @PostMapping("/authors/edit")
-    public String updateAuthor(AuthorDto author) {
+    @PatchMapping("/authors/{id}")
+    public ResponseEntity updateAuthor(AuthorDto author) {
         authorService.update(author.getId(), author.getName());
-        return "redirect:/authors";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/authors/create")
-    public String createPage() {
-        return "createAuthor";
-    }
-
-    @PostMapping("/authors/create")
-    public String createAuthor(AuthorDto author) {
+    @PostMapping("/authors")
+    public ResponseEntity createAuthor(AuthorDto author) {
         authorService.create(author.getName());
-        return "redirect:/authors";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
