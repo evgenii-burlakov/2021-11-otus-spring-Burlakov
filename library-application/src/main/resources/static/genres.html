@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
-    <title>Authors</title>
+    <title>Genres</title>
     <style type="text/css">
         body {
             padding: 50px;
         }
 
-        .authors {
+        .genres {
             border: 1px solid steelblue;
             width: 500px;
             border-collapse: collapse;
@@ -17,22 +17,19 @@
         width: 350px;
         }
 
-        .authors tr td, th {
+        .genres tr td, th {
             word-break: break-word;
             padding: 5px;
             border: 1px solid steelblue;
         }
-
-
-
     </style>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
 
-<h3 id="head">Authors:</h3>
-<table class="authors">
+<h3>Genres:</h3>
+<table class="genres">
     <thead>
     </thead>
     <tbody>
@@ -40,7 +37,7 @@
 </table>
 
 <br><br>
-<button onclick="window.location.href='/createAuthor.html'; " type="button">Add author</button>
+<button onclick="window.location.href='/createGenre.html'; " type="button">Add genre</button>
 <br><br>
 <button onclick="window.location.href='/'; " type="button">Exit</button>
 
@@ -50,8 +47,8 @@
     function buildList() {
         $('tbody').find("tr").remove();
         $('thead').find("th").remove();
-        $.get('/authors').done(function (authors) {
-            if (authors.length != 0) {
+        $.get('/genres').done(function (genres) {
+            if (genres.length != 0) {
                 $('thead').append(`
                     <th>Name</th>
                     <th></th>
@@ -59,17 +56,17 @@
                 `)
             }
 
-            authors.forEach(function (author) {
+            genres.forEach(function (genre) {
                 $('tbody').append(`
                     <tr>
-                        <td>${author.name}</td>
+                        <td>${genre.name}</td>
                         <td>
-                            <button onclick="makeEditRequest(${author.id})">
+                            <button onclick="makeEditRequest(${genre.id})">
                             Edit
                             </button>
                         </td>
                         <td>
-                            <button onclick="makeDeleteRequest(${author.id})">
+                            <button onclick="makeDeleteRequest(${genre.id})">
                             Delete
                             </button>
                         </td>
@@ -81,7 +78,7 @@
 
     function makeDeleteRequest(id) {
         $.ajax({
-            url: '/authors',
+            url: '/genres',
             type: 'DELETE',
             data: "id="+id,
             success: function (result) {
@@ -91,8 +88,9 @@
     }
 
     function makeEditRequest(id) {
-        window.location = "/editAuthor.html?id=" +id;
+        window.location = "/editGenre.html?id=" +id;
     }
+
 
 </script>
 
