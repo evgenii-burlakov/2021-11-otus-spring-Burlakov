@@ -1,29 +1,35 @@
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
-    <title>Authors</title>
+    <title>Books</title>
     <style type="text/css">
         body {
             padding: 50px;
         }
 
-        .authors {
+        .books {
             border: 1px solid steelblue;
-            width: 500px;
+            width: 650px;
             border-collapse: collapse;
         }
 
-        #firstColumn {
-        width: 350px;
+        #firstBookColumn {
+        width: 300px;
         }
 
-        .authors tr td, th {
+        #secondBookColumn {
+        width: 100px;
+        }
+
+        #thirdBookColumn {
+        width: 100px;
+        }
+
+        .books tr td, th {
             word-break: break-word;
             padding: 5px;
             border: 1px solid steelblue;
         }
-
-
 
     </style>
 
@@ -31,16 +37,18 @@
 </head>
 <body>
 
-<h3 id="head">Authors:</h3>
-<table class="authors">
+
+<h3>Books:</h3>
+<table class="books">
     <thead>
     </thead>
     <tbody>
     </tbody>
 </table>
 
+
 <br><br>
-<button onclick="window.location.href='/createAuthor.html'; " type="button">Add author</button>
+<button onclick="window.location.href='/createBook.html'; " type="button">Add book</button>
 <br><br>
 <button onclick="window.location.href='/'; " type="button">Exit</button>
 
@@ -50,26 +58,30 @@
     function buildList() {
         $('tbody').find("tr").remove();
         $('thead').find("th").remove();
-        $.get('/authors').done(function (authors) {
-            if (authors.length != 0) {
+        $.get('/books').done(function (books) {
+            if (books.length != 0) {
                 $('thead').append(`
                     <th>Name</th>
+                    <th>Author</th>
+                    <th>Genre</th>
                     <th></th>
                     <th></th>
                 `)
             }
 
-            authors.forEach(function (author) {
+            books.forEach(function (book) {
                 $('tbody').append(`
                     <tr>
-                        <td>${author.name}</td>
+                        <td>${book.name}</td>
+                        <td>${book.author.name}</td>
+                        <td>${book.genre.name}</td>
                         <td>
-                            <button onclick="makeEditRequest(${author.id})">
+                            <button onclick="makeEditRequest(${book.id})">
                             Edit
                             </button>
                         </td>
                         <td>
-                            <button onclick="makeDeleteRequest(${author.id})">
+                            <button onclick="makeDeleteRequest(${book.id})">
                             Delete
                             </button>
                         </td>
@@ -81,7 +93,7 @@
 
     function makeDeleteRequest(id) {
         $.ajax({
-            url: '/authors',
+            url: '/books',
             type: 'DELETE',
             data: "id="+id,
             success: function (result) {
@@ -91,8 +103,9 @@
     }
 
     function makeEditRequest(id) {
-        window.location = "/editAuthor.html?id=" +id;
+        window.location = "/editBook.html?id=" +id;
     }
+
 
 </script>
 
