@@ -13,14 +13,16 @@ import ru.otus.libraryapplication.dto.CommentDto;
 import ru.otus.libraryapplication.service.book.BookService;
 import ru.otus.libraryapplication.service.comment.CommentService;
 
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ru.otus.libraryapplication.LibraryUnitTestData.BOOK1;
-import static ru.otus.libraryapplication.LibraryUnitTestData.COMMENT1;
+import static ru.otus.libraryapplication.LibraryUnitTestData.*;
 
 @WebMvcTest(CommentController.class)
 @DisplayName("Контроллер для работы с комментариями должен ")
@@ -32,57 +34,64 @@ class CommentControllerTest {
     private CommentService commentService;
 
     @Test
-    @DisplayName("корректно возвращать страницу создания комментария")
-    void correctReturnCreatePage() throws Exception {
-        mvc.perform(get("/comments/create?bookId=1"))
+    @DisplayName("корректно возвращать комментарий по ИД")
+    void correctReturnCommentById() throws Exception {
+        given(commentService.getById(1L)).willReturn(COMMENT1);
+
+        mvc.perform(get("/comments/1"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("createComment"));
+                .andExpect(jsonPath("id", is(1)))
+                .andExpect(jsonPath("comment", is("ЧИТАЛ ЕЕ В ШКОЛЕ")))
+                .andExpect(jsonPath("book.id", is(1)));
+    }
+
+    @Test
+    @DisplayName("корректно возвращать комментарий по ИД книги")
+    void correctReturnCommentByBookId() throws Exception {
+        given(commentService.getAllByBookId(1L)).willReturn(List.of(COMMENT1,COMMENT2));
+
+        mvc.perform(get("/comments?bookId=1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0].comment", is("ЧИТАЛ ЕЕ В ШКОЛЕ")))
+                .andExpect(jsonPath("$[0].book.id", is(1)))
+                .andExpect(jsonPath("$[1].id", is(2)))
+                .andExpect(jsonPath("$[1].comment", is("Пушкин ван лав")))
+                .andExpect(jsonPath("$[1].book.id", is(1)));
     }
 
     @Test
     @DisplayName("корректно создавать комментарий")
     void correctCreateComment() throws Exception {
-        mvc.perform(post("/comments/create")
+        mvc.perform(post("/comments")
                         .param("comment", "Nice")
                         .param("book.id", "1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/books/get/1"));
+                .andExpect(status().isOk());
+
         Mockito.verify(commentService, times(1)).create("Nice", 1L);
     }
 
-    @Test
-    @DisplayName("корректно возвращать страницу редактирования комментария")
-    void correctReturnEditPage() throws Exception {
-        given(commentService.getById(1L)).willReturn(COMMENT1);
-        CommentDto expectedResult = CommentDto.toDto(COMMENT1);
-
-        mvc.perform(get("/comments/edit?id=1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("editComment"))
-                .andExpect(model().attributeExists("comment"))
-                .andExpect(model().attribute("comment", expectedResult));
-    }
 
     @Test
     @DisplayName("корректно редактировать комментарий")
     void correctUpdateComment() throws Exception {
-        mvc.perform(post("/comments/edit")
+        mvc.perform(patch("/comments/1")
                         .param("id", "1")
                         .param("comment", "Nice")
                         .param("book.id", "1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/books/get/1"));
+                .andExpect(status().isOk());
+
         Mockito.verify(commentService, times(1)).update(1, "Nice", 1L);
     }
 
     @Test
     @DisplayName("корректно удалять комментарий")
     void correctDeleteBookById() throws Exception {
-        mvc.perform(post("/comments/delete")
-                        .param("id", "1")
-                        .param("bookId", "2"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/books/get/2"));
+        mvc.perform(delete("/comments")
+                        .param("id", "1"))
+                .andExpect(status().isOk());
+
         Mockito.verify(commentService, times(1)).deleteById(1L);
     }
 }

@@ -14,13 +14,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ru.otus.libraryapplication.LibraryUnitTestData.GENRE1;
-import static ru.otus.libraryapplication.LibraryUnitTestData.GENRE2;
+import static ru.otus.libraryapplication.LibraryUnitTestData.*;
+import static ru.otus.libraryapplication.LibraryUnitTestData.AUTHOR2;
 
 @WebMvcTest(GenreController.class)
 @DisplayName("Контроллер для работы с жанрами должен ")
@@ -36,65 +37,53 @@ class GenreControllerTest {
     void correctGetAllGenres() throws Exception {
         given(genreService.getAll()).willReturn(List.of(GENRE1, GENRE2));
 
-        List<GenreDto> expectedResult = Stream.of(GENRE1, GENRE2)
-                .map(GenreDto::toDto).collect(Collectors.toList());
-
         mvc.perform(get("/genres"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("genres"))
-                .andExpect(model().attributeExists("genres"))
-                .andExpect(model().attribute("genres", expectedResult));
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0].name", is("POEM")))
+                .andExpect(jsonPath("$[1].id", is(2)))
+                .andExpect(jsonPath("$[1].name", is("NOVEL")));
     }
 
     @Test
     @DisplayName("корректно удалять жанр")
     void correctDeleteGenreById() throws Exception {
-        mvc.perform(post("/genres/delete")
+        mvc.perform(delete("/genres")
                         .param("id", "1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/genres"));
+                .andExpect(status().isOk());
+
         Mockito.verify(genreService, times(1)).deleteById(1L);
-    }
-
-    @Test
-    @DisplayName("корректно возвращать страницу редактирования автора")
-    void correctReturnEditPage() throws Exception {
-        given(genreService.getById(1L)).willReturn(GENRE1);
-        GenreDto expectedResult = GenreDto.toDto(GENRE1);
-
-        mvc.perform(get("/genres/edit?id=1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("editGenre"))
-                .andExpect(model().attributeExists("genre"))
-                .andExpect(model().attribute("genre", expectedResult));
     }
 
     @Test
     @DisplayName("корректно редактировать жанр")
     void correctUpdateGenre() throws Exception {
-        mvc.perform(post("/genres/edit")
+        mvc.perform(patch("/genres/1")
                         .param("id", "1")
                         .param("name", "Poem"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/genres"));
+                .andExpect(status().isOk());
+
         Mockito.verify(genreService, times(1)).update(1, "Poem");
     }
 
     @Test
-    @DisplayName("корректно возвращать страницу создания жанра")
-    void correctReturnCreatePage() throws Exception {
-        mvc.perform(get("/genres/create"))
+    @DisplayName("корректно возвращать жанр по ИД")
+    void correctReturnGenreById() throws Exception {
+        given(genreService.getById(1)).willReturn(GENRE1);
+
+        mvc.perform(get("/genres/1"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("createGenre"));
+                .andExpect(jsonPath("id", is(1)))
+                .andExpect(jsonPath("name", is("POEM")));
     }
 
     @Test
     @DisplayName("корректно создавать жанр")
     void correctCreateGenre() throws Exception {
-        mvc.perform(post("/genres/create")
+        mvc.perform(post("/genres")
                         .param("name", "Poem"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/genres"));
+                .andExpect(status().isOk());
         Mockito.verify(genreService, times(1)).create("Poem");
     }
 }

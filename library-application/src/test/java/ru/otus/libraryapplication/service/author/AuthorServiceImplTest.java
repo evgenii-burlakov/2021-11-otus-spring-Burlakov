@@ -81,7 +81,7 @@ class AuthorServiceImplTest {
     void shouldCorrectUpdateAuthor() {
         Mockito.when(stringService.beautifyStringName("lermontov")).thenReturn("LERMONTOV");
         Mockito.when(stringService.verifyNotBlank("LERMONTOV")).thenReturn(true);
-        Mockito.when(authorRepository.findById(1)).thenReturn(Optional.of(AUTHOR1));
+        Mockito.when(authorRepository.findById(1)).thenReturn(Optional.of(new Author(1L, "PUSHKIN")));
         authorService.update(1, "lermontov");
         Mockito.verify(stringService, Mockito.times(1)).beautifyStringName("lermontov");
         Mockito.verify(authorRepository, Mockito.times(1)).save(new Author(1L, "LERMONTOV"));

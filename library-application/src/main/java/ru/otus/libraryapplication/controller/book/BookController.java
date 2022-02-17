@@ -40,8 +40,8 @@ public class BookController {
     }
 
     @PostMapping("/books")
-    public String createBook(BookDto book) {
+    public ResponseEntity createBook(BookDto book) {
         bookService.create(book.getName(), book.getAuthor().getName(), book.getGenre().getName());
-        return "redirect:/books";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
