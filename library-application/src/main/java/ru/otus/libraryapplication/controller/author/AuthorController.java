@@ -29,7 +29,7 @@ public class AuthorController {
     }
 
     @GetMapping("/authors/{id}")
-    public AuthorDto getAuthor(@PathVariable("id") Long id) {
+    public AuthorDto getAuthorById(@PathVariable("id") Long id) {
         return AuthorDto.toDto(authorService.getById(id));
     }
 

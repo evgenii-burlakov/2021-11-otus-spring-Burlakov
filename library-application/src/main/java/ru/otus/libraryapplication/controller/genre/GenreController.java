@@ -18,7 +18,7 @@ public class GenreController {
     private final GenreService genreService;
 
     @GetMapping("/genres")
-    public List<GenreDto> getAllGenres(Model model) {
+    public List<GenreDto> getAllGenres() {
         return genreService.getAll().stream()
                 .map(GenreDto::toDto)
                 .collect(Collectors.toList());
@@ -31,7 +31,7 @@ public class GenreController {
     }
 
     @GetMapping("/genres/{id}")
-    public GenreDto editGenre(@PathVariable("id") Long id) {
+    public GenreDto getGenreById(@PathVariable("id") Long id) {
         return GenreDto.toDto(genreService.getById(id));
     }
 

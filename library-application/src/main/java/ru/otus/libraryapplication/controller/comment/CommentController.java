@@ -2,51 +2,47 @@ package ru.otus.libraryapplication.controller.comment;
 
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import ru.otus.libraryapplication.dto.CommentDto;
 import ru.otus.libraryapplication.service.comment.CommentService;
 
-@Controller
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
 
-    @GetMapping("/comments/create")
-    public String createPage(@RequestParam("bookId") Long bookId, Model model) {
-        model.addAttribute("bookId", bookId);
-        return "createComment";
+    @GetMapping("/comments/{id}")
+    public CommentDto getCommentById(@PathVariable("id") Long id) {
+        return CommentDto.toDto(commentService.getById(id));
     }
 
-    @PostMapping("/comments/create")
-    public String createComment(CommentDto comment, RedirectAttributes redirectAttributes) {
+    @GetMapping("/comments")
+    public List<CommentDto> getCommentByBookId(@RequestParam("bookId") Long bookId) {
+        return commentService.getAllByBookId(bookId).stream()
+                .map(CommentDto::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @PostMapping("/comments")
+    public ResponseEntity createComment(CommentDto comment) {
         commentService.create(comment.getComment(), comment.getBook().getId());
-        redirectAttributes.addAttribute("id", comment.getBook().getId());
-        return "redirect:/books/get/{id}";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/comments/edit")
-    public String editPage(@RequestParam("id") Long id, Model model) {
-        CommentDto comment = CommentDto.toDto(commentService.getById(id));
-        model.addAttribute("comment", comment);
-        return "editComment";
-    }
-
-    @PostMapping("/comments/edit")
-    public String updateComment(CommentDto comment, RedirectAttributes redirectAttributes) {
+    @PatchMapping("/comments/{id}")
+    public ResponseEntity updateComment(CommentDto comment) {
         commentService.update(comment.getId(), comment.getComment(), comment.getBook().getId());
-        redirectAttributes.addAttribute("id", comment.getBook().getId());
-        return "redirect:/books/get/{id}";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/comments/delete")
-    public String deleteComment(@RequestParam("id") long id, @RequestParam("bookId") long bookId, RedirectAttributes redirectAttributes) {
+    @DeleteMapping("/comments")
+    public ResponseEntity deleteComment(@RequestParam("id") long id) {
         commentService.deleteById(id);
-        redirectAttributes.addAttribute("id", bookId);
-        return "redirect:/books/get/{id}";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

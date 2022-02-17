@@ -72,7 +72,10 @@
             books.forEach(function (book) {
                 $('tbody').append(`
                     <tr>
-                        <td>${book.name}</td>
+
+                        <td id="firstBookColumn">
+                        <a href="/bookPage.html?id=${book.id}">${book.name}</a>
+                        </td>
                         <td>${book.author.name}</td>
                         <td>${book.genre.name}</td>
                         <td>
