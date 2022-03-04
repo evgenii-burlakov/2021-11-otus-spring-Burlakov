@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Create</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<form id="create-form" action="javascript:void(null);" onsubmit="sendForm()">
+    <h3>New Comment:</h3>
+
+    <div class="row">
+        <label for="comment-comment">Name:</label>
+        <input id="comment-comment" name="comment" type="text"/>
+    </div>
+
+    <br><br>
+
+    <div class="row">
+        <button type="submit">Save</button>
+        <button id= "cancel" type="button">Cancel </button>
+    </div>
+</form>
+
+<script>
+    function sendForm() {
+           var bookId = getUrlVars()["bookId"];
+           var comment = document.getElementById("comment-comment").value;
+           $.ajax({
+               type: 'POST',
+               url: '/api/comments',
+               data: { comment: comment,
+                   "book.id": bookId,
+               },
+               success: function(data) {
+                   window.location = '/bookPage.html?id=' + bookId;
+           }
+           });
+    }
+
+    function getUrlVars() {
+            var vars = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+                vars[key] = value;
+               });
+            return vars;
+    }
+
+    $(document).ready(function() {
+        $("#cancel").click(function(){
+            var id = getUrlVars()["bookId"];
+            window.location = "/bookPage.html?id=" + id;
+        });
+    });
+</script>
+
+</body>
+</html>

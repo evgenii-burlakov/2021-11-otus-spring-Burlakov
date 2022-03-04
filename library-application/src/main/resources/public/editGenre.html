@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Edit</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+<form id="edit-form" action="javascript:void(null);" onsubmit="sendForm()">
+    <h3>Genre Info:</h3>
+
+    <div class="row">
+        <label for="genre-name-input">Name:</label>
+        <input id="genre-name-input" name="name" type="text" value="Novel"/>
+    </div>
+
+    <div class="row">
+        <button type="submit">Save</button>
+        <button onclick="window.location.href='/genres.html'; " type="button">Cancel</button>
+    </div>
+</form>
+
+<script>
+    $(function () {
+        var id = getUrlVars()["id"];
+        $.get('/api/genres/' + id).done(function (genre) {
+            document.getElementById("genre-name-input").value = genre.name;
+        })
+    });
+
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+           });
+        return vars;
+    }
+
+    function sendForm() {
+    var id = getUrlVars()["id"];
+    var name = document.getElementById("genre-name-input").value;
+    $.ajax({
+        type: 'PATCH',
+        url: '/api/genres/' + id,
+        data: "name=" + name,
+        success: function(data) {
+                window.location = "/genres.html";
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

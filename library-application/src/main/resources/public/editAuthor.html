@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Edit</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+<form id="edit-form" action="javascript:void(null);" onsubmit="sendForm()">
+    <h3>Author Info:</h3>
+
+    <div class="row">
+        <label for="author-name-input">Name:</label>
+        <input id="author-name-input" name="name" type="text" value="Lermontov"/>
+    </div>
+
+    <div class="row">
+        <button type="submit">Save</button>
+        <button onclick="window.location.href='/authors.html'" type="button">Cancel</button>
+    </div>
+</form>
+
+<script>
+    $(function () {
+        var id = getUrlVars()["id"];
+        $.get('/api/authors/' + id).done(function (author) {
+            document.getElementById("author-name-input").value = author.name;
+        })
+    });
+
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+           });
+        return vars;
+    }
+
+    function sendForm() {
+    var id = getUrlVars()["id"];
+    var name = document.getElementById("author-name-input").value;
+    $.ajax({
+        type: 'PATCH',
+        url: '/api/authors/' + id,
+        data: "name=" + name,
+        success: function(data) {
+                window.location = "/authors.html";
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

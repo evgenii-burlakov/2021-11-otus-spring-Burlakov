@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Genres</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .genres {
+            border: 1px solid steelblue;
+            width: 500px;
+            border-collapse: collapse;
+        }
+
+        #firstColumn {
+        width: 350px;
+        }
+
+        .genres tr td, th {
+            word-break: break-word;
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+<h3>Genres:</h3>
+<table class="genres">
+    <thead>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<br><br>
+<button onclick="window.location.href='/createGenre.html'; " type="button">Add genre</button>
+<br><br>
+<button onclick="window.location.href='/'; " type="button">Exit</button>
+
+<script>
+    $(buildList());
+
+    function buildList() {
+        $('tbody').find("tr").remove();
+        $('thead').find("th").remove();
+        $.get('/api/genres').done(function (genres) {
+            if (genres.length != 0) {
+                $('thead').append(`
+                    <th>Name</th>
+                    <th></th>
+                    <th></th>
+                `)
+            }
+
+            genres.forEach(function (genre) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${genre.name}</td>
+                        <td>
+                            <button onclick="makeEditRequest(${genre.id})">
+                            Edit
+                            </button>
+                        </td>
+                        <td>
+                            <button onclick="makeDeleteRequest(${genre.id})">
+                            Delete
+                            </button>
+                        </td>
+                    </tr>
+                `)
+            });
+        })
+    }
+
+    function makeDeleteRequest(id) {
+        $.ajax({
+            url: '/api/genres/' + id,
+            type: 'DELETE',
+            success: function (result) {
+                buildList();
+            }
+        });
+    }
+
+    function makeEditRequest(id) {
+        window.location = "/editGenre.html?id=" +id;
+    }
+
+
+</script>
+
+</body>
+</html>

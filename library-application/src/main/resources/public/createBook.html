@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Create</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<form id="create-form" action="javascript:void(null);" onsubmit="sendForm()">
+    <h3>New Book:</h3>
+
+    <div class="row">
+        <label for="book-name">Name:</label>
+        <input id="book-name" name="name" type="text"/>
+    </div>
+
+    <div class="row">
+        <label for="author-name">Author:</label>
+        <select id="author-name" name="author.name" required="required" >
+        </select>
+    </div>
+
+    <div class="row">
+        <label for="genre-name">Genre:</label>
+        <select id="genre-name" name="genre.name" required="required" >
+        </select>
+    </div>
+
+    <br><br>
+
+    <div class="row">
+        <button type="submit">Save</button>
+        <button onclick="window.location.href='/books.html'" type="button">Cancel</button>
+    </div>
+</form>
+
+<script>
+    $(selectAuthors());
+    $(selectGenres());
+
+    function selectAuthors() {
+        $.get('/api/authors').done(function (authors) {
+            authors.forEach(function (author) {
+                    $('#author-name').append('<option value="' + author.name + '">' + author.name + '</option>');
+            });
+        })
+    }
+
+    function selectGenres() {
+        $.get('/api/genres').done(function (genres) {
+            genres.forEach(function (genre) {
+                $('#genre-name').append('<option value="' + genre.name + '">' + genre.name + '</option>');
+            });
+        })
+    }
+
+
+    function sendForm() {
+    var name = document.getElementById("book-name").value;
+    var authorName = document.getElementById("author-name").value;
+    var genreName = document.getElementById("genre-name").value;
+    $.ajax({
+        type: 'POST',
+        url: '/api/books',
+        data: { name: name,
+                "author.name": authorName,
+                "genre.name": genreName,
+        },
+        success: function(data) {
+                window.location = "/books.html";
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Books</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .books {
+            border: 1px solid steelblue;
+            width: 650px;
+            border-collapse: collapse;
+        }
+
+        #firstBookColumn {
+        width: 300px;
+        }
+
+        #secondBookColumn {
+        width: 100px;
+        }
+
+        #thirdBookColumn {
+        width: 100px;
+        }
+
+        .books tr td, th {
+            word-break: break-word;
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+
+<h3>Books:</h3>
+<table class="books">
+    <thead>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+
+<br><br>
+<button onclick="window.location.href='/createBook.html'; " type="button">Add book</button>
+<br><br>
+<button onclick="window.location.href='/'; " type="button">Exit</button>
+
+<script>
+    $(buildList());
+
+    function buildList() {
+        $('tbody').find("tr").remove();
+        $('thead').find("th").remove();
+        $.get('/api/books').done(function (books) {
+            if (books.length != 0) {
+                $('thead').append(`
+                    <th>Name</th>
+                    <th>Author</th>
+                    <th>Genre</th>
+                    <th></th>
+                    <th></th>
+                `)
+            }
+
+            books.forEach(function (book) {
+                $('tbody').append(`
+                    <tr>
+
+                        <td id="firstBookColumn">
+                        <a href="/bookPage.html?id=${book.id}">${book.name}</a>
+                        </td>
+                        <td>${book.author.name}</td>
+                        <td>${book.genre.name}</td>
+                        <td>
+                            <button onclick="makeEditRequest(${book.id})">
+                            Edit
+                            </button>
+                        </td>
+                        <td>
+                            <button onclick="makeDeleteRequest(${book.id})">
+                            Delete
+                            </button>
+                        </td>
+                    </tr>
+                `)
+            });
+        })
+    }
+
+    function makeDeleteRequest(id) {
+        $.ajax({
+            url: '/api/books/' + id,
+            type: 'DELETE',
+            success: function (result) {
+                buildList();
+            }
+        });
+    }
+
+    function makeEditRequest(id) {
+        window.location = "/editBook.html?id=" +id;
+    }
+
+
+</script>
+
+</body>
+</html>

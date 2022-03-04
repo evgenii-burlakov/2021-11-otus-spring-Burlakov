@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Edit</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+<form id="edit-form" action="javascript:void(null);" onsubmit="sendForm()">
+    <h3>Comment Info:</h3>
+
+    <div class="row" id="book-name"><a></a></div>
+
+    <br><br>
+
+    <div class="row">
+        <label for="comment-name-input">Comment:</label>
+        <input id="comment-name-input" name="comment" type="text" value="Beautiful"/>
+    </div>
+
+    <div class="row">
+        <input id="book-id" name="book-id" type="hidden" readonly="readonly" />
+    </div>
+
+    <br><br>
+
+    <div class="row">
+        <button type="submit">Save</button>
+        <button id= "cancel" type="button">Cancel </button>
+    </div>
+</form>
+
+<script>
+    $(function () {
+        var id = getUrlVars()["id"];
+        $.get('/api/comments/' + id).done(function (comment) {
+            document.getElementById("comment-name-input").value = comment.comment;
+            $('#book-name').append(comment.book.name);
+            document.getElementById("book-id").value = comment.book.id;
+        })
+    });
+
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+           });
+        return vars;
+    }
+
+    function sendForm() {
+    var id = getUrlVars()["id"];
+    var comment = document.getElementById("comment-name-input").value;
+    var bookId = document.getElementById("book-id").value;
+    $.ajax({
+        type: 'PATCH',
+        url: '/api/comments/' + id,
+        data: { id: id,
+                comment: comment,
+                "book.id": bookId,
+        },
+        success: function(data) {
+                window.location = "/bookPage.html?id=" + bookId;
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        $("#cancel").click(function(){
+            var bookId = document.getElementById("book-id").value;
+            window.location = "/bookPage.html?id=" + bookId;
+        });
+    });
+</script>
+
+</body>
+</html>

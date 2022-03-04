@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Create</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<form id="create-form" action="javascript:void(null);" onsubmit="sendForm()">
+    <h3>New Author:</h3>
+
+    <div class="row">
+        <label for="author-name">Name:</label>
+        <input id="author-name" name="name" type="text"/>
+    </div>
+
+    <br><br>
+
+    <div class="row">
+        <button type="submit">Save</button>
+        <button onclick="window.location.href='/authors.html'" type="button">Cancel</button>
+    </div>
+</form>
+
+<script>
+    function sendForm() {
+        var name = document.getElementById("author-name").value;
+        $.ajax({
+            type: 'POST',
+            url: '/api/authors',
+            data: "name=" + name,
+            success: function(data) {
+                window.location = "/authors.html";
+        }
+        });
+    }
+</script>
+
+</body>
+</html>

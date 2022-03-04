@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Authors</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .authors {
+            border: 1px solid steelblue;
+            width: 500px;
+            border-collapse: collapse;
+        }
+
+        #firstColumn {
+        width: 350px;
+        }
+
+        .authors tr td, th {
+            word-break: break-word;
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+
+
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+<h3 id="head">Authors:</h3>
+<table class="authors">
+    <thead>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<br><br>
+<button onclick="window.location.href='/createAuthor.html'; " type="button">Add author</button>
+<br><br>
+<button onclick="window.location.href='/'; " type="button">Exit</button>
+
+<script>
+    $(buildList());
+
+    function buildList() {
+        $('tbody').find("tr").remove();
+        $('thead').find("th").remove();
+        $.get('/api/authors').done(function (authors) {
+            if (authors.length != 0) {
+                $('thead').append(`
+                    <th>Name</th>
+                    <th></th>
+                    <th></th>
+                `)
+            }
+
+            authors.forEach(function (author) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${author.name}</td>
+                        <td>
+                            <button onclick="makeEditRequest(${author.id})">
+                            Edit
+                            </button>
+                        </td>
+                        <td>
+                            <button onclick="makeDeleteRequest(${author.id})">
+                            Delete
+                            </button>
+                        </td>
+                    </tr>
+                `)
+            });
+        })
+    }
+
+    function makeDeleteRequest(id) {
+        $.ajax({
+            url: '/api/authors/' + id,
+            type: 'DELETE',
+            success: function (result) {
+                buildList();
+            }
+        });
+    }
+
+    function makeEditRequest(id) {
+        window.location = "/editAuthor.html?id=" +id;
+    }
+
+</script>
+
+</body>
+</html>

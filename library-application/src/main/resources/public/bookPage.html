@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Books</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .books {
+            border: 1px solid steelblue;
+            width: 500px;
+            border-collapse: collapse;
+        }
+
+        #firstBookColumn {
+        width: 300px;
+        }
+
+        #secondBookColumn {
+        width: 100px;
+        }
+
+        #thirdBookColumn {
+        width: 100px;
+        }
+
+        .books tr td, th {
+            word-break: break-word;
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .comments {
+            border: 1px solid steelblue;
+            width: 500px;
+            border-collapse: collapse;
+        }
+
+        #firstColumn {
+        width: 350px;
+        }
+
+        .comments tr td, th {
+            word-break: break-word;
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<h3>Book:</h3>
+
+<table class="books">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Author</th>
+        <th>Genre</th>
+    </tr>
+    </thead>
+    <tbody id="book-body">
+    </tbody>
+</table>
+
+<br><br>
+
+<h3>Comments:</h3>
+<table class="comments">
+    <thead>
+    <tr id="comment-head">
+    </tr>
+    </thead>
+    <tbody id="comment-body">
+    </tbody>
+</table>
+
+<br><br>
+<button id= "add-comment" type="button">Add comment </button>
+<br><br>
+<button onclick="window.location.href='/books.html'" type="button">Exit</button>
+
+<script>
+    $(book());
+    $(comments());
+
+    function book() {
+        var id = getUrlVars()["id"];
+        $.get('/api/books/' + id).done(function (book) {
+                $('#book-body').append(`
+                    <tr>
+                        <td>${book.name}</td>
+                        <td>${book.author.name}</td>
+                        <td>${book.genre.name}</td>
+                    </tr>
+                `)
+        })
+    }
+
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+           });
+        return vars;
+    }
+
+    function comments() {
+        $('#comment-body').find("tr").remove();
+        $('#comment-head').find("th").remove();
+        var bookId = getUrlVars()["id"];
+        $.get('/api/comments?bookId=' + bookId).done(function (comments) {
+            if (comments.length != 0) {
+                $('#comment-head').append(`
+                    <th>Name</th>
+                    <th></th>
+                    <th></th>
+                `)
+            }
+
+            comments.forEach(function (comment) {
+                $('#comment-body').append(`
+                    <tr>
+                        <td>${comment.comment}</td>
+                        <td>
+                            <button onclick="makeEditRequest(${comment.id})">
+                            Edit
+                            </button>
+                        </td>
+                        <td>
+                            <button onclick="makeDeleteRequest(${comment.id})">
+                            Delete
+                            </button>
+                        </td>
+                    </tr>
+                `)
+            });
+        })
+    }
+
+    $(document).ready(function() {
+        $("#add-comment").click(function(){
+            var bookId = getUrlVars()["id"];
+            window.location = "/createComment.html?bookId=" + bookId;
+        });
+    });
+
+    function makeEditRequest(id) {
+        window.location = "/editComment.html?id=" +id;
+    }
+
+    function makeDeleteRequest(id) {
+        $.ajax({
+            url: '/api/comments/' + id,
+            type: 'DELETE',
+            success: function (result) {
+                comments();
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
