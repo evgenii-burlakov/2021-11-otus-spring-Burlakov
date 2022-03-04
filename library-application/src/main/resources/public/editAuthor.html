@@ -23,7 +23,7 @@
 <script>
     $(function () {
         var id = getUrlVars()["id"];
-        $.get('/authors/' + id).done(function (author) {
+        $.get('/api/authors/' + id).done(function (author) {
             document.getElementById("author-name-input").value = author.name;
         })
     });
@@ -41,7 +41,7 @@
     var name = document.getElementById("author-name-input").value;
     $.ajax({
         type: 'PATCH',
-        url: '/authors/' + id,
+        url: '/api/authors/' + id,
         data: "name=" + name,
         success: function(data) {
                 window.location = "/authors.html";

@@ -38,7 +38,7 @@ class CommentControllerTest {
     void correctReturnCommentById() throws Exception {
         given(commentService.getById(1L)).willReturn(COMMENT1);
 
-        mvc.perform(get("/comments/1"))
+        mvc.perform(get("/api/comments/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id", is(1)))
                 .andExpect(jsonPath("comment", is("ЧИТАЛ ЕЕ В ШКОЛЕ")))
@@ -50,7 +50,7 @@ class CommentControllerTest {
     void correctReturnCommentByBookId() throws Exception {
         given(commentService.getAllByBookId(1L)).willReturn(List.of(COMMENT1,COMMENT2));
 
-        mvc.perform(get("/comments?bookId=1"))
+        mvc.perform(get("/api/comments?bookId=1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id", is(1)))
@@ -64,7 +64,7 @@ class CommentControllerTest {
     @Test
     @DisplayName("корректно создавать комментарий")
     void correctCreateComment() throws Exception {
-        mvc.perform(post("/comments")
+        mvc.perform(post("/api/comments")
                         .param("comment", "Nice")
                         .param("book.id", "1"))
                 .andExpect(status().isOk());
@@ -76,7 +76,7 @@ class CommentControllerTest {
     @Test
     @DisplayName("корректно редактировать комментарий")
     void correctUpdateComment() throws Exception {
-        mvc.perform(patch("/comments/1")
+        mvc.perform(patch("/api/comments/1")
                         .param("id", "1")
                         .param("comment", "Nice")
                         .param("book.id", "1"))
@@ -88,9 +88,8 @@ class CommentControllerTest {
     @Test
     @DisplayName("корректно удалять комментарий")
     void correctDeleteBookById() throws Exception {
-        mvc.perform(delete("/comments")
-                        .param("id", "1"))
-                .andExpect(status().isOk());
+        mvc.perform(delete("/api/comments/1"))
+                .andExpect(status().isCreated());
 
         Mockito.verify(commentService, times(1)).deleteById(1L);
     }

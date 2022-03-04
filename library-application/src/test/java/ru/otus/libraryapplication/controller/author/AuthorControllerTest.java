@@ -40,7 +40,7 @@ class AuthorControllerTest {
     void correctGetAllAuthors() throws Exception {
         Mockito.when(authorService.getAll()).thenReturn(List.of(AUTHOR1, AUTHOR2));
 
-        mvc.perform(get("/authors"))
+        mvc.perform(get("/api/authors"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id", is(1)))
@@ -52,8 +52,7 @@ class AuthorControllerTest {
     @Test
     @DisplayName("корректно удалять автора")
     void correctDeleteAuthorById() throws Exception {
-        mvc.perform(delete("/authors")
-                        .param("id", "1"))
+        mvc.perform(delete("/api/authors/1"))
                 .andExpect(status().isOk());
 
         Mockito.verify(authorService, times(1)).deleteById(1L);
@@ -62,7 +61,7 @@ class AuthorControllerTest {
     @Test
     @DisplayName("корректно редактировать автора")
     void correctUpdateAuthor() throws Exception {
-        mvc.perform(patch("/authors/1")
+        mvc.perform(patch("/api/authors/1")
                         .param("id", "1")
                         .param("name", "Pushkin"))
                 .andExpect(status().isOk());
@@ -75,7 +74,7 @@ class AuthorControllerTest {
     void correctReturnAuthorById() throws Exception {
         given(authorService.getById(1)).willReturn(AUTHOR2);
 
-        mvc.perform(get("/authors/1"))
+        mvc.perform(get("/api/authors/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id", is(2)))
                 .andExpect(jsonPath("name", is("MONTGOMERY")));
@@ -84,9 +83,9 @@ class AuthorControllerTest {
     @Test
     @DisplayName("корректно создавать автора")
     void correctCreateAuthor() throws Exception {
-        mvc.perform(post("/authors")
+        mvc.perform(post("/api/authors")
                         .param("name", "Pushkin"))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
         Mockito.verify(authorService, times(1)).create("Pushkin");
     }
 }

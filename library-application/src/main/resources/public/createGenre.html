@@ -26,7 +26,7 @@
         var name = document.getElementById("genre-name").value;
         $.ajax({
             type: 'POST',
-            url: '/genres',
+            url: '/api/genres',
             data: "name=" + name,
             success: function(data) {
                 window.location = "/genres.html";

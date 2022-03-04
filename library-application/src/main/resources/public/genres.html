@@ -47,7 +47,7 @@
     function buildList() {
         $('tbody').find("tr").remove();
         $('thead').find("th").remove();
-        $.get('/genres').done(function (genres) {
+        $.get('/api/genres').done(function (genres) {
             if (genres.length != 0) {
                 $('thead').append(`
                     <th>Name</th>
@@ -78,9 +78,8 @@
 
     function makeDeleteRequest(id) {
         $.ajax({
-            url: '/genres',
+            url: '/api/genres/' + id,
             type: 'DELETE',
-            data: "id="+id,
             success: function (result) {
                 buildList();
             }

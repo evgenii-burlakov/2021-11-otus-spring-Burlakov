@@ -37,7 +37,7 @@ class GenreControllerTest {
     void correctGetAllGenres() throws Exception {
         given(genreService.getAll()).willReturn(List.of(GENRE1, GENRE2));
 
-        mvc.perform(get("/genres"))
+        mvc.perform(get("/api/genres"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id", is(1)))
@@ -49,8 +49,7 @@ class GenreControllerTest {
     @Test
     @DisplayName("корректно удалять жанр")
     void correctDeleteGenreById() throws Exception {
-        mvc.perform(delete("/genres")
-                        .param("id", "1"))
+        mvc.perform(delete("/api/genres/1"))
                 .andExpect(status().isOk());
 
         Mockito.verify(genreService, times(1)).deleteById(1L);
@@ -59,7 +58,7 @@ class GenreControllerTest {
     @Test
     @DisplayName("корректно редактировать жанр")
     void correctUpdateGenre() throws Exception {
-        mvc.perform(patch("/genres/1")
+        mvc.perform(patch("/api/genres/1")
                         .param("id", "1")
                         .param("name", "Poem"))
                 .andExpect(status().isOk());
@@ -72,7 +71,7 @@ class GenreControllerTest {
     void correctReturnGenreById() throws Exception {
         given(genreService.getById(1)).willReturn(GENRE1);
 
-        mvc.perform(get("/genres/1"))
+        mvc.perform(get("/api/genres/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id", is(1)))
                 .andExpect(jsonPath("name", is("POEM")));
@@ -81,9 +80,9 @@ class GenreControllerTest {
     @Test
     @DisplayName("корректно создавать жанр")
     void correctCreateGenre() throws Exception {
-        mvc.perform(post("/genres")
+        mvc.perform(post("/api/genres")
                         .param("name", "Poem"))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
         Mockito.verify(genreService, times(1)).create("Poem");
     }
 }

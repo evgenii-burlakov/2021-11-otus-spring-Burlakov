@@ -26,7 +26,7 @@
         var name = document.getElementById("author-name").value;
         $.ajax({
             type: 'POST',
-            url: '/authors',
+            url: '/api/authors',
             data: "name=" + name,
             success: function(data) {
                 window.location = "/authors.html";

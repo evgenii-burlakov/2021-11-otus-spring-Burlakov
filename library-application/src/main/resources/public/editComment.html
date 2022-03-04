@@ -33,7 +33,7 @@
 <script>
     $(function () {
         var id = getUrlVars()["id"];
-        $.get('/comments/' + id).done(function (comment) {
+        $.get('/api/comments/' + id).done(function (comment) {
             document.getElementById("comment-name-input").value = comment.comment;
             $('#book-name').append(comment.book.name);
             document.getElementById("book-id").value = comment.book.id;
@@ -54,7 +54,7 @@
     var bookId = document.getElementById("book-id").value;
     $.ajax({
         type: 'PATCH',
-        url: '/comments/' + id,
+        url: '/api/comments/' + id,
         data: { id: id,
                 comment: comment,
                 "book.id": bookId,

@@ -27,7 +27,7 @@
            var comment = document.getElementById("comment-comment").value;
            $.ajax({
                type: 'POST',
-               url: '/comments',
+               url: '/api/comments',
                data: { comment: comment,
                    "book.id": bookId,
                },

@@ -58,7 +58,7 @@
     function buildList() {
         $('tbody').find("tr").remove();
         $('thead').find("th").remove();
-        $.get('/books').done(function (books) {
+        $.get('/api/books').done(function (books) {
             if (books.length != 0) {
                 $('thead').append(`
                     <th>Name</th>
@@ -96,9 +96,8 @@
 
     function makeDeleteRequest(id) {
         $.ajax({
-            url: '/books',
+            url: '/api/books/' + id,
             type: 'DELETE',
-            data: "id="+id,
             success: function (result) {
                 buildList();
             }

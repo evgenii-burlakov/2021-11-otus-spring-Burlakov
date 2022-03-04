@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.otus.libraryapplication.domain.Book;
 import ru.otus.libraryapplication.dto.BookDto;
 import ru.otus.libraryapplication.service.book.BookService;
 
@@ -15,33 +16,33 @@ import java.util.stream.Collectors;
 public class BookController {
     private final BookService bookService;
 
-    @GetMapping("/books")
+    @GetMapping("/api/books")
     public List<BookDto> getAllBooks() {
         return bookService.getAll().stream()
                 .map(BookDto::toDto)
                 .collect(Collectors.toList());
     }
 
-    @DeleteMapping("/books")
-    public ResponseEntity deleteBookById(@RequestParam("id") long id) {
+    @DeleteMapping("/api/books/{id}")
+    public ResponseEntity<Book> deleteBookById(@PathVariable("id") Long id) {
         bookService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PatchMapping("/books/{id}")
-    public ResponseEntity updateBook(BookDto book) {
+    @PatchMapping("/api/books/{id}")
+    public ResponseEntity<Book> updateBook(BookDto book) {
         bookService.update(book.getId(), book.getName(), book.getAuthor().getName(), book.getGenre().getName());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/books/{id}")
+    @GetMapping("/api/books/{id}")
     public BookDto getBookById(@PathVariable("id") Long id) {
         return BookDto.toDto(bookService.getById(id));
     }
 
-    @PostMapping("/books")
-    public ResponseEntity createBook(BookDto book) {
+    @PostMapping("/api/books")
+    public ResponseEntity<Book> createBook(BookDto book) {
         bookService.create(book.getName(), book.getAuthor().getName(), book.getGenre().getName());
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

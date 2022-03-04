@@ -38,7 +38,7 @@
     $(selectGenres());
 
     function selectAuthors() {
-        $.get('/authors').done(function (authors) {
+        $.get('/api/authors').done(function (authors) {
             authors.forEach(function (author) {
                     $('#author-name').append('<option value="' + author.name + '">' + author.name + '</option>');
             });
@@ -46,7 +46,7 @@
     }
 
     function selectGenres() {
-        $.get('/genres').done(function (genres) {
+        $.get('/api/genres').done(function (genres) {
             genres.forEach(function (genre) {
                 $('#genre-name').append('<option value="' + genre.name + '">' + genre.name + '</option>');
             });
@@ -60,7 +60,7 @@
     var genreName = document.getElementById("genre-name").value;
     $.ajax({
         type: 'POST',
-        url: '/books',
+        url: '/api/books',
         data: { name: name,
                 "author.name": authorName,
                 "genre.name": genreName,

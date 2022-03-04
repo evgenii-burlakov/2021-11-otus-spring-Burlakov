@@ -23,7 +23,7 @@
 <script>
     $(function () {
         var id = getUrlVars()["id"];
-        $.get('/genres/' + id).done(function (genre) {
+        $.get('/api/genres/' + id).done(function (genre) {
             document.getElementById("genre-name-input").value = genre.name;
         })
     });
@@ -41,7 +41,7 @@
     var name = document.getElementById("genre-name-input").value;
     $.ajax({
         type: 'PATCH',
-        url: '/genres/' + id,
+        url: '/api/genres/' + id,
         data: "name=" + name,
         success: function(data) {
                 window.location = "/genres.html";

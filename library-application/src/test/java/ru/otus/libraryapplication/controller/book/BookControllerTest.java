@@ -35,7 +35,7 @@ class BookControllerTest {
     void correctGetAllBooks() throws Exception {
         given(bookService.getAll()).willReturn(List.of(BOOK1, BOOK2));
 
-        mvc.perform(get("/books"))
+        mvc.perform(get("/api/books"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id", is(1)))
@@ -51,8 +51,7 @@ class BookControllerTest {
     @Test
     @DisplayName("корректно удалять книгу")
     void correctDeleteBookById() throws Exception {
-        mvc.perform(delete("/books")
-                        .param("id", "1"))
+        mvc.perform(delete("/api/books/1"))
                 .andExpect(status().isOk());
 
         Mockito.verify(bookService, times(1)).deleteById(1L);
@@ -63,7 +62,7 @@ class BookControllerTest {
     void correctReturnGenreById() throws Exception {
         given(bookService.getById(1)).willReturn(BOOK1);
 
-        mvc.perform(get("/books/1"))
+        mvc.perform(get("/api/books/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id", is(1)))
                 .andExpect(jsonPath("name", is("EVGENII ONEGIN")))
@@ -74,7 +73,7 @@ class BookControllerTest {
     @Test
     @DisplayName("корректно редактировать книгу")
     void correctUpdateBook() throws Exception {
-        mvc.perform(patch("/books/1")
+        mvc.perform(patch("/api/books/1")
                         .param("id", "1")
                         .param("name", "We")
                         .param("author.name", "Zamiatin")
@@ -87,11 +86,11 @@ class BookControllerTest {
     @Test
     @DisplayName("корректно создавать книгу")
     void correctCreateBook() throws Exception {
-        mvc.perform(post("/books")
+        mvc.perform(post("/api/books")
                         .param("name", "We")
                         .param("author.name", "Zamiatin")
                         .param("genre.name", "Fantasy"))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         Mockito.verify(bookService, times(1)).create("We", "Zamiatin", "Fantasy");
     }

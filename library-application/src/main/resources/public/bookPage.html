@@ -88,7 +88,7 @@
 
     function book() {
         var id = getUrlVars()["id"];
-        $.get('/books/' + id).done(function (book) {
+        $.get('/api/books/' + id).done(function (book) {
                 $('#book-body').append(`
                     <tr>
                         <td>${book.name}</td>
@@ -111,7 +111,7 @@
         $('#comment-body').find("tr").remove();
         $('#comment-head').find("th").remove();
         var bookId = getUrlVars()["id"];
-        $.get('/comments?bookId=' + bookId).done(function (comments) {
+        $.get('/api/comments?bookId=' + bookId).done(function (comments) {
             if (comments.length != 0) {
                 $('#comment-head').append(`
                     <th>Name</th>
@@ -153,9 +153,8 @@
 
     function makeDeleteRequest(id) {
         $.ajax({
-            url: '/comments',
+            url: '/api/comments/' + id,
             type: 'DELETE',
-            data: "id="+id,
             success: function (result) {
                 comments();
             }

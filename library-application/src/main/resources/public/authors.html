@@ -50,7 +50,7 @@
     function buildList() {
         $('tbody').find("tr").remove();
         $('thead').find("th").remove();
-        $.get('/authors').done(function (authors) {
+        $.get('/api/authors').done(function (authors) {
             if (authors.length != 0) {
                 $('thead').append(`
                     <th>Name</th>
@@ -81,9 +81,8 @@
 
     function makeDeleteRequest(id) {
         $.ajax({
-            url: '/authors',
+            url: '/api/authors/' + id,
             type: 'DELETE',
-            data: "id="+id,
             success: function (result) {
                 buildList();
             }
