@@ -6,8 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import ru.otus.libraryapplication.domain.Genre;
 import ru.otus.libraryapplication.dto.GenreDto;
+import ru.otus.libraryapplication.repositories.genre.GenreRepository;
 import ru.otus.libraryapplication.service.genre.GenreService;
 
 import java.util.List;
@@ -16,13 +18,13 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 public class GenreController {
-    private final GenreService genreService;
+//    private final GenreService genreService;
+    private final GenreRepository genreRepository;
 
     @GetMapping("/api/genres")
-    public List<GenreDto> getAllGenres() {
-        return genreService.getAll().stream()
-                .map(GenreDto::toDto)
-                .collect(Collectors.toList());
+    public Flux<GenreDto> getAllGenres() {
+        return genreRepository.findAll()
+                .map(GenreDto::toDto);
     }
 
     @DeleteMapping("/api/genres/{id}")

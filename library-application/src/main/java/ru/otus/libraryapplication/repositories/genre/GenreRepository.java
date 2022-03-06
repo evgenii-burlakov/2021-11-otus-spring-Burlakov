@@ -1,19 +1,16 @@
 package ru.otus.libraryapplication.repositories.genre;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.libraryapplication.domain.Genre;
 
-import java.util.List;
-import java.util.Optional;
+public interface GenreRepository extends ReactiveMongoRepository<Genre, Long>, GenreRepositoryCustom {
+    Flux<Genre> findAll();
 
-public interface GenreRepository extends JpaRepository<Genre, Long> {
-    List<Genre> findAll();
+    Mono<Genre> findById(String id);
 
-    Optional<Genre> findById(long id);
+    Mono<Genre> findByName(String name);
 
-    Optional<Genre> findByName(String name);
-
-    void deleteById(long id);
-
-    Genre save(Genre genre);
+    Mono<Genre> save(Genre genre);
 }

@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import ru.otus.libraryapplication.domain.Book;
 import ru.otus.libraryapplication.dto.BookDto;
+import ru.otus.libraryapplication.repositories.book.BookRepository;
 import ru.otus.libraryapplication.service.book.BookService;
 
 import java.util.List;
@@ -14,13 +16,13 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 public class BookController {
-    private final BookService bookService;
+//    private final BookService bookService;
+    private final BookRepository bookRepository;
 
     @GetMapping("/api/books")
-    public List<BookDto> getAllBooks() {
-        return bookService.getAll().stream()
-                .map(BookDto::toDto)
-                .collect(Collectors.toList());
+    public Flux<BookDto> getAllBooks() {
+        return bookRepository.findAll()
+                .map(BookDto::toDto);
     }
 
     @DeleteMapping("/api/books/{id}")
