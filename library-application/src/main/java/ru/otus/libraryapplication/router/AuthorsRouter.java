@@ -1,8 +1,9 @@
 package ru.otus.libraryapplication.router;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import ru.otus.libraryapplication.dto.AuthorDto;
@@ -12,12 +13,13 @@ import ru.otus.libraryapplication.repositories.author.AuthorRepository;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.web.reactive.function.BodyInserters.fromValue;
 import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
+import static org.springframework.web.reactive.function.server.RequestPredicates.contentType;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
 @Configuration
-@RequiredArgsConstructor
 public class AuthorsRouter {
+    @Autowired
     private AuthorHandler authorHandler;
 
     @Bean
@@ -27,11 +29,10 @@ public class AuthorsRouter {
                         request -> authorRepository.findAll()
                                 .map(AuthorDto::toDto)
                                 .collectList()
-                                .flatMap(authors -> ok().body(authors, AuthorDto.class))
+                                .flatMap(authors -> ok().contentType(APPLICATION_JSON).bodyValue(authors))
                 )
                 .DELETE("/api/authors/{id}", accept(APPLICATION_JSON),
-                        request -> authorRepository.deleteWithBooksByAuthorId(request.pathVariable("id"))
-                                .flatMap(() -> ok())
+                        request -> authorHandler.delete(request)
                 )
                 .GET("/api/authors/{id}", accept(APPLICATION_JSON),
                         request -> authorRepository.findById(request.pathVariable("id"))
@@ -39,7 +40,9 @@ public class AuthorsRouter {
                                 .flatMap(author -> ok().contentType(APPLICATION_JSON).body(fromValue(author)))
                 )
                 .PATCH("/api/authors/{id}", accept(APPLICATION_JSON),
-                        request -> authorHandler.update(request.pathVariable("id"), request.pathVariable("name")))
+                        request -> authorHandler.update(request))
+                .POST("/api/authors", contentType(APPLICATION_JSON),
+                        request -> authorHandler.create(request))
                 .build();
     }
 }

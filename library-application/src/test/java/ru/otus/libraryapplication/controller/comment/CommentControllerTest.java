@@ -7,22 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.otus.libraryapplication.controller.book.BookController;
-import ru.otus.libraryapplication.dto.BookDto;
-import ru.otus.libraryapplication.dto.CommentDto;
-import ru.otus.libraryapplication.service.book.BookService;
 import ru.otus.libraryapplication.service.comment.CommentService;
 
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ru.otus.libraryapplication.LibraryUnitTestData.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.otus.libraryapplication.LibraryUnitTestData.COMMENT1;
+import static ru.otus.libraryapplication.LibraryUnitTestData.COMMENT2;
 
 @WebMvcTest(CommentController.class)
 @DisplayName("Контроллер для работы с комментариями должен ")

@@ -27,7 +27,9 @@
         $.ajax({
             type: 'POST',
             url: '/api/authors',
-            data: "name=" + name,
+            contentType : 'application/json',
+            data: JSON.stringify({name: name}),
+            async: true,
             success: function(data) {
                 window.location = "/authors.html";
         }

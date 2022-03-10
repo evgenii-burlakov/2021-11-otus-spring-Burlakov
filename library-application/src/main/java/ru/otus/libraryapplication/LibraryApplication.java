@@ -13,18 +13,9 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 @SpringBootApplication
 @RequiredArgsConstructor
 public class LibraryApplication {
-    private final AuthorsRouter authorsRouter;
 
     public static void main(String[] args) {
         SpringApplication.run(LibraryApplication.class, args);
     }
 
-    @Bean
-    public RouterFunction<ServerResponse> composedRouters() {
-        return route()
-                .path("/api/authors", authorsRouter)
-                .path("/api/books", booksRouter)
-                .path("/api/comments", commentsRouter)
-                .path("/api/genres", genresRouter);
-    }
 }

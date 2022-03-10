@@ -12,14 +12,14 @@ import ru.otus.libraryapplication.domain.Author;
 @Setter
 @EqualsAndHashCode
 public class AuthorDto {
-    private Long id;
+    private String id;
 
     private String name;
 
     public AuthorDto() {
     }
 
-    public AuthorDto(Long id, String name) {
+    public AuthorDto(String id, String name) {
         this.id = id;
         this.name = name;
     }

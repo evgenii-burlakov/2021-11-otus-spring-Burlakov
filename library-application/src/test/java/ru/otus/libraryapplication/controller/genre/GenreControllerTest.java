@@ -7,21 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.otus.libraryapplication.dto.GenreDto;
 import ru.otus.libraryapplication.service.genre.GenreService;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ru.otus.libraryapplication.LibraryUnitTestData.*;
-import static ru.otus.libraryapplication.LibraryUnitTestData.AUTHOR2;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.otus.libraryapplication.LibraryUnitTestData.GENRE1;
+import static ru.otus.libraryapplication.LibraryUnitTestData.GENRE2;
 
 @WebMvcTest(GenreController.class)
 @DisplayName("Контроллер для работы с жанрами должен ")
