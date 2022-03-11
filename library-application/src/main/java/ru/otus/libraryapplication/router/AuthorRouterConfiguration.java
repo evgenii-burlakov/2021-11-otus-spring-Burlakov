@@ -1,9 +1,7 @@
 package ru.otus.libraryapplication.router;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import ru.otus.libraryapplication.dto.AuthorDto;
@@ -18,12 +16,10 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
 @Configuration
-public class AuthorsRouter {
-    @Autowired
-    private AuthorHandler authorHandler;
+public class AuthorRouterConfiguration {
 
     @Bean
-    public RouterFunction<ServerResponse> authorRouter(AuthorRepository authorRepository) {
+    public RouterFunction<ServerResponse> authorRouter(AuthorRepository authorRepository, AuthorHandler authorHandler) {
         return route()
                 .GET("/api/authors", accept(APPLICATION_JSON),
                         request -> authorRepository.findAll()
@@ -31,18 +27,14 @@ public class AuthorsRouter {
                                 .collectList()
                                 .flatMap(authors -> ok().contentType(APPLICATION_JSON).bodyValue(authors))
                 )
-                .DELETE("/api/authors/{id}", accept(APPLICATION_JSON),
-                        request -> authorHandler.delete(request)
-                )
+                .DELETE("/api/authors/{id}", accept(APPLICATION_JSON), authorHandler::delete)
                 .GET("/api/authors/{id}", accept(APPLICATION_JSON),
                         request -> authorRepository.findById(request.pathVariable("id"))
                                 .map(AuthorDto::toDto)
                                 .flatMap(author -> ok().contentType(APPLICATION_JSON).body(fromValue(author)))
                 )
-                .PATCH("/api/authors/{id}", contentType(APPLICATION_JSON),
-                        request -> authorHandler.update(request))
-                .POST("/api/authors", contentType(APPLICATION_JSON),
-                        request -> authorHandler.create(request))
+                .PATCH("/api/authors/{id}", contentType(APPLICATION_JSON), authorHandler::update)
+                .POST("/api/authors", contentType(APPLICATION_JSON), authorHandler::create)
                 .build();
     }
 }

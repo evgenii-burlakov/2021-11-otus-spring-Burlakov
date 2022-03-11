@@ -12,14 +12,14 @@ import ru.otus.libraryapplication.domain.Genre;
 @Setter
 @EqualsAndHashCode
 public class GenreDto {
-    private Long id;
+    private String id;
 
     private String name;
 
     public GenreDto() {
     }
 
-    public GenreDto(Long id, String name) {
+    public GenreDto(String id, String name) {
         this.id = id;
         this.name = name;
     }

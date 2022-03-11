@@ -27,7 +27,8 @@
         $.ajax({
             type: 'POST',
             url: '/api/genres',
-            data: "name=" + name,
+            contentType : 'application/json',
+            data: JSON.stringify({name: name}),
             success: function(data) {
                 window.location = "/genres.html";
         }

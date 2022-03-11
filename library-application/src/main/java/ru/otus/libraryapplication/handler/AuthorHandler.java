@@ -23,24 +23,25 @@ public class AuthorHandler {
         return Mono.just(request.pathVariable("id"))
                 .filter(StringUtils::isNotEmpty)
                 .flatMap(id -> authorRepository.deleteWithBooksByAuthorId(id)
-                        .flatMap(authorDto -> ok().build()));
+                        .flatMap(result -> ok().build()));
     }
 
     public Mono<ServerResponse> update(ServerRequest request) {
         String id = request.pathVariable("id");
 
         return request.bodyToMono(AuthorDto.class)
-                .map(author -> stringService.beautifyStringName(author.getName()))
-                .flatMap(name -> {
-                    if (stringService.verifyNotBlank(name)) {
-                        return authorRepository.findById(id)
-                                .flatMap(author -> {
-                                    author.setName(name);
-                                    return authorRepository.save(author)
-                                            .map(AuthorDto::toDto)
-                                            .flatMap(authorDto -> ok().body(fromValue(authorDto)));
-                                })
-                                .switchIfEmpty(notFound().build());
+                .map(author -> {
+                    String name = stringService.beautifyStringName(author.getName());
+                    author.setName(name);
+                    author.setId(id);
+                    return author;
+                })
+                .flatMap(author -> {
+                    if (stringService.verifyNotBlank(author.getName())) {
+
+                        return authorRepository.save(author.toBean())
+                                .map(AuthorDto::toDto)
+                                .flatMap(authorDto -> ok().body(fromValue(authorDto)));
                     } else {
                         return badRequest().build();
                     }

@@ -29,7 +29,6 @@
             url: '/api/authors',
             contentType : 'application/json',
             data: JSON.stringify({name: name}),
-            async: true,
             success: function(data) {
                 window.location = "/authors.html";
         }

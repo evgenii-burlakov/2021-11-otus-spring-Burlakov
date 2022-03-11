@@ -5,7 +5,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.otus.libraryapplication.domain.Genre;
 
-public interface GenreRepository extends ReactiveMongoRepository<Genre, Long>, GenreRepositoryCustom {
+public interface GenreRepository extends ReactiveMongoRepository<Genre, String>, GenreRepositoryCustom {
     Flux<Genre> findAll();
 
     Mono<Genre> findById(String id);
