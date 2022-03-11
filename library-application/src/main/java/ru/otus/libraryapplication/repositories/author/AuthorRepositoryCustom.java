@@ -1,5 +1,8 @@
 package ru.otus.libraryapplication.repositories.author;
 
+import com.mongodb.client.result.DeleteResult;
+import reactor.core.publisher.Mono;
+
 public interface AuthorRepositoryCustom {
-    void deleteWithBooksByAuthorId(String id);
+    Mono<DeleteResult> deleteWithBooksByAuthorId(String id);
 }

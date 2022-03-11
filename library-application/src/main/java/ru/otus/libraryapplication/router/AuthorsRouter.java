@@ -39,7 +39,7 @@ public class AuthorsRouter {
                                 .map(AuthorDto::toDto)
                                 .flatMap(author -> ok().contentType(APPLICATION_JSON).body(fromValue(author)))
                 )
-                .PATCH("/api/authors/{id}", accept(APPLICATION_JSON),
+                .PATCH("/api/authors/{id}", contentType(APPLICATION_JSON),
                         request -> authorHandler.update(request))
                 .POST("/api/authors", contentType(APPLICATION_JSON),
                         request -> authorHandler.create(request))

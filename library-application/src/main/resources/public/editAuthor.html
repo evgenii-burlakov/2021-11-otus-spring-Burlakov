@@ -42,7 +42,8 @@
     $.ajax({
         type: 'PATCH',
         url: '/api/authors/' + id,
-        data: "name=" + name,
+        contentType : 'application/json',
+        data: JSON.stringify({name: name}),
         success: function(data) {
                 window.location = "/authors.html";
             }

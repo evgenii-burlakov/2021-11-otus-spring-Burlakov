@@ -5,7 +5,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.otus.libraryapplication.domain.Author;
 
-public interface AuthorRepository extends ReactiveMongoRepository<Author, Long>, AuthorRepositoryCustom {
+public interface AuthorRepository extends ReactiveMongoRepository<Author, String>, AuthorRepositoryCustom {
     Flux<Author> findAll();
 
     Mono<Author> findById(String Id);
