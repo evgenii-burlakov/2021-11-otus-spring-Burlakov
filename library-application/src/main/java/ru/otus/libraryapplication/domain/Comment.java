@@ -8,15 +8,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = "book")
-@ToString(exclude = "book")
 @Document(collection = "COMMENTS")
 public class Comment {
     @Id
-    private Long id;
+    private String id;
 
     private String comment;
 
-    @DBRef
-    private Book book;
+    private String bookId;
 }

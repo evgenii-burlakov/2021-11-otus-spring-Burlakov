@@ -35,8 +35,11 @@
         var id = getUrlVars()["id"];
         $.get('/api/comments/' + id).done(function (comment) {
             document.getElementById("comment-name-input").value = comment.comment;
-            $('#book-name').append(comment.book.name);
-            document.getElementById("book-id").value = comment.book.id;
+
+            $.get('/api/books/' + comment.bookId).done(function (book) {
+                $('#book-name').append(book.name);
+                document.getElementById("book-id").value = book.id;
+            })
         })
     });
 
@@ -55,10 +58,10 @@
     $.ajax({
         type: 'PATCH',
         url: '/api/comments/' + id,
-        data: { id: id,
+        contentType : 'application/json',
+        data: JSON.stringify({ id: id,
                 comment: comment,
-                "book.id": bookId,
-        },
+                bookId: bookId }),
         success: function(data) {
                 window.location = "/bookPage.html?id=" + bookId;
             }

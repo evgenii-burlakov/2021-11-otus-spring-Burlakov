@@ -7,14 +7,12 @@ import reactor.core.publisher.Mono;
 import ru.otus.libraryapplication.domain.Book;
 import ru.otus.libraryapplication.domain.Comment;
 
-public interface CommentRepository extends ReactiveMongoRepository<Comment, Long> {
-    @Query(fields="{ 'id' : 1, 'comment' : 1}")
-    Flux<Comment> getAllByBook(Book book);
+public interface CommentRepository extends ReactiveMongoRepository<Comment, String> {
+    Flux<Comment> getAllByBookId(String bookId);
 
-    void deleteById(String id);
+    Mono<Void> deleteById(String id);
 
     Mono<Comment> save(Comment comment);
 
-    @Query(fields="{ 'id' : 1, 'comment' : 1}")
     Mono<Comment> findById(String id);
 }

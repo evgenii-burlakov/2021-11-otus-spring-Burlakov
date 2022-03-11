@@ -28,9 +28,10 @@
            $.ajax({
                type: 'POST',
                url: '/api/comments',
-               data: { comment: comment,
-                   "book.id": bookId,
-               },
+               contentType : 'application/json',
+               data: JSON.stringify({ comment: comment,
+                    bookId: bookId,
+               }),
                success: function(data) {
                    window.location = '/bookPage.html?id=' + bookId;
            }

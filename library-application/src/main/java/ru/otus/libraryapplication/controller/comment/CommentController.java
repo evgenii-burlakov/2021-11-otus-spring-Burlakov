@@ -9,8 +9,8 @@ public class CommentController {
 //    @GetMapping("/api/comments/{id}")
 //    public CommentDto getCommentById(@PathVariable("id") Long id) {
 //        return CommentDto.toDto(commentService.getById(id));
-//    }
-//
+////    }
+////
 //    @GetMapping("/api/comments")
 //    public List<CommentDto> getCommentByBookId(@RequestParam("bookId") Long bookId) {
 //        return commentService.getAllByBookId(bookId).stream()
