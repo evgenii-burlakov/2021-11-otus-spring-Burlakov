@@ -12,7 +12,7 @@ import ru.otus.libraryapplication.domain.Book;
 @Setter
 @EqualsAndHashCode
 public class BookDto {
-    private Long id;
+    private String id;
 
     private String name;
     private AuthorDto author;
@@ -21,7 +21,7 @@ public class BookDto {
     public BookDto() {
     }
 
-    public BookDto(Long id, String name, AuthorDto author, GenreDto genre) {
+    public BookDto(String id, String name, AuthorDto author, GenreDto genre) {
         this.id = id;
         this.name = name;
         this.author = author;

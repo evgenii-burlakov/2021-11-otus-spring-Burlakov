@@ -11,17 +11,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "BOOKS")
 public class Book {
     @Id
-    private Long id;
+    private String id;
 
     private String name;
 
-    @DBRef
+
     private Author author;
 
-    @DBRef
+
     private Genre genre;
 
-    public Book(Long id, String name, Author author, Genre genre) {
+    public Book(String id, String name, Author author, Genre genre) {
         this.id = id;
         this.name = name;
         this.author = author;

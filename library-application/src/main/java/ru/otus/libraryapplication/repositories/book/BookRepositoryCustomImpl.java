@@ -1,5 +1,6 @@
 package ru.otus.libraryapplication.repositories.book;
 
+import com.mongodb.client.result.DeleteResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -27,10 +28,10 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
     }
 
     @Override
-    public void deleteWithCommentsByBookId(String id) {
+    public Mono<DeleteResult> deleteWithCommentsByBookId(String id) {
         Query query = Query.query(Criteria.where("book.id").is(id));
         mongoTemplate.remove(query, Comment.class);
 
-        mongoTemplate.remove(Query.query(Criteria.where("id").is(id)), Book.class);
+        return mongoTemplate.remove(Query.query(Criteria.where("id").is(id)), Book.class);
     }
 }

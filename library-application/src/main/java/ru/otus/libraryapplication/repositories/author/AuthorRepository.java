@@ -10,7 +10,5 @@ public interface AuthorRepository extends ReactiveMongoRepository<Author, String
 
     Mono<Author> findById(String Id);
 
-    Mono<Author> findByName(String name);
-
     Mono<Author> save(Author author);
 }

@@ -10,7 +10,5 @@ public interface GenreRepository extends ReactiveMongoRepository<Genre, String>,
 
     Mono<Genre> findById(String id);
 
-    Mono<Genre> findByName(String name);
-
     Mono<Genre> save(Genre genre);
 }
