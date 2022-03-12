@@ -11,16 +11,15 @@ import ru.otus.libraryapplication.dto.CommentDto;
 import ru.otus.libraryapplication.repositories.book.BookRepository;
 import ru.otus.libraryapplication.repositories.comment.CommentRepository;
 import ru.otus.libraryapplication.service.string.StringService;
+import ru.otus.libraryapplication.util.exeption.ApplicationException;
 
 import static org.springframework.web.reactive.function.BodyInserters.fromValue;
-import static org.springframework.web.reactive.function.server.ServerResponse.badRequest;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
 @Component
 @RequiredArgsConstructor
 public class CommentHandler {
     private final CommentRepository commentRepository;
-    private final BookRepository bookRepository;
     private final StringService stringService;
 
     public Mono<ServerResponse> delete(ServerRequest request) {
@@ -42,7 +41,7 @@ public class CommentHandler {
                                 .map(CommentDto::toDto)
                                 .flatMap(commentDto -> ok().body(fromValue(commentDto)));
                     } else {
-                        return badRequest().build();
+                        throw new ApplicationException("Invalid comment");
                     }
                 });
     }
@@ -63,7 +62,7 @@ public class CommentHandler {
                                 .map(CommentDto::toDto)
                                 .flatMap(commentDto -> ok().body(fromValue(commentDto)));
                     } else {
-                        return badRequest().build();
+                        throw new ApplicationException("Invalid comment");
                     }
                 });
     }

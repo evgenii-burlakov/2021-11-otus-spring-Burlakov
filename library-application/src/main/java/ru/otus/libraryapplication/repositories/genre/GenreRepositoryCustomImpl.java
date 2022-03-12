@@ -17,9 +17,9 @@ public class GenreRepositoryCustomImpl implements GenreRepositoryCustom {
     @Override
     public Mono<DeleteResult> deleteWithBooksByGenreId(String id) {
         Query query = Query.query(Criteria.where("genre.id").is(id));
-        mongoTemplate.remove(query, Book.class);
 
-        return mongoTemplate.remove(Query.query(Criteria.where("id").is(id)), Genre.class);
+        return mongoTemplate.remove(query, Book.class)
+                .flatMap(d -> mongoTemplate.remove(Query.query(Criteria.where("id").is(id)), Genre.class));
     }
 
     public Mono<Genre> updateWithBooks(Genre genre) {
@@ -28,8 +28,6 @@ public class GenreRepositoryCustomImpl implements GenreRepositoryCustom {
         update.set("genre.name", genre.getName());
 
         return mongoTemplate.updateMulti(query, update, Book.class)
-                .flatMap(d -> {
-                    return mongoTemplate.save(genre);
-                });
+                .flatMap(d -> mongoTemplate.save(genre));
     }
 }

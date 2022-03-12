@@ -10,9 +10,9 @@ import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.dto.AuthorDto;
 import ru.otus.libraryapplication.repositories.author.AuthorRepository;
 import ru.otus.libraryapplication.service.string.StringService;
+import ru.otus.libraryapplication.util.exeption.ApplicationException;
 
 import static org.springframework.web.reactive.function.BodyInserters.fromValue;
-import static org.springframework.web.reactive.function.server.ServerResponse.badRequest;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
 @Component
@@ -45,7 +45,7 @@ public class AuthorHandler {
                                 .map(AuthorDto::toDto)
                                 .flatMap(authorDto -> ok().body(fromValue(authorDto)));
                     } else {
-                        return badRequest().build();
+                        throw new ApplicationException("Invalid author name");
                     }
                 });
     }
@@ -64,7 +64,7 @@ public class AuthorHandler {
                                 .map(AuthorDto::toDto)
                                 .flatMap(authorDto -> ok().body(fromValue(authorDto)));
                     } else {
-                        return badRequest().build();
+                        throw new ApplicationException("Invalid author name");
                     }
                 });
     }
