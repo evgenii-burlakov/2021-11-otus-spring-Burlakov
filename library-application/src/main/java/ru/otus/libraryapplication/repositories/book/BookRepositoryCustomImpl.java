@@ -30,8 +30,8 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
     @Override
     public Mono<DeleteResult> deleteWithCommentsByBookId(String id) {
         Query query = Query.query(Criteria.where("book.id").is(id));
-        mongoTemplate.remove(query, Comment.class);
 
-        return mongoTemplate.remove(Query.query(Criteria.where("id").is(id)), Book.class);
+        return mongoTemplate.remove(query, Comment.class)
+                .flatMap(d -> mongoTemplate.remove(Query.query(Criteria.where("id").is(id)), Book.class));
     }
 }

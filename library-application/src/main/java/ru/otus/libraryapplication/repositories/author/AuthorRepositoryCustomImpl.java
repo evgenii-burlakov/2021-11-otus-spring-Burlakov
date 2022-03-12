@@ -18,9 +18,7 @@ public class AuthorRepositoryCustomImpl implements AuthorRepositoryCustom {
     public Mono<DeleteResult> deleteWithBooksByAuthorId(String id) {
         Query query = Query.query(Criteria.where("author.id").is(id));
         return mongoTemplate.remove(query, Book.class)
-                .flatMap(d -> {
-                    return mongoTemplate.remove(Query.query(Criteria.where("id").is(id)), Author.class);
-                });
+                .flatMap(d -> mongoTemplate.remove(Query.query(Criteria.where("id").is(id)), Author.class));
     }
 
     public Mono<Author> updateWithBooks(Author author) {
@@ -29,8 +27,6 @@ public class AuthorRepositoryCustomImpl implements AuthorRepositoryCustom {
         update.set("author.name", author.getName());
 
         return mongoTemplate.updateMulti(query, update, Book.class)
-                .flatMap(d -> {
-                    return mongoTemplate.save(author);
-                });
+                .flatMap(d -> mongoTemplate.save(author));
     }
 }
