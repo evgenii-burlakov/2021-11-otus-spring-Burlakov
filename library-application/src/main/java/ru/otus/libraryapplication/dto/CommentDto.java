@@ -4,10 +4,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import ru.otus.libraryapplication.domain.Book;
 import ru.otus.libraryapplication.domain.Comment;
-
-import java.util.Optional;
 
 @Builder
 @Getter

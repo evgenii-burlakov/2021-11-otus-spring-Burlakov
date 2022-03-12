@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
+import ru.otus.libraryapplication.domain.Genre;
 import ru.otus.libraryapplication.dto.GenreDto;
 import ru.otus.libraryapplication.repositories.genre.GenreRepository;
 import ru.otus.libraryapplication.service.string.StringService;
@@ -30,7 +31,7 @@ public class GenreHandler {
     public Mono<ServerResponse> update(ServerRequest request) {
         String id = request.pathVariable("id");
 
-        return request.bodyToMono(GenreDto.class)
+        return request.bodyToMono(Genre.class)
                 .map(genre -> {
                     String name = stringService.beautifyStringName(genre.getName());
                     genre.setName(name);
@@ -40,7 +41,7 @@ public class GenreHandler {
                 .flatMap(genre -> {
                     if (stringService.verifyNotBlank(genre.getName())) {
 
-                        return genreRepository.save(genre.toBean())
+                        return genreRepository.updateWithBooks(genre)
                                 .map(GenreDto::toDto)
                                 .flatMap(genreDto -> ok().body(fromValue(genreDto)));
                     } else {
@@ -51,7 +52,7 @@ public class GenreHandler {
 
     public Mono<ServerResponse> create(ServerRequest request) {
 
-        return request.bodyToMono(GenreDto.class)
+        return request.bodyToMono(Genre.class)
                 .map(genre -> {
                     String name = stringService.beautifyStringName(genre.getName());
                     genre.setName(stringService.beautifyStringName(name));
@@ -59,7 +60,7 @@ public class GenreHandler {
                 })
                 .flatMap(genre -> {
                     if (stringService.verifyNotBlank(genre.getName())) {
-                        return genreRepository.save(genre.toBean())
+                        return genreRepository.save(genre)
                                 .map(GenreDto::toDto)
                                 .flatMap(genreDto -> ok().body(fromValue(genreDto)));
                     } else {

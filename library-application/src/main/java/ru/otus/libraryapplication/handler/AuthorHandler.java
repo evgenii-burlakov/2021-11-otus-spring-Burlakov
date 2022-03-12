@@ -6,12 +6,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
+import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.dto.AuthorDto;
 import ru.otus.libraryapplication.repositories.author.AuthorRepository;
 import ru.otus.libraryapplication.service.string.StringService;
 
 import static org.springframework.web.reactive.function.BodyInserters.fromValue;
-import static org.springframework.web.reactive.function.server.ServerResponse.*;
+import static org.springframework.web.reactive.function.server.ServerResponse.badRequest;
+import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
 @Component
 @RequiredArgsConstructor
@@ -29,7 +31,7 @@ public class AuthorHandler {
     public Mono<ServerResponse> update(ServerRequest request) {
         String id = request.pathVariable("id");
 
-        return request.bodyToMono(AuthorDto.class)
+        return request.bodyToMono(Author.class)
                 .map(author -> {
                     String name = stringService.beautifyStringName(author.getName());
                     author.setName(name);
@@ -39,7 +41,7 @@ public class AuthorHandler {
                 .flatMap(author -> {
                     if (stringService.verifyNotBlank(author.getName())) {
 
-                        return authorRepository.save(author.toBean())
+                        return authorRepository.updateWithBooks(author)
                                 .map(AuthorDto::toDto)
                                 .flatMap(authorDto -> ok().body(fromValue(authorDto)));
                     } else {
@@ -50,7 +52,7 @@ public class AuthorHandler {
 
     public Mono<ServerResponse> create(ServerRequest request) {
 
-        return request.bodyToMono(AuthorDto.class)
+        return request.bodyToMono(Author.class)
                 .map(author -> {
                     String name = stringService.beautifyStringName(author.getName());
                     author.setName(stringService.beautifyStringName(name));
@@ -58,7 +60,7 @@ public class AuthorHandler {
                 })
                 .flatMap(author -> {
                     if (stringService.verifyNotBlank(author.getName())) {
-                        return authorRepository.save(author.toBean())
+                        return authorRepository.save(author)
                                 .map(AuthorDto::toDto)
                                 .flatMap(authorDto -> ok().body(fromValue(authorDto)));
                     } else {

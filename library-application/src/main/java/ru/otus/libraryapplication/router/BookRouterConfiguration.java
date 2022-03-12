@@ -5,11 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import ru.otus.libraryapplication.dto.BookDto;
-import ru.otus.libraryapplication.dto.GenreDto;
 import ru.otus.libraryapplication.handler.BookHandler;
-import ru.otus.libraryapplication.handler.GenreHandler;
 import ru.otus.libraryapplication.repositories.book.BookRepository;
-import ru.otus.libraryapplication.repositories.genre.GenreRepository;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.web.reactive.function.BodyInserters.fromValue;

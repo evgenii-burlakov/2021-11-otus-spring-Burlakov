@@ -5,11 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import ru.otus.libraryapplication.dto.AuthorDto;
 import ru.otus.libraryapplication.dto.CommentDto;
-import ru.otus.libraryapplication.handler.AuthorHandler;
 import ru.otus.libraryapplication.handler.CommentHandler;
-import ru.otus.libraryapplication.repositories.author.AuthorRepository;
 import ru.otus.libraryapplication.repositories.comment.CommentRepository;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;

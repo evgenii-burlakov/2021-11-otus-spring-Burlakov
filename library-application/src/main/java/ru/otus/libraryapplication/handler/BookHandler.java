@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
+import ru.otus.libraryapplication.domain.Book;
 import ru.otus.libraryapplication.dto.BookDto;
 import ru.otus.libraryapplication.repositories.book.BookRepository;
 import ru.otus.libraryapplication.service.string.StringService;
@@ -30,7 +31,7 @@ public class BookHandler {
     public Mono<ServerResponse> update(ServerRequest request) {
         String id = request.pathVariable("id");
 
-        return request.bodyToMono(BookDto.class)
+        return request.bodyToMono(Book.class)
                 .flatMap(book -> {
                     String bookName = stringService.beautifyStringName(book.getName());
 
@@ -41,7 +42,7 @@ public class BookHandler {
                     book.setId(id);
                     book.setName(bookName);
 
-                    return bookRepository.save(book.toBean())
+                    return bookRepository.save(book)
                             .map(BookDto::toDto)
                             .flatMap(bookDto -> ok().body(fromValue(bookDto)));
                 });
@@ -49,7 +50,7 @@ public class BookHandler {
 
     public Mono<ServerResponse> create(ServerRequest request) {
 
-        return request.bodyToMono(BookDto.class)
+        return request.bodyToMono(Book.class)
                 .flatMap(book -> {
                     String bookName = stringService.beautifyStringName(book.getName());
 
@@ -57,14 +58,14 @@ public class BookHandler {
                         throw new ApplicationException("Invalid book name");
                     }
 
-                    return bookRepository.existByBookAuthorAndGenre(bookName, book.getAuthor().toBean(), book.getGenre().toBean())
+                    return bookRepository.existByBookAuthorAndGenre(bookName, book.getAuthor(), book.getGenre())
                             .flatMap(bool -> {
                                 if (bool) {
                                     throw new ApplicationException("Book already exist");
                                 } else {
                                     book.setName(bookName);
 
-                                    return bookRepository.save(book.toBean())
+                                    return bookRepository.save(book)
                                             .map(BookDto::toDto)
                                             .flatMap(bookDto -> ok().body(fromValue(bookDto)));
                                 }
