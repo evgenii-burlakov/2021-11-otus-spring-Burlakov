@@ -1,1 +1,1 @@
-Домашние задания в рамках курса OTUS SPRING.
+Library application, Spring Boot + Spring Shell + Spring JDBC
