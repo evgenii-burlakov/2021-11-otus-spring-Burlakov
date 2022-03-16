@@ -1,1 +1,1 @@
-Домашние задания в рамках курса OTUS SPRING.
+Students testing application, Spring Boot + Spring Shell
