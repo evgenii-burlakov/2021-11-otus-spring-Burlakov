@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import ru.otus.libraryapplication.repositories.author.AuthorRepository;
 import ru.otus.libraryapplication.repositories.book.BookRepository;
 import ru.otus.libraryapplication.repositories.genre.GenreRepository;
@@ -20,6 +21,9 @@ class StringServiceImplTest {
 
     @MockBean
     private CommentService commentService;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @MockBean
     private AuthorRepository authorRepository;

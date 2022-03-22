@@ -6,6 +6,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.libraryapplication.dto.GenreDto;
 import ru.otus.libraryapplication.service.genre.GenreService;
@@ -31,7 +33,11 @@ class GenreControllerTest {
     @MockBean
     private GenreService genreService;
 
+    @MockBean
+    private UserDetailsService userDetailsService;
+
     @Test
+    @WithMockUser(username = "USER", roles = "USER")
     @DisplayName("корректно возвращать все жанры")
     void correctGetAllGenres() throws Exception {
         given(genreService.getAll()).willReturn(List.of(GENRE1, GENRE2));
@@ -47,6 +53,15 @@ class GenreControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "USER", roles = "ADMIN")
+    @DisplayName("без аутентификации не возвращать все жанры")
+    void dontGetAllGenresWithoutAuthentication() throws Exception {
+        mvc.perform(get("/genres"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "USER", roles = "USER")
     @DisplayName("корректно удалять жанр")
     void correctDeleteGenreById() throws Exception {
         mvc.perform(post("/genres/delete")
@@ -57,6 +72,16 @@ class GenreControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "USER", roles = "ADMIN")
+    @DisplayName("без аутентификации не удалять жанр")
+    void dontDeleteGenreByIdWithoutAuthentication() throws Exception {
+        mvc.perform(post("/genres/delete")
+                        .param("id", "1"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "USER", roles = "USER")
     @DisplayName("корректно возвращать страницу редактирования автора")
     void correctReturnEditPage() throws Exception {
         given(genreService.getById(1L)).willReturn(GENRE1);
@@ -70,6 +95,15 @@ class GenreControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "USER", roles = "ADMIN")
+    @DisplayName("без аутентификации не возвращать страницу редактирования автора")
+    void dontReturnEditPageWithoutAuthentication() throws Exception {
+        mvc.perform(get("/genres/edit?id=1"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "USER", roles = "USER")
     @DisplayName("корректно редактировать жанр")
     void correctUpdateGenre() throws Exception {
         mvc.perform(post("/genres/edit")
@@ -81,6 +115,17 @@ class GenreControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "USER", roles = "ADMIN")
+    @DisplayName("без аутентификации не редактировать жанр")
+    void dontUpdateGenreWithoutAuthentication() throws Exception {
+        mvc.perform(post("/genres/edit")
+                        .param("id", "1")
+                        .param("name", "Poem"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "USER", roles = "USER")
     @DisplayName("корректно возвращать страницу создания жанра")
     void correctReturnCreatePage() throws Exception {
         mvc.perform(get("/genres/create"))
@@ -89,6 +134,15 @@ class GenreControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "USER", roles = "ADMIN")
+    @DisplayName("без аутентификации не возвращать страницу создания жанра")
+    void dontReturnCreatePageWithoutAuthentication() throws Exception {
+        mvc.perform(get("/genres/create"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "USER", roles = "USER")
     @DisplayName("корректно создавать жанр")
     void correctCreateGenre() throws Exception {
         mvc.perform(post("/genres/create")
@@ -96,5 +150,14 @@ class GenreControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/genres"));
         Mockito.verify(genreService, times(1)).create("Poem");
+    }
+
+    @Test
+    @WithMockUser(username = "USER", roles = "ADMIN")
+    @DisplayName("без аутентификации не создавать жанр")
+    void dontCreateGenreWithoutAuthentication() throws Exception {
+        mvc.perform(post("/genres/create")
+                        .param("name", "Poem"))
+                .andExpect(status().isForbidden());
     }
 }

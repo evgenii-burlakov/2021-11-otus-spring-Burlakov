@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.domain.Book;
 import ru.otus.libraryapplication.repositories.book.BookRepository;
@@ -39,6 +40,9 @@ class BookServiceImplTest {
 
     @MockBean
     private GenreService genreService;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @MockBean
     private BookRepository bookRepository;

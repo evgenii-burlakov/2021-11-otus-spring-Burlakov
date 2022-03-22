@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import ru.otus.libraryapplication.domain.Author;
 import ru.otus.libraryapplication.repositories.author.AuthorRepository;
 import ru.otus.libraryapplication.repositories.book.BookRepository;
@@ -34,6 +35,9 @@ class AuthorServiceImplTest {
 
     @MockBean
     private CommentService commentService;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @MockBean
     private AuthorRepository authorRepository;

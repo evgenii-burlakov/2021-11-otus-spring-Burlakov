@@ -6,6 +6,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.libraryapplication.dto.AuthorDto;
 import ru.otus.libraryapplication.dto.BookDto;
@@ -42,7 +44,11 @@ class BookControllerTest {
     @MockBean
     private GenreService genreService;
 
+    @MockBean
+    private UserDetailsService userDetailsService;
+
     @Test
+    @WithMockUser(username = "USER", roles = "USER")
     @DisplayName("корректно возвращать все книги")
     void correctGetAllBooks() throws Exception {
         given(bookService.getAll()).willReturn(List.of(BOOK1, BOOK2, BOOK3));
@@ -58,6 +64,15 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "USER", roles = "ADMIN")
+    @DisplayName("без аутентификации не возвращать все книги")
+    void dontGetAllBooksWithoutAuthentication() throws Exception {
+        mvc.perform(get("/books"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "USER", roles = "USER")
     @DisplayName("корректно удалять книгу")
     void correctDeleteBookById() throws Exception {
         mvc.perform(post("/books/delete")
@@ -68,6 +83,16 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "USER", roles = "ADMIN")
+    @DisplayName("без аутентификации не удалять книгу")
+    void dontDeleteBookByIdWithoutAuthentication() throws Exception {
+        mvc.perform(post("/books/delete")
+                        .param("id", "1"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "USER", roles = "USER")
     @DisplayName("корректно возвращать страницу редактирования книги")
     void correctReturnEditPage() throws Exception {
         given(bookService.getById(1L)).willReturn(BOOK1);
@@ -96,6 +121,15 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "USER", roles = "ADMIN")
+    @DisplayName("без аутентификации не возвращать страницу редактирования книги")
+    void dontReturnEditPageWithoutAuthentication() throws Exception {
+        mvc.perform(get("/books/edit?id=1"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "USER", roles = "USER")
     @DisplayName("корректно редактировать книгу")
     void correctUpdateBook() throws Exception {
         mvc.perform(post("/books/edit")
@@ -109,6 +143,19 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "USER", roles = "ADMIN")
+    @DisplayName("без аутентификации не редактировать книгу")
+    void dontUpdateBookWithoutAuthentication() throws Exception {
+        mvc.perform(post("/books/edit")
+                        .param("id", "1")
+                        .param("name", "We")
+                        .param("author.name", "Zamiatin")
+                        .param("genre.name", "Fantasy"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "USER", roles = "USER")
     @DisplayName("корректно возвращать страницу книги")
     void correctGetBookPage() throws Exception {
         given(bookService.getById(1L)).willReturn(BOOK1);
@@ -126,6 +173,15 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "USER", roles = "ADMIN")
+    @DisplayName("без аутентификации не возвращать страницу книги")
+    void dontGetBookPageWithoutAuthentication() throws Exception {
+        mvc.perform(get("/books/get/1"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "USER", roles = "USER")
     @DisplayName("корректно возвращать страницу создания книги")
     void correctReturnCreatePage() throws Exception {
         given(authorService.getAll()).willReturn(List.of(AUTHOR1, AUTHOR2));
@@ -149,6 +205,15 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "USER", roles = "ADMIN")
+    @DisplayName("без аутентификации не возвращать страницу создания книги")
+    void dontReturnCreatePageWithoutAuthentication() throws Exception {
+        mvc.perform(get("/books/create"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "USER", roles = "USER")
     @DisplayName("корректно создавать книгу")
     void correctCreateBook() throws Exception {
         mvc.perform(post("/books/create")
@@ -158,5 +223,16 @@ class BookControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/books"));
         Mockito.verify(bookService, times(1)).create("We", "Zamiatin", "Fantasy");
+    }
+
+    @Test
+    @WithMockUser(username = "USER", roles = "ADMIN")
+    @DisplayName("без аутентификации не создавать книгу")
+    void dontCreateBookWithoutAuthentication() throws Exception {
+        mvc.perform(post("/books/create")
+                        .param("name", "We")
+                        .param("author.name", "Zamiatin")
+                        .param("genre.name", "Fantasy"))
+                .andExpect(status().isForbidden());
     }
 }
