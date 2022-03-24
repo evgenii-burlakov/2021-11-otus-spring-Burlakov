@@ -9,6 +9,8 @@ import ru.otus.libraryapplication.domain.User;
 import ru.otus.libraryapplication.repositories.user.UserRepository;
 
 import static org.springframework.security.core.userdetails.User.UserBuilder;
+import static org.springframework.security.core.userdetails.User.withUsername;
+
 
 @RequiredArgsConstructor
 @Service
@@ -20,16 +22,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         User user = userRepository.findByUsername(username);
 
-        UserBuilder builder;
-
         if (user != null) {
-            builder = org.springframework.security.core.userdetails.User.withUsername(username);
+            UserBuilder builder = withUsername(username);
             builder.password(user.getPassword());
             builder.roles("USER");
+            return builder.build();
         } else {
             throw new UsernameNotFoundException("User not found.");
         }
-
-        return builder.build();
     }
 }
