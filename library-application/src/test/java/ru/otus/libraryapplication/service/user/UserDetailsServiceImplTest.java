@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import ru.otus.libraryapplication.domain.User;
 import ru.otus.libraryapplication.repositories.author.AuthorRepository;
 import ru.otus.libraryapplication.repositories.book.BookRepository;
 import ru.otus.libraryapplication.repositories.genre.GenreRepository;
@@ -18,6 +17,8 @@ import ru.otus.libraryapplication.service.string.StringService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.springframework.security.core.userdetails.User.withUsername;
+import static ru.otus.libraryapplication.LibraryUnitTestData.USER;
 
 @SpringBootTest
 @DisplayName("Сервис для работы с пользователями должен ")
@@ -46,10 +47,10 @@ class UserDetailsServiceImplTest {
     @Test
     @DisplayName("корректно возвращать пользователя по его имени")
     void correctLoadUserByUsername() {
-        Mockito.when(userRepository.findByUsername("USER")).thenReturn(new User(1L, "USER", "PASSWORD"));
+        Mockito.when(userRepository.findByUsername("USER")).thenReturn(USER);
 
-        UserDetails expected = org.springframework.security.core.userdetails.User.withUsername("USER")
-                .password("PASSWORD")
+        UserDetails expected = withUsername("USER")
+                .password("USER")
                 .roles("USER")
                 .build();
 

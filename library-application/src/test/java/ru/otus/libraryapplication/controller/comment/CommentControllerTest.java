@@ -46,11 +46,10 @@ class CommentControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "ADMIN")
     @DisplayName("без аутентификации не возвращать страницу создания комментария")
     void dontReturnCreatePageWithoutAuthentication() throws Exception {
         mvc.perform(get("/comments/create?bookId=1"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test
@@ -66,13 +65,12 @@ class CommentControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "ADMIN")
     @DisplayName("без аутентификации не создавать комментарий")
     void dontCreateCommentWithoutAuthentication() throws Exception {
         mvc.perform(post("/comments/create")
                         .param("comment", "Nice")
                         .param("book.id", "1"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test
@@ -90,11 +88,10 @@ class CommentControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "ADMIN")
     @DisplayName("без аутентификации не возвращать страницу редактирования комментария")
     void dontReturnEditPageWithoutAuthentication() throws Exception {
         mvc.perform(get("/comments/edit?id=1"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test
@@ -111,18 +108,17 @@ class CommentControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "ADMIN")
     @DisplayName("без аутентификации не редактировать комментарий")
     void dontUpdateCommentWithoutAuthentication() throws Exception {
         mvc.perform(post("/comments/edit")
                         .param("id", "1")
                         .param("comment", "Nice")
                         .param("book.id", "1"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "USER")
+    @WithMockUser(username = "USER", roles = "ADMIN")
     @DisplayName("корректно удалять комментарий")
     void correctDeleteBookById() throws Exception {
         mvc.perform(post("/comments/delete")
@@ -134,7 +130,7 @@ class CommentControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "ADMIN")
+    @WithMockUser(username = "USER", roles = "USER")
     @DisplayName("без аутентификации не удалять комментарий")
     void dontDeleteBookByIdWithoutAuthentication() throws Exception {
         mvc.perform(post("/comments/delete")

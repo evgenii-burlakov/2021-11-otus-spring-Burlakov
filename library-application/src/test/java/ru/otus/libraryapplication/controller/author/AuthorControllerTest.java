@@ -37,7 +37,7 @@ class AuthorControllerTest {
     private UserDetailsService userDetailsService;
 
     @Test
-    @WithMockUser(username = "USER", roles = "USER")
+    @WithMockUser(username = "USER", roles = "ADMIN")
     @DisplayName("корректно возвращать всех авторов")
     void correctGetAllAuthors() throws Exception {
         given(authorService.getAll()).willReturn(List.of(AUTHOR1, AUTHOR2));
@@ -53,16 +53,15 @@ class AuthorControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "ADMIN")
     @DisplayName("без аутентификации не возвращать авторов")
     void dontGetAllAuthorsWithoutAuthentication() throws Exception {
         mvc.perform(get("/authors"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test
     @DisplayName("корректно удалять автора")
-    @WithMockUser(username = "USER", roles = "USER")
+    @WithMockUser(username = "USER", roles = "ADMIN")
     void correctDeleteAuthorById() throws Exception {
         mvc.perform(post("/authors/delete")
                         .param("id", "1"))
@@ -72,8 +71,8 @@ class AuthorControllerTest {
     }
 
     @Test
-    @DisplayName("без аутентификации не удалять автора")
-    @WithMockUser(username = "USER", roles = "ADMIN")
+    @DisplayName("без авторизации не удалять автора")
+    @WithMockUser(username = "USER", roles = "USER")
     void dontDeleteAuthorByIdWithoutAuthentication() throws Exception {
         mvc.perform(post("/authors/delete")
                         .param("id", "1"))
@@ -81,7 +80,7 @@ class AuthorControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "USER")
+    @WithMockUser(username = "USER", roles = "ADMIN")
     @DisplayName("корректно возвращать страницу редактирования автора")
     void correctReturnEditPage() throws Exception {
         given(authorService.getById(1L)).willReturn(AUTHOR1);
@@ -95,15 +94,15 @@ class AuthorControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "ADMIN")
-    @DisplayName("без аутентификации не возвращать страницу редактирования автора")
+    @WithMockUser(username = "USER", roles = "USER")
+    @DisplayName("без авторизации не возвращать страницу редактирования автора")
     void dontReturnEditPageWithoutAuthentication() throws Exception {
         mvc.perform(get("/authors/edit?id=1"))
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "USER")
+    @WithMockUser(username = "USER", roles = "ADMIN")
     @DisplayName("корректно редактировать автора")
     void correctUpdateAuthor() throws Exception {
         mvc.perform(post("/authors/edit")
@@ -115,8 +114,8 @@ class AuthorControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "ADMIN")
-    @DisplayName("без аутентификации не редактировать автора")
+    @WithMockUser(username = "USER", roles = "USER")
+    @DisplayName("без авторизации не редактировать автора")
     void dontUpdateAuthorWithoutAuthentication() throws Exception {
         mvc.perform(post("/authors/edit")
                         .param("id", "1")
@@ -125,7 +124,7 @@ class AuthorControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "USER")
+    @WithMockUser(username = "USER", roles = "ADMIN")
     @DisplayName("корректно возвращать страницу создания автора")
     void correctReturnCreatePage() throws Exception {
         mvc.perform(get("/authors/create"))
@@ -134,15 +133,15 @@ class AuthorControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "ADMIN")
-    @DisplayName("без аутентификации не возвращать страницу создания автора")
+    @WithMockUser(username = "USER", roles = "USER")
+    @DisplayName("без авторизации не возвращать страницу создания автора")
     void dontReturnCreatePageWithoutAuthentication() throws Exception {
         mvc.perform(get("/authors/create"))
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "USER")
+    @WithMockUser(username = "USER", roles = "ADMIN")
     @DisplayName("корректно создавать автора")
     void correctCreateAuthor() throws Exception {
         mvc.perform(post("/authors/create")
@@ -153,8 +152,8 @@ class AuthorControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "ADMIN")
-    @DisplayName("без аутентификации не создавать автора")
+    @WithMockUser(username = "USER", roles = "USER")
+    @DisplayName("без авторизации не создавать автора")
     void dontCreateAuthorWithoutAuthentication() throws Exception {
         mvc.perform(post("/authors/create")
                         .param("name", "Pushkin"))

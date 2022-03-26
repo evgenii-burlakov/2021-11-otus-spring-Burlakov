@@ -37,7 +37,7 @@ class GenreControllerTest {
     private UserDetailsService userDetailsService;
 
     @Test
-    @WithMockUser(username = "USER", roles = "USER")
+    @WithMockUser(username = "USER", roles = "ADMIN")
     @DisplayName("корректно возвращать все жанры")
     void correctGetAllGenres() throws Exception {
         given(genreService.getAll()).willReturn(List.of(GENRE1, GENRE2));
@@ -53,15 +53,14 @@ class GenreControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "ADMIN")
     @DisplayName("без аутентификации не возвращать все жанры")
     void dontGetAllGenresWithoutAuthentication() throws Exception {
         mvc.perform(get("/genres"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "USER")
+    @WithMockUser(username = "USER", roles = "ADMIN")
     @DisplayName("корректно удалять жанр")
     void correctDeleteGenreById() throws Exception {
         mvc.perform(post("/genres/delete")
@@ -72,8 +71,8 @@ class GenreControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "ADMIN")
-    @DisplayName("без аутентификации не удалять жанр")
+    @WithMockUser(username = "USER", roles = "USER")
+    @DisplayName("без авторизации не удалять жанр")
     void dontDeleteGenreByIdWithoutAuthentication() throws Exception {
         mvc.perform(post("/genres/delete")
                         .param("id", "1"))
@@ -81,7 +80,7 @@ class GenreControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "USER")
+    @WithMockUser(username = "USER", roles = "ADMIN")
     @DisplayName("корректно возвращать страницу редактирования автора")
     void correctReturnEditPage() throws Exception {
         given(genreService.getById(1L)).willReturn(GENRE1);
@@ -95,15 +94,15 @@ class GenreControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "ADMIN")
-    @DisplayName("без аутентификации не возвращать страницу редактирования автора")
+    @WithMockUser(username = "USER", roles = "USER")
+    @DisplayName("без авторизации не возвращать страницу редактирования автора")
     void dontReturnEditPageWithoutAuthentication() throws Exception {
         mvc.perform(get("/genres/edit?id=1"))
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "USER")
+    @WithMockUser(username = "USER", roles = "ADMIN")
     @DisplayName("корректно редактировать жанр")
     void correctUpdateGenre() throws Exception {
         mvc.perform(post("/genres/edit")
@@ -115,8 +114,8 @@ class GenreControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "ADMIN")
-    @DisplayName("без аутентификации не редактировать жанр")
+    @WithMockUser(username = "USER", roles = "USER")
+    @DisplayName("без авторизации не редактировать жанр")
     void dontUpdateGenreWithoutAuthentication() throws Exception {
         mvc.perform(post("/genres/edit")
                         .param("id", "1")
@@ -125,7 +124,7 @@ class GenreControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "USER")
+    @WithMockUser(username = "USER", roles = "ADMIN")
     @DisplayName("корректно возвращать страницу создания жанра")
     void correctReturnCreatePage() throws Exception {
         mvc.perform(get("/genres/create"))
@@ -134,15 +133,15 @@ class GenreControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "ADMIN")
-    @DisplayName("без аутентификации не возвращать страницу создания жанра")
+    @WithMockUser(username = "USER", roles = "USER")
+    @DisplayName("без авторизации не возвращать страницу создания жанра")
     void dontReturnCreatePageWithoutAuthentication() throws Exception {
         mvc.perform(get("/genres/create"))
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "USER")
+    @WithMockUser(username = "USER", roles = "ADMIN")
     @DisplayName("корректно создавать жанр")
     void correctCreateGenre() throws Exception {
         mvc.perform(post("/genres/create")
@@ -153,8 +152,8 @@ class GenreControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "USER", roles = "ADMIN")
-    @DisplayName("без аутентификации не создавать жанр")
+    @WithMockUser(username = "USER", roles = "USER")
+    @DisplayName("без авторизации не создавать жанр")
     void dontCreateGenreWithoutAuthentication() throws Exception {
         mvc.perform(post("/genres/create")
                         .param("name", "Poem"))

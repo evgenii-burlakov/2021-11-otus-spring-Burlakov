@@ -1,9 +1,8 @@
 package ru.otus.libraryapplication;
 
-import ru.otus.libraryapplication.domain.Author;
-import ru.otus.libraryapplication.domain.Book;
-import ru.otus.libraryapplication.domain.Comment;
-import ru.otus.libraryapplication.domain.Genre;
+import ru.otus.libraryapplication.domain.*;
+
+import java.util.List;
 
 public final class LibraryUnitTestData {
     public static final Author AUTHOR1 = new Author(1L, "PUSHKIN");
@@ -19,4 +18,11 @@ public final class LibraryUnitTestData {
     public static final Comment COMMENT1 = new Comment(1L, "ЧИТАЛ ЕЕ В ШКОЛЕ", BOOK1);
     public static final Comment COMMENT2 = new Comment(2L, "Пушкин ван лав", BOOK1);
     public static final Comment COMMENT3 = new Comment(3L, "СкУчНоТиЩа", BOOK1);
+
+    public static final User USER = new User(1L, "USER", "PASSWORD");
+
+    public static final Role ROLE_USER = new Role(1L, "USER", USER);
+    static {
+        USER.setRoles(List.of(ROLE_USER));
+    }
 }
