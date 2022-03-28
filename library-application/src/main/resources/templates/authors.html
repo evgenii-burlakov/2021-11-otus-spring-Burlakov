@@ -38,16 +38,16 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="author : ${authors}">
-            <td id="firstColumn" th:text="${author.name}">Lermontov</td>
+        <tr th:each="authorMongo : ${authors}">
+            <td id="firstColumn" th:text="${authorMongo.name}">Lermontov</td>
             <td>
                 <form method="GET" th:action="@{/authors/edit}">
-                    <button type="submit" name="id" value="value" th:value="${author.id}" class="link-button">Edit</button>
+                    <button type="submit" name="id" value="value" th:value="${authorMongo.id}" class="link-button">Edit</button>
                 </form>
             </td>
             <td>
                 <form method="POST" th:action="@{/authors/delete}">
-                    <button type="submit" name="id" value="value" th:value="${author.id}" class="link-button">Delete</button>
+                    <button type="submit" name="id" value="value" th:value="${authorMongo.id}" class="link-button">Delete</button>
                 </form>
             </td>
         </tr>
@@ -56,7 +56,7 @@
 </div>
 
 <br><br>
-<button onclick="window.location.href='/authors/create'; " type="button">Add author</button>
+<button onclick="window.location.href='/authors/create'; " type="button">Add authorMongo</button>
 <br><br>
 <button onclick="window.location.href='/'; " type="button">Exit</button>
 

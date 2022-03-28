@@ -53,8 +53,8 @@
             <td id="firstBookColumn">
                 <a th:href="@{/books/get/{id}(id=${book.id})}" href="#" th:text="${book.name}">We</a>
             </td>
-            <td id="secondBookColumn" th:text="${book.author.name}">Zamiatin</td>
-            <td id="thirdBookColumn" th:text="${book.genre.name}">Fantasy</td>
+            <td id="secondBookColumn" th:text="${book.authorMongo.name}">Zamiatin</td>
+            <td id="thirdBookColumn" th:text="${book.genreMongo.name}">Fantasy</td>
             <td>
                 <form method="GET" th:action="@{/books/edit}">
                     <button type="submit" name="id" value="value" th:value="${book.id}" class="link-button">Edit</button>
