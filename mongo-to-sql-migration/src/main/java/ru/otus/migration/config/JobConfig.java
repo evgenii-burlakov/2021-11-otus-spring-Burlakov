@@ -4,7 +4,6 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
@@ -16,8 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import ru.otus.migration.jpaModel.AuthorJpa;
 import ru.otus.migration.jpaModel.BookJpa;
+import ru.otus.migration.jpaModel.CommentJpa;
+import ru.otus.migration.jpaModel.GenreJpa;
+import ru.otus.migration.mongoModel.AuthorMongo;
 import ru.otus.migration.mongoModel.BookMongo;
+import ru.otus.migration.mongoModel.CommentMongo;
+import ru.otus.migration.mongoModel.GenreMongo;
 import ru.otus.migration.service.MongoToJpaModelTransformer;
 
 import javax.persistence.EntityManagerFactory;
@@ -27,7 +32,7 @@ import java.util.HashMap;
 public class JobConfig {
     private static final int CHUNK_SIZE = 10;
 
-    public static final String IMPORT_USER_JOB_NAME = "importUserJob";
+    public static final String MIGRATE_JOB_NAME = "migrateJob";
 
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
@@ -36,13 +41,101 @@ public class JobConfig {
     private StepBuilderFactory stepBuilderFactory;
 
     @Autowired
+    private MongoToJpaModelTransformer mongoToJpaModelTransformer;
+
+    @Autowired
     private MongoTemplate template;
 
     @Autowired
     EntityManagerFactory emf;
 
     @Bean
-    public MongoItemReader<BookMongo> reader() {
+    public Job importUserJob(Step migrateAuthor, Step migrateGenre, Step migrateBook, Step migrateComment) {
+        return jobBuilderFactory.get(MIGRATE_JOB_NAME)
+                .incrementer(new RunIdIncrementer())
+                .flow(migrateAuthor)
+                .next(migrateGenre)
+                .next(migrateBook)
+                .next(migrateComment)
+                .end()
+                .build();
+    }
+
+    //<editor-fold defaultstate="collapsed" desc="authorStep">
+    @Bean
+    public MongoItemReader<AuthorMongo> authorReader() {
+        return new MongoItemReaderBuilder<AuthorMongo>()
+                .name("mongoItemAuthorReader")
+                .template(template)
+                .jsonQuery("{}")
+                .targetType(AuthorMongo.class)
+                .sorts(new HashMap<>())
+                .build();
+    }
+
+    @Bean
+    public ItemProcessor<AuthorMongo, AuthorJpa> authorProcessor() {
+        return mongoToJpaModelTransformer::transformAuthorToJpaModel;
+    }
+
+    @Bean
+    public JpaItemWriter<AuthorJpa> authorWriter() {
+        return new JpaItemWriterBuilder<AuthorJpa>()
+                .entityManagerFactory(emf)
+                .build();
+    }
+
+    @Bean
+    public Step migrateAuthor(ItemReader<AuthorMongo> authorReader, JpaItemWriter<AuthorJpa> authorWriter,
+                              ItemProcessor<AuthorMongo, AuthorJpa> authorProcessor) {
+        return stepBuilderFactory.get("step1")
+                .<AuthorMongo, AuthorJpa>chunk(CHUNK_SIZE)
+                .reader(authorReader)
+                .processor(authorProcessor)
+                .writer(authorWriter)
+                .build();
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="genreStep">
+    @Bean
+    public MongoItemReader<GenreMongo> genreReader() {
+        return new MongoItemReaderBuilder<GenreMongo>()
+                .name("mongoItemAuthorReader")
+                .template(template)
+                .jsonQuery("{}")
+                .targetType(GenreMongo.class)
+                .sorts(new HashMap<>())
+                .build();
+    }
+
+    @Bean
+    public ItemProcessor<GenreMongo, GenreJpa> genreProcessor() {
+        return mongoToJpaModelTransformer::transformGenreToJpaModel;
+    }
+
+    @Bean
+    public JpaItemWriter<GenreJpa> genreWriter() {
+        return new JpaItemWriterBuilder<GenreJpa>()
+                .entityManagerFactory(emf)
+                .build();
+    }
+
+    @Bean
+    public Step migrateGenre(ItemReader<GenreMongo> genreReader, JpaItemWriter<GenreJpa> genreWriter,
+                             ItemProcessor<GenreMongo, GenreJpa> genreProcessor) {
+        return stepBuilderFactory.get("step1")
+                .<GenreMongo, GenreJpa>chunk(CHUNK_SIZE)
+                .reader(genreReader)
+                .processor(genreProcessor)
+                .writer(genreWriter)
+                .build();
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="bookStep">
+    @Bean
+    public MongoItemReader<BookMongo> bookReader() {
         return new MongoItemReaderBuilder<BookMongo>()
                 .name("mongoItemBookReader")
                 .template(template)
@@ -53,34 +146,62 @@ public class JobConfig {
     }
 
     @Bean
-    public ItemProcessor<BookMongo, BookJpa> processor() {
-        return MongoToJpaModelTransformer::transformBookToJpaModel;
+    public ItemProcessor<BookMongo, BookJpa> bookProcessor() {
+        return mongoToJpaModelTransformer::transformBookToJpaModel;
     }
 
     @Bean
-    public JpaItemWriter<BookJpa> writer() {
+    public JpaItemWriter<BookJpa> bookWriter() {
         return new JpaItemWriterBuilder<BookJpa>()
                 .entityManagerFactory(emf)
                 .build();
     }
 
     @Bean
-    public Job importUserJob(Step migrateBook) {
-        return jobBuilderFactory.get(IMPORT_USER_JOB_NAME)
-                .incrementer(new RunIdIncrementer())
-                .flow(migrateBook)
-                .end()
+    public Step migrateBook(ItemReader<BookMongo> bookReader, JpaItemWriter<BookJpa> bookWriter,
+                            ItemProcessor<BookMongo, BookJpa> bookProcessor) {
+        return stepBuilderFactory.get("step1")
+                .<BookMongo, BookJpa>chunk(CHUNK_SIZE)
+                .reader(bookReader)
+                .processor(bookProcessor)
+                .writer(bookWriter)
+                .build();
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="commentStep">
+    @Bean
+    public MongoItemReader<CommentMongo> commentReader() {
+        return new MongoItemReaderBuilder<CommentMongo>()
+                .name("mongoItemCommentReader")
+                .template(template)
+                .jsonQuery("{}")
+                .targetType(CommentMongo.class)
+                .sorts(new HashMap<>())
                 .build();
     }
 
     @Bean
-    public Step migrateBook(ItemReader<BookMongo> reader, JpaItemWriter<BookJpa> writer,
-                            ItemProcessor<BookMongo, BookJpa> itemProcessor) {
-        return stepBuilderFactory.get("step1")
-                .<BookMongo, BookJpa>chunk(CHUNK_SIZE)
-                .reader(reader)
-                .processor(itemProcessor)
-                .writer(writer)
+    public ItemProcessor<CommentMongo, CommentJpa> commentProcessor() {
+        return mongoToJpaModelTransformer::transformCommentToJpaModel;
+    }
+
+    @Bean
+    public JpaItemWriter<CommentJpa> commentWriter() {
+        return new JpaItemWriterBuilder<CommentJpa>()
+                .entityManagerFactory(emf)
                 .build();
     }
+
+    @Bean
+    public Step migrateComment(ItemReader<CommentMongo> commentReader, JpaItemWriter<CommentJpa> commentWriter,
+                               ItemProcessor<CommentMongo, CommentJpa> commentProcessor) {
+        return stepBuilderFactory.get("step1")
+                .<CommentMongo, CommentJpa>chunk(CHUNK_SIZE)
+                .reader(commentReader)
+                .processor(commentProcessor)
+                .writer(commentWriter)
+                .build();
+    }
+    //</editor-fold>
 }

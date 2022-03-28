@@ -19,7 +19,7 @@ public class CommentJpa {
     @Column(name = "COMMENT", nullable = false)
     private String comment;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "BOOK_ID")
     private BookJpa book;
 }

@@ -17,11 +17,11 @@ public class BookJpa {
     @Column(name = "NAME", nullable = false, unique = true)
     private String name;
 
-    @ManyToOne(targetEntity = AuthorJpa.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = AuthorJpa.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "AUTHOR_ID", nullable = false)
     private AuthorJpa author;
 
-    @ManyToOne(targetEntity = GenreJpa.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = GenreJpa.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "GENRE_ID", nullable = false)
     private GenreJpa genre;
 
