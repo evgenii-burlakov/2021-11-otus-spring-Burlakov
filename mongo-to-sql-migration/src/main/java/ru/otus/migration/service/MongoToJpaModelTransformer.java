@@ -10,17 +10,29 @@ import ru.otus.migration.mongoModel.AuthorMongo;
 import ru.otus.migration.mongoModel.BookMongo;
 import ru.otus.migration.mongoModel.CommentMongo;
 import ru.otus.migration.mongoModel.GenreMongo;
-import ru.otus.migration.repositories.AuthorRepositoryJpa;
-import ru.otus.migration.repositories.BookRepositoryJpa;
-import ru.otus.migration.repositories.GenreRepositoryJpa;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
 public class MongoToJpaModelTransformer {
 
-    private final AuthorRepositoryJpa authorRepositoryJpa;
-    private final GenreRepositoryJpa genreRepositoryJpa;
-    private final BookRepositoryJpa bookRepositoryJpa;
+    private final Set<AuthorJpa> authorJpaSet = new HashSet<>();
+    private final Set<GenreJpa> genreJpaSet = new HashSet<>();
+    private final Set<BookJpa> bookJpaSet = new HashSet<>();
+
+    public void addAuthorJpaListElement(AuthorJpa authorJpa) {
+        authorJpaSet.add(authorJpa);
+    }
+
+    public void addGenreJpaListElement(GenreJpa genreJpa) {
+        genreJpaSet.add(genreJpa);
+    }
+
+    public void addBookJpaListElement(BookJpa bookJpa) {
+        bookJpaSet.add(bookJpa);
+    }
 
     public AuthorJpa transformAuthorToJpaModel(AuthorMongo authorMongo) {
         return new AuthorJpa(null, authorMongo.getName());
@@ -31,15 +43,23 @@ public class MongoToJpaModelTransformer {
     }
 
     public BookJpa transformBookToJpaModel(BookMongo bookMongo) {
-        AuthorJpa author = authorRepositoryJpa.getByName(bookMongo.getAuthorMongo().getName());
-        GenreJpa genre = genreRepositoryJpa.getByName(bookMongo.getGenreMongo().getName());
+        AuthorJpa author = authorJpaSet.stream()
+                .filter(a -> a.getName().equals(bookMongo.getAuthorMongo().getName()))
+                .findFirst().orElse(null);
+
+        GenreJpa genre = genreJpaSet.stream()
+                .filter(g -> g.getName().equals(bookMongo.getGenreMongo().getName()))
+                .findFirst().orElse(null);
+
         return new BookJpa(null, bookMongo.getName(), author, genre);
     }
 
     public CommentJpa transformCommentToJpaModel(CommentMongo commentMongo) {
-        BookJpa book = bookRepositoryJpa.getByBookAuthorAndGenreNames(commentMongo.getBookMongo().getName(),
-                commentMongo.getBookMongo().getAuthorMongo().getName(),
-                commentMongo.getBookMongo().getGenreMongo().getName());
+        BookJpa book = bookJpaSet.stream()
+                .filter(b -> b.getName().equals(commentMongo.getBookMongo().getName())
+                        && b.getAuthor().getName().equals(commentMongo.getBookMongo().getAuthorMongo().getName())
+                        && b.getGenre().getName().equals(commentMongo.getBookMongo().getGenreMongo().getName()))
+                .findFirst().orElse(null);
 
         return new CommentJpa(null, commentMongo.getComment(), book);
     }

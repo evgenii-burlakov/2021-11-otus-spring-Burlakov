@@ -19,6 +19,7 @@ import ru.otus.migration.jpaModel.AuthorJpa;
 import ru.otus.migration.jpaModel.BookJpa;
 import ru.otus.migration.jpaModel.CommentJpa;
 import ru.otus.migration.jpaModel.GenreJpa;
+import ru.otus.migration.migration.CustomJpaItemWriter;
 import ru.otus.migration.mongoModel.AuthorMongo;
 import ru.otus.migration.mongoModel.BookMongo;
 import ru.otus.migration.mongoModel.CommentMongo;
@@ -79,16 +80,18 @@ public class JobConfig {
     }
 
     @Bean
-    public JpaItemWriter<AuthorJpa> authorWriter() {
-        return new JpaItemWriterBuilder<AuthorJpa>()
-                .entityManagerFactory(emf)
-                .build();
+    public CustomJpaItemWriter<AuthorJpa> authorWriter() {
+        CustomJpaItemWriter<AuthorJpa> customJpaItemWriter = new CustomJpaItemWriter<>();
+        customJpaItemWriter.setTransformer(mongoToJpaModelTransformer);
+        customJpaItemWriter.setEntityManagerFactory(emf);
+
+        return customJpaItemWriter;
     }
 
     @Bean
     public Step migrateAuthor(ItemReader<AuthorMongo> authorReader, JpaItemWriter<AuthorJpa> authorWriter,
                               ItemProcessor<AuthorMongo, AuthorJpa> authorProcessor) {
-        return stepBuilderFactory.get("step1")
+        return stepBuilderFactory.get("migrateAuthorStep")
                 .<AuthorMongo, AuthorJpa>chunk(CHUNK_SIZE)
                 .reader(authorReader)
                 .processor(authorProcessor)
@@ -115,16 +118,18 @@ public class JobConfig {
     }
 
     @Bean
-    public JpaItemWriter<GenreJpa> genreWriter() {
-        return new JpaItemWriterBuilder<GenreJpa>()
-                .entityManagerFactory(emf)
-                .build();
+    public CustomJpaItemWriter<GenreJpa> genreWriter() {
+        CustomJpaItemWriter<GenreJpa> customJpaItemWriter = new CustomJpaItemWriter<>();
+        customJpaItemWriter.setTransformer(mongoToJpaModelTransformer);
+        customJpaItemWriter.setEntityManagerFactory(emf);
+
+        return customJpaItemWriter;
     }
 
     @Bean
     public Step migrateGenre(ItemReader<GenreMongo> genreReader, JpaItemWriter<GenreJpa> genreWriter,
                              ItemProcessor<GenreMongo, GenreJpa> genreProcessor) {
-        return stepBuilderFactory.get("step1")
+        return stepBuilderFactory.get("migrateGenreStep")
                 .<GenreMongo, GenreJpa>chunk(CHUNK_SIZE)
                 .reader(genreReader)
                 .processor(genreProcessor)
@@ -151,16 +156,18 @@ public class JobConfig {
     }
 
     @Bean
-    public JpaItemWriter<BookJpa> bookWriter() {
-        return new JpaItemWriterBuilder<BookJpa>()
-                .entityManagerFactory(emf)
-                .build();
+    public CustomJpaItemWriter<BookJpa> bookWriter() {
+        CustomJpaItemWriter<BookJpa> customJpaItemWriter = new CustomJpaItemWriter<>();
+        customJpaItemWriter.setTransformer(mongoToJpaModelTransformer);
+        customJpaItemWriter.setEntityManagerFactory(emf);
+
+        return customJpaItemWriter;
     }
 
     @Bean
     public Step migrateBook(ItemReader<BookMongo> bookReader, JpaItemWriter<BookJpa> bookWriter,
                             ItemProcessor<BookMongo, BookJpa> bookProcessor) {
-        return stepBuilderFactory.get("step1")
+        return stepBuilderFactory.get("migrateBookStep")
                 .<BookMongo, BookJpa>chunk(CHUNK_SIZE)
                 .reader(bookReader)
                 .processor(bookProcessor)
@@ -196,7 +203,7 @@ public class JobConfig {
     @Bean
     public Step migrateComment(ItemReader<CommentMongo> commentReader, JpaItemWriter<CommentJpa> commentWriter,
                                ItemProcessor<CommentMongo, CommentJpa> commentProcessor) {
-        return stepBuilderFactory.get("step1")
+        return stepBuilderFactory.get("migrateCommentStep")
                 .<CommentMongo, CommentJpa>chunk(CHUNK_SIZE)
                 .reader(commentReader)
                 .processor(commentProcessor)
