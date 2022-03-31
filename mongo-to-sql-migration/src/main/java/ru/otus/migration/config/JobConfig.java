@@ -24,6 +24,7 @@ import ru.otus.migration.mongoModel.AuthorMongo;
 import ru.otus.migration.mongoModel.BookMongo;
 import ru.otus.migration.mongoModel.CommentMongo;
 import ru.otus.migration.mongoModel.GenreMongo;
+import ru.otus.migration.service.MongoToJpaModelCache;
 import ru.otus.migration.service.MongoToJpaModelTransformer;
 
 import javax.persistence.EntityManagerFactory;
@@ -43,6 +44,9 @@ public class JobConfig {
 
     @Autowired
     private MongoToJpaModelTransformer mongoToJpaModelTransformer;
+
+    @Autowired
+    private MongoToJpaModelCache mongoToJpaModelCache;
 
     @Autowired
     private MongoTemplate template;
@@ -82,7 +86,7 @@ public class JobConfig {
     @Bean
     public CustomJpaItemWriter<AuthorJpa> authorWriter() {
         CustomJpaItemWriter<AuthorJpa> customJpaItemWriter = new CustomJpaItemWriter<>();
-        customJpaItemWriter.setTransformer(mongoToJpaModelTransformer);
+        customJpaItemWriter.setCache(mongoToJpaModelCache);
         customJpaItemWriter.setEntityManagerFactory(emf);
 
         return customJpaItemWriter;
@@ -120,7 +124,7 @@ public class JobConfig {
     @Bean
     public CustomJpaItemWriter<GenreJpa> genreWriter() {
         CustomJpaItemWriter<GenreJpa> customJpaItemWriter = new CustomJpaItemWriter<>();
-        customJpaItemWriter.setTransformer(mongoToJpaModelTransformer);
+        customJpaItemWriter.setCache(mongoToJpaModelCache);
         customJpaItemWriter.setEntityManagerFactory(emf);
 
         return customJpaItemWriter;
@@ -158,7 +162,7 @@ public class JobConfig {
     @Bean
     public CustomJpaItemWriter<BookJpa> bookWriter() {
         CustomJpaItemWriter<BookJpa> customJpaItemWriter = new CustomJpaItemWriter<>();
-        customJpaItemWriter.setTransformer(mongoToJpaModelTransformer);
+        customJpaItemWriter.setCache(mongoToJpaModelCache);
         customJpaItemWriter.setEntityManagerFactory(emf);
 
         return customJpaItemWriter;

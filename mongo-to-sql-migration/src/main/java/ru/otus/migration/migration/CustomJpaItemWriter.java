@@ -4,18 +4,17 @@ import org.springframework.batch.item.database.JpaItemWriter;
 import ru.otus.migration.jpaModel.AuthorJpa;
 import ru.otus.migration.jpaModel.BookJpa;
 import ru.otus.migration.jpaModel.GenreJpa;
-import ru.otus.migration.service.MongoToJpaModelTransformer;
+import ru.otus.migration.service.MongoToJpaModelCache;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
 public class CustomJpaItemWriter<T> extends JpaItemWriter<T> {
 
-    private MongoToJpaModelTransformer transformer;
+    private MongoToJpaModelCache cache;
 
-
-    public void setTransformer(MongoToJpaModelTransformer transformer) {
-        this.transformer = transformer;
+    public void setCache(MongoToJpaModelCache cache) {
+        this.cache = cache;
     }
 
     @Override
@@ -33,11 +32,11 @@ public class CustomJpaItemWriter<T> extends JpaItemWriter<T> {
                     T entity = entityManager.merge(item);
 
                     if (entity instanceof AuthorJpa) {
-                        transformer.addAuthorJpaListElement((AuthorJpa) entity);
+                        cache.addAuthorJpaMapElement((AuthorJpa) entity);
                     } else if (entity instanceof GenreJpa) {
-                        transformer.addGenreJpaListElement((GenreJpa) entity);
+                        cache.addGenreJpaMapElement((GenreJpa) entity);
                     } else if (entity instanceof BookJpa) {
-                        transformer.addBookJpaListElement((BookJpa) entity);
+                        cache.addBookJpaMapElement((BookJpa) entity);
                     }
 
                     ++addedToContextCount;
