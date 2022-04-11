@@ -12,5 +12,6 @@
         <module>testing-application</module>
         <module>library-application</module>
         <module>mongo-to-sql-migration</module>
+        <module>spring-integration-application</module>
     </modules>
 </project>
