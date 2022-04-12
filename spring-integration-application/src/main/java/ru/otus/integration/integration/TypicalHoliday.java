@@ -1,16 +1,14 @@
-package ru.otus.integration;
+package ru.otus.integration.integration;
 
 
 import org.springframework.integration.annotation.Gateway;
 import org.springframework.integration.annotation.MessagingGateway;
 import ru.otus.integration.domain.Bar;
-import ru.otus.integration.domain.Student;
-
-import java.util.List;
+import ru.otus.integration.domain.HardWorker;
 
 @MessagingGateway
-public interface Day {
+public interface TypicalHoliday {
 
     @Gateway(requestChannel = "morningChannel", replyChannel = "barChannel")
-    List<Bar> process(Student student);
+    Bar process(HardWorker hardWorker);
 }

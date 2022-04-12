@@ -2,92 +2,38 @@ package ru.otus.integration;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.integration.annotation.IntegrationComponentScan;
-import org.springframework.integration.channel.PublishSubscribeChannel;
-import org.springframework.integration.channel.QueueChannel;
-import org.springframework.integration.core.GenericSelector;
-import org.springframework.integration.dsl.*;
-import org.springframework.integration.scheduling.PollerMetadata;
 import ru.otus.integration.domain.Bar;
-import ru.otus.integration.domain.Student;
-import ru.otus.integration.service.BarService;
+import ru.otus.integration.domain.HardWorker;
+import ru.otus.integration.integration.TypicalHoliday;
 
-import java.util.List;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 
 @IntegrationComponentScan
 @SpringBootApplication
 public class Main {
-    @Bean
-    public QueueChannel morningChannel() {
-        return MessageChannels.queue( 10 ).get();
-    }
+    public static void main(String[] args) throws Exception {
+        AbstractApplicationContext ctx = new AnnotationConfigApplicationContext(Main.class);
 
-    @Bean
-    public PublishSubscribeChannel barChannel() {
-        return MessageChannels.publishSubscribe().get();
-    }
-
-    @Bean
-    public GenericSelector<Bar> freeBars() {
-        return new GenericSelector<Bar>() {
-
-            @Override
-            public boolean accept(Bar bar) {
-                if (!bar.isFree()) {
-                    System.out.println(bar.getName() + " successfully completed the working day");
-                }
-
-                return bar.isFree();
-            }
-        };
-    }
-
-    @Bean(name = PollerMetadata.DEFAULT_POLLER)
-    public PollerMetadata poller() {
-        return Pollers.fixedRate( 100 ).maxMessagesPerPoll( 2 ).get();
-    }
-
-    @Bean
-    public IntegrationFlow dayFlow() {
-        return IntegrationFlows.from( "morningChannel" )
-                .handle( "dayService", "dinner" )
-                .handle( "dayService", "tryingFindFreeBar" )
-                .split()
-                .handle( "barService", "isBarFree" )
-                .aggregate()
-
-                .filter(freeBars())
-                .get();
-    }
-
-//    @Bean
-//    public IntegrationFlow aggregatorFlow(GyroAggregator agg) {
-//        return IntegrationFlows.from("filterOutputChannel")
-//                .aggregate(a -> a
-//                        .processor(agg)
-//                        .groupTimeout(500L))
-//                .channel("aggregatorOutputChannel")
-//                .get();
-//    }
-
-    public static void main( String[] args ) throws Exception {
-        AbstractApplicationContext ctx = new AnnotationConfigApplicationContext( Main.class );
-
-        Day day = ctx.getBean( Day.class );
+        TypicalHoliday typicalHoliday = ctx.getBean(TypicalHoliday.class);
 
         ForkJoinPool pool = ForkJoinPool.commonPool();
 
-        pool.execute( () -> {
-            Student student = new Student("Ivan", List.of(new Student("Yan"), new Student("Igor"), new Student("Evgenii")));
-            System.out.println( student.getName() + " wake up");
-            List<Bar> process = day.process(student);
-            System.out.println(process.toArray().toString() + " go sleep");
-        } );
+        while (true) {
+            Thread.sleep(3000);
+
+            pool.execute(() -> {
+
+                HardWorker hardWorker = new HardWorker("Ivan");
+                System.out.printf("%s wake up%n", hardWorker.getName());
+                Bar bar = typicalHoliday.process(hardWorker);
+                if (bar == null) {
+                    System.out.printf("Sad %s goes to sleep%n", hardWorker.getName());
+                } else {
+                    System.out.printf("%s SATISFIED and FULL OF STRENGTH returns home!!!%n", hardWorker.getName());
+                }
+            });
+        }
     }
-
-
 }
