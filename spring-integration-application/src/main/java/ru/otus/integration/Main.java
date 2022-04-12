@@ -21,18 +21,14 @@ public class Main {
         ForkJoinPool pool = ForkJoinPool.commonPool();
 
         while (true) {
-            Thread.sleep(3000);
+            Thread.sleep(6000);
 
             pool.execute(() -> {
 
                 HardWorker hardWorker = new HardWorker("Ivan");
                 System.out.printf("%s wake up%n", hardWorker.getName());
-                Bar bar = typicalHoliday.process(hardWorker);
-                if (bar == null) {
-                    System.out.printf("Sad %s goes to sleep%n", hardWorker.getName());
-                } else {
-                    System.out.printf("%s SATISFIED and FULL OF STRENGTH returns home!!!%n", hardWorker.getName());
-                }
+                typicalHoliday.process(hardWorker);
+                System.out.printf("%s SATISFIED and FULL OF STRENGTH returns home!!!%n", hardWorker.getName());
             });
         }
     }
