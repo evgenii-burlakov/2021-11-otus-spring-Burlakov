@@ -1,5 +1,6 @@
 package ru.otus.integration.integration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.channel.PublishSubscribeChannel;
@@ -11,9 +12,17 @@ import org.springframework.integration.dsl.MessageChannels;
 import org.springframework.integration.dsl.Pollers;
 import org.springframework.integration.scheduling.PollerMetadata;
 import ru.otus.integration.domain.Bar;
+import ru.otus.integration.service.BarService;
+import ru.otus.integration.service.HardWorkerHolidayService;
 
 @Configuration
 public class Config {
+    @Autowired
+    private BarService barService;
+
+    @Autowired
+    private HardWorkerHolidayService hardWorkerHolidayService;
+
     @Bean
     public QueueChannel morningChannel() {
         return MessageChannels.queue(10).get();
@@ -46,16 +55,16 @@ public class Config {
 
     @Bean
     public IntegrationFlow dayFlow() {
-        return IntegrationFlows.from("morningChannel")
-                .handle("hardWorkerHolidayService", "tryingFindFreeBar")
+        return IntegrationFlows.from(morningChannel())
+                .handle(hardWorkerHolidayService, "tryingFindFreeBar")
                 .split()
-                .handle("barService", "isBarFree")
+                .handle(barService, "isBarFree")
                 .filter(freeBars())
                 .aggregate(a -> {
                     a.groupTimeout(1L);
                     a.sendPartialResultOnExpiry(true);
                 })
-                .handle("barService", "barDayResult")
+                .handle(barService, "barDayResult")
                 .get();
     }
 }
