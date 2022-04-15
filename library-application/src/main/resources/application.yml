@@ -16,7 +16,19 @@ spring:
       ddl-auto: none
 
 #    show-sql: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, logfile
+  endpoint:
+    health:
+      show-details: always
+  security:
+    enabled: false
 
 logging:
+  file:
+    path: ./library-application
   level:
-    ROOT: ERROR
+    ROOT: INFO
