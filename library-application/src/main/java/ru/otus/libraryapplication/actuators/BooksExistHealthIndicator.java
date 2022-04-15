@@ -14,13 +14,13 @@ public class BooksExistHealthIndicator implements HealthIndicator {
 
     @Override
     public Health health() {
-        if (bookRepository.findAll().isEmpty()) {
+        if (bookRepository.existsBy()) {
+            return Health.up().withDetail("message", "There are books in the library!").build();
+        } else {
             return Health.down()
                     .status(Status.DOWN)
                     .withDetail("message", "There is no books in library!")
                     .build();
-        } else {
-            return Health.up().withDetail("message", "There are books in the library!").build();
         }
     }
 }

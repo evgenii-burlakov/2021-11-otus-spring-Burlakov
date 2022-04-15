@@ -13,6 +13,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @EntityGraph(attributePaths = {"author", "genre"})
     List<Book> findAll();
 
+    boolean existsBy();
+
     Optional<Book> findById(long id);
 
     void deleteById(long id);
