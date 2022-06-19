@@ -1,1 +1,1 @@
-Приложение для хранения книг
+Spring Integration Application, Spring Integration
