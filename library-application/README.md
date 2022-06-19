@@ -1,1 +1,1 @@
-Приложение для хранения книг
+Library application, Spring Boot + Spring Data JPA + Spring MVC + view (Thymeleaf) + Spring Security (authorization) + Spring Actuator
