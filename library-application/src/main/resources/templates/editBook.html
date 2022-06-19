@@ -15,17 +15,17 @@
     </div>
 
     <div class="row">
-        <label for="author-name">Author:</label>
-        <select id="author-name" name="author.name" required="required" th:field="*{author.name}">
-            <option th:each="author : ${authors}" th:text="${author.name}" th:value="${author.name}">
+        <label for="authorMongo-name">Author:</label>
+        <select id="authorMongo-name" name="authorMongo.name" required="required" th:field="*{authorMongo.name}">
+            <option th:each="authorMongo : ${authors}" th:text="${authorMongo.name}" th:value="${authorMongo.name}">
             </option>
         </select>
     </div>
 
     <div class="row">
-        <label for="genre-name">Genre:</label>
-        <select id="genre-name" name="genre.name" required="required" th:field="*{genre.name}">
-            <option th:each="genre : ${genres}" th:text="${genre.name}" th:value="${genre.name}" >
+        <label for="genreMongo-name">Genre:</label>
+        <select id="genreMongo-name" name="genreMongo.name" required="required" th:field="*{genreMongo.name}">
+            <option th:each="genreMongo : ${genres}" th:text="${genreMongo.name}" th:value="${genreMongo.name}" >
             </option>
         </select>
     </div>

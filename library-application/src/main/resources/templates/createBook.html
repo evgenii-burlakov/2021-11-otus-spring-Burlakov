@@ -14,17 +14,17 @@
     </div>
 
     <div class="row">
-        <label for="author-name">Author:</label>
-        <select id="author-name" name="author.name" required="required" >
-            <option th:each="author : ${authors}" th:text="${author.name}">
+        <label for="authorMongo-name">Author:</label>
+        <select id="authorMongo-name" name="authorMongo.name" required="required" >
+            <option th:each="authorMongo : ${authors}" th:text="${authorMongo.name}">
             </option>
         </select>
     </div>
 
     <div class="row">
-        <label for="genre-name">Genre:</label>
-        <select id="genre-name" name="genre.name" required="required" >
-            <option th:each="genre : ${genres}" th:text="${genre.name}">
+        <label for="genreMongo-name">Genre:</label>
+        <select id="genreMongo-name" name="genreMongo.name" required="required" >
+            <option th:each="genreMongo : ${genres}" th:text="${genreMongo.name}">
             </option>
         </select>
     </div>

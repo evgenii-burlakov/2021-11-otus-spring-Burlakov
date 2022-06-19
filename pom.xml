@@ -11,5 +11,6 @@
     <modules>
         <module>testing-application</module>
         <module>library-application</module>
+        <module>mongo-to-sql-migration</module>
     </modules>
 </project>

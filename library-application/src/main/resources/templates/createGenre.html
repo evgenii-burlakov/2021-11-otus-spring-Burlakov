@@ -5,12 +5,12 @@
     <title>Create</title>
 </head>
 <body>
-<form id="create-form" action="edit.html" th:action="@{/genres/create}" th:method="post" th:object="${genre}">
+<form id="create-form" action="edit.html" th:action="@{/genres/create}" th:method="post" th:object="${genreMongo}">
     <h3>New Genre:</h3>
 
     <div class="row">
-        <label for="genre-name">Name:</label>
-        <input id="genre-name" name="name" type="text"/>
+        <label for="genreMongo-name">Name:</label>
+        <input id="genreMongo-name" name="name" type="text"/>
     </div>
 
     <br><br>

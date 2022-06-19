@@ -5,12 +5,12 @@
     <title>Create</title>
 </head>
 <body>
-<form id="create-form" action="edit.html" th:action="@{/authors/create}" th:method="post" th:object="${author}">
+<form id="create-form" action="edit.html" th:action="@{/authors/create}" th:method="post" th:object="${authorMongo}">
     <h3>New Author:</h3>
 
     <div class="row">
-        <label for="author-name">Name:</label>
-        <input id="author-name" name="name" type="text"/>
+        <label for="authorMongo-name">Name:</label>
+        <input id="authorMongo-name" name="name" type="text"/>
     </div>
 
     <br><br>

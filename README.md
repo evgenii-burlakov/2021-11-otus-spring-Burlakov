@@ -1,1 +1,1 @@
-Library application, Spring Boot + Spring Data JPA + Spring MVC + view (Thymeleaf) + Spring Security (authorization)
+Mongo to RDB migration application, Spring Batch
