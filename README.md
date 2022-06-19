@@ -17,3 +17,7 @@ Branches:
 
 - Homework 12- Library application, Spring Boot + Spring Data JPA + Spring MVC + view (Thymeleaf) + Spring Security (authentication)
 - Homework 13- Library application, Spring Boot + Spring Data JPA + Spring MVC + view (Thymeleaf) + Spring Security (authorization)
+
+- Homework 14- Mongo to RDB migration application, Spring Batch
+- Homework 15- Spring Integration Application, Spring Integration
+- Homework 16- Library application, Spring Boot + Spring Data JPA + Spring MVC + view (Thymeleaf) + Spring Security (authorization) + Spring Actuator
